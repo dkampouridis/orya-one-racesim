@@ -2,6 +2,8 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
+export const preferredRegion = "iad1";
 
 function resolveApiBaseUrl() {
   const value =
