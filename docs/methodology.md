@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Orya One RaceSim is a hybrid research product. It is designed to make its assumptions legible rather than hide them behind a single opaque forecast.
+Orya One RaceSim is a hybrid simulation project. It is designed to make its assumptions visible rather than hide them behind a single opaque forecast.
 
 ## Modeling philosophy
 
@@ -72,7 +72,7 @@ Each recommendation returns:
 - rationale bullets
 - tradeoff statement
 
-The aim is coherent, scenario-specific strategy logic rather than fake optimization theater.
+The aim is coherent, scenario-specific strategy logic rather than a fake optimizer.
 
 ## 4. Event engine
 
@@ -133,7 +133,7 @@ The current version is intentionally bounded:
 - safety-car behavior is abstracted into compression and pit-value effects
 - sample data is synthetic and intended for replacement later
 
-These are explicit MVP boundaries, not hidden caveats.
+These are explicit MVP boundaries, not caveats buried in the fine print.
 
 ## Future realism path
 

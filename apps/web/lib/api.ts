@@ -1,6 +1,4 @@
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??
-  (process.env.NODE_ENV === "development" ? "http://localhost:8000/api" : "");
+const API_PROXY_URL = "/api/racesim";
 
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
@@ -10,24 +8,15 @@ async function handleResponse<T>(response: Response): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-function requireApiUrl() {
-  if (!API_URL) {
-    throw new Error(
-      "NEXT_PUBLIC_API_URL is not configured. Set it in Vercel for production deployments.",
-    );
-  }
-  return API_URL;
-}
-
 export async function fetchDefaults<T>() {
-  const response = await fetch(`${requireApiUrl()}/defaults`, {
+  const response = await fetch(`${API_PROXY_URL}/defaults`, {
     cache: "no-store",
   });
   return handleResponse<T>(response);
 }
 
 export async function fetchSuggestions<T>(payload: object) {
-  const response = await fetch(`${requireApiUrl()}/strategy-suggestions`, {
+  const response = await fetch(`${API_PROXY_URL}/strategy-suggestions`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -38,7 +27,7 @@ export async function fetchSuggestions<T>(payload: object) {
 }
 
 export async function runSimulation<T>(payload: object) {
-  const response = await fetch(`${requireApiUrl()}/simulate`, {
+  const response = await fetch(`${API_PROXY_URL}/simulate`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

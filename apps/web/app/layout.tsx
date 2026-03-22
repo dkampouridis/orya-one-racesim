@@ -7,7 +7,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Orya One RaceSim",
-  description: "Premium motorsport scenario simulation built on a hybrid pace, strategy, and event engine.",
+  description: "Formula 1 Grand Prix simulation for qualifying influence, race pace, tire wear, and pit-wall strategy analysis.",
 };
 
 export default function RootLayout({

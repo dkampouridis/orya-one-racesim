@@ -1,6 +1,6 @@
 # Architecture Overview
 
-Orya One RaceSim is organized as a small monorepo with a clear split between presentation, transport, and simulation logic. The architecture is intentionally modest in size but deliberate in boundaries so the project feels maintainable and extensible from the first public release.
+Orya One RaceSim is organized as a small monorepo with a clear split between presentation, transport, and simulation logic. The architecture is intentionally modest, with boundaries chosen to keep the project maintainable and easy to extend.
 
 ## Repository structure
 
@@ -34,8 +34,8 @@ Responsibilities:
 
 - landing, simulator, and methodology surfaces
 - dense but readable control grouping
-- result storytelling and chart presentation
-- demo- and screenshot-ready product framing
+- result presentation and chart rendering
+- landing and documentation surfaces
 
 ### `apps/api`
 
@@ -66,7 +66,7 @@ The project intentionally avoids treating all motorsport behavior as a black-box
 - The event engine introduces controlled uncertainty.
 - Monte Carlo resolution aggregates uncertainty into usable probabilities.
 
-This preserves explainability while still giving the simulator a credible technical core.
+This keeps the simulator explainable while still giving it a real modeling core.
 
 ## Current realism boundary
 

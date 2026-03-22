@@ -1,17 +1,17 @@
 # Demo Guide
 
-This guide is intended to make screenshot capture and short demo recording consistent, fast, and high quality.
+This guide is meant to make screenshot capture and short demo recording consistent and repeatable.
 
-## Best default showcase scenario
+## Best default demo scenario
 
 Use the `Harbor volatility` preset in the simulator.
 
 Why:
 
-- mixed conditions create stronger event-impact cards
-- strategy recommendations become more visibly differentiated
-- the results table shows more interesting confidence and exposure variation
-- the charts look richer than a low-volatility dry scenario
+- mixed conditions make the event-impact cards easier to read
+- strategy recommendations separate more clearly
+- the results table shows more variation in confidence and exposure
+- the charts move more than they do in a low-volatility dry scenario
 
 ## Recommended capture order
 
@@ -23,7 +23,7 @@ Why:
 6. Strategy recommendation and explainability panels
 7. Methodology page
 
-If you create a short GIF, the strongest sequence is:
+If you create a short GIF, this is the best sequence:
 
 1. open simulator
 2. click `Harbor volatility`
@@ -47,7 +47,7 @@ If you create a short GIF, the strongest sequence is:
 - Weather: `Dry Stable`
 - Runs: `900`
 
-Use the secondary demo if you want a calmer, more technical-looking screenshot with stronger track-position framing.
+Use the secondary demo if you want a calmer screenshot with a stronger track-position story.
 
 ## Best pages to capture
 
@@ -109,7 +109,7 @@ Capture:
 
 - `1440 x 900`
 
-This keeps the simulator dense and polished without making the control column feel cramped.
+This keeps the simulator readable without making the control column feel cramped.
 
 ## Visual quality tips
 
@@ -134,4 +134,4 @@ This keeps the simulator dense and polished without making the control column fe
 3. Results dashboard
 4. Strategy and explainability
 
-That order gives visitors the clearest narrative from product framing to technical depth.
+That order gives visitors a clean path from project overview to results detail.

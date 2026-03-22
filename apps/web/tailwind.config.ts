@@ -33,8 +33,8 @@ const config: Config = {
         },
       },
       boxShadow: {
-        panel: "0 30px 80px rgba(6, 12, 19, 0.45)",
-        inset: "inset 0 1px 0 rgba(255,255,255,0.06)",
+        panel: "0 30px 80px rgba(0, 0, 0, 0.52)",
+        inset: "inset 0 1px 0 rgba(255,255,255,0.04)",
       },
       fontFamily: {
         display: ["Space Grotesk", "Avenir Next", "Segoe UI", "sans-serif"],
@@ -44,6 +44,8 @@ const config: Config = {
       backgroundImage: {
         "grid-fade":
           "linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px)",
+        "telemetry-grid":
+          "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)",
       },
     },
   },
@@ -51,4 +53,3 @@ const config: Config = {
 };
 
 export default config;
-

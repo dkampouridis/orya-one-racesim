@@ -2,20 +2,20 @@
 
 Thanks for contributing to Orya One RaceSim.
 
-This repository is intended to feel like a serious open-source product, not a loose prototype. Contributions should preserve that standard across UI, modeling, API behavior, docs, and repo presentation.
+This repository is meant to feel like a finished open-source project, not a loose prototype. Contributions should keep that standard across the UI, simulation logic, API behavior, docs, and repo presentation.
 
 ## Principles
 
-- Keep the product serious, clear, and public-repo safe.
+- Keep the product clear, grounded, and public-repo safe.
 - Do not introduce copyrighted team marks, official race branding, or protected series assets.
 - Prefer explainable simulation logic over opaque claims.
-- Keep UX disciplined: technical, premium, calm, and readable.
+- Keep the UX disciplined: technical, calm, and readable.
 - Document meaningful modeling assumptions and tradeoffs.
 
 ## Good contribution areas
 
 - simulation realism improvements that do not bloat the architecture
-- UI refinement that improves clarity or credibility
+- UI refinement that improves clarity or trust
 - better scenario presets, demo readiness, or docs quality
 - data-pipeline improvements and schema documentation
 - tests, validation, and developer-experience polish

@@ -62,7 +62,7 @@ Abstract strategy templates with fields for:
 - safety-car bias
 - weather adaptability
 
-These are intentionally abstract enough for an MVP while still remaining coherent and scenario-aware.
+These are intentionally abstract enough for an MVP while still being coherent and scenario-aware.
 
 ### `data/weather/weather_event_priors.json`
 
@@ -77,11 +77,11 @@ Weather and event presets that seed:
 
 ### `data/model/training_samples.csv`
 
-Synthetic tabular samples used for pace-model training. The file is intentionally inspectable so contributors can understand the feature path and replace it later with richer real-world data.
+Synthetic tabular samples used for pace-model training. The file is intentionally easy to inspect so contributors can understand the feature path and replace it later with richer real-world data.
 
 ## Demo presets
 
-The simulator UI includes showcase presets built on top of the sample data:
+The simulator UI includes a few demo presets built on top of the sample data:
 
 - Harbor volatility
 - Street-track control

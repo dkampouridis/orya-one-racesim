@@ -33,13 +33,16 @@ Reasons:
 
 ### Frontend environment variable
 
-Set this in Vercel:
+Set one of these in Vercel:
 
+- `API_URL=https://YOUR-API-HOST/api`
 - `NEXT_PUBLIC_API_URL=https://YOUR-API-HOST/api`
 
 Example:
 
-- `NEXT_PUBLIC_API_URL=https://orya-one-racesim-api.onrender.com/api`
+- `API_URL=https://orya-one-racesim-api.onrender.com/api`
+
+The frontend now calls the backend through a same-origin Next.js proxy route. That means the browser talks to Vercel, and Vercel talks to the FastAPI backend server-to-server.
 
 ### Backend environment variable
 
@@ -59,8 +62,8 @@ If you use a custom domain, include that too:
 
 Local development still works with the existing setup:
 
-- if `NEXT_PUBLIC_API_URL` is not set and `NODE_ENV=development`, the frontend falls back to `http://localhost:8000/api`
-- in production, `NEXT_PUBLIC_API_URL` must be set
+- if neither `API_URL` nor `NEXT_PUBLIC_API_URL` is set and `NODE_ENV=development`, the frontend proxy falls back to `http://localhost:8000/api`
+- in production, set `API_URL` in Vercel
 
 ## Vercel deployment steps
 
@@ -72,7 +75,7 @@ Local development still works with the existing setup:
 4. In project configuration, set the `Root Directory` to `apps/web`.
 5. Confirm the framework is detected as `Next.js`.
 6. Open the environment variable section and add:
-   - `NEXT_PUBLIC_API_URL`
+   - `API_URL`
 7. Set the value to your deployed backend URL with the `/api` suffix.
 8. Apply the variable to `Production` and `Preview`.
 9. Click `Deploy`.
@@ -81,7 +84,7 @@ After the first deploy:
 
 10. Open the deployed project in Vercel.
 11. If you want a custom domain, open `Settings` -> `Domains` and add it there.
-12. If you change `NEXT_PUBLIC_API_URL`, redeploy the project so the updated value is applied.
+12. If you change `API_URL`, redeploy the project so the updated value is applied.
 
 ## Render deployment steps for the API
 
@@ -113,13 +116,13 @@ Then add:
 
 ## Recommended deployment order
 
-Use this order to avoid CORS confusion:
+Use this order:
 
 1. Deploy the backend first on Render.
 2. Copy the Render service URL.
 3. Deploy the frontend on Vercel with `NEXT_PUBLIC_API_URL` pointing to the Render URL plus `/api`.
 4. Copy the Vercel frontend URL.
-5. Go back to Render and set `CORS_ORIGINS` to the Vercel frontend URL.
+5. If you still want direct browser access to the backend, set `CORS_ORIGINS` to the Vercel frontend URL.
 6. Redeploy the backend.
 7. If needed, redeploy the frontend once more after final domain changes.
 
@@ -127,7 +130,7 @@ Use this order to avoid CORS confusion:
 
 ### Frontend on Vercel
 
-- `NEXT_PUBLIC_API_URL=https://orya-one-racesim-api.onrender.com/api`
+- `API_URL=https://orya-one-racesim-api.onrender.com/api`
 
 ### Backend on Render
 
@@ -135,7 +138,7 @@ Use this order to avoid CORS confusion:
 
 ## Common deployment mistakes
 
-- forgetting the `/api` suffix in `NEXT_PUBLIC_API_URL`
+- forgetting the `/api` suffix in `API_URL`
 - deploying the frontend before the backend URL exists
 - setting backend CORS to `localhost` only
 - changing environment variables without redeploying
@@ -145,7 +148,6 @@ Use this order to avoid CORS confusion:
 
 - backend service is live and returns `/api/health`
 - frontend Vercel project uses `apps/web` as root directory
-- `NEXT_PUBLIC_API_URL` is set on Vercel
-- `CORS_ORIGINS` is set on the backend
-- frontend loads defaults successfully
-- running a simulation from the live site returns results without CORS errors
+- `API_URL` is set on Vercel
+- frontend loads defaults successfully through the proxy route
+- running a simulation from the live site returns results

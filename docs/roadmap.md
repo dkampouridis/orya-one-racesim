@@ -1,6 +1,6 @@
 # Roadmap
 
-This roadmap separates near-term product tightening from deeper realism work so the project can evolve without losing its clarity.
+This roadmap separates near-term product work from deeper realism work so the project can evolve without losing clarity.
 
 ## Release line
 

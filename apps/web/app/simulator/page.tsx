@@ -5,16 +5,15 @@ export default function SimulatorPage() {
   return (
     <div className="space-y-6 pb-10">
       <div className="max-w-3xl">
-        <Badge>Scenario workspace</Badge>
+        <Badge>Grand Prix strategy workspace</Badge>
         <h1 className="mt-4 font-display text-[clamp(2.4rem,5vw,4rem)] leading-[0.98] tracking-[-0.04em] text-white">
-          Build race assumptions, stress-test strategy, and inspect probabilistic outcomes.
+          Build a Grand Prix, shape the race weekend, and project the finish.
         </h1>
         <p className="mt-4 text-base leading-7 text-muted-foreground">
-          The simulator combines a pace model, deterministic race adjustments, and event-driven Monte Carlo simulation so strategy choices can be explored in a structured way.
+          Set circuit assumptions, qualifying influence, tire degradation, safety-car risk, and stint strategy from a single pit-wall style workspace.
         </p>
       </div>
       <SimulatorWorkspace />
     </div>
   );
 }
-

@@ -1,40 +1,40 @@
 # Orya One RaceSim
 
-![Status](https://img.shields.io/badge/status-showcase%20mvp-0f172a?style=flat-square)
+![Status](https://img.shields.io/badge/status-public%20mvp-0f172a?style=flat-square)
 ![Next.js](https://img.shields.io/badge/Next.js-15-111111?style=flat-square&logo=next.js)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-0f766e?style=flat-square&logo=fastapi)
 ![Python](https://img.shields.io/badge/Python-3.11+-1d4ed8?style=flat-square&logo=python)
 ![License](https://img.shields.io/badge/license-MIT-b45309?style=flat-square)
 
-Orya One RaceSim is a premium open-source motorsport simulation platform for Grand Prix scenario analysis. It combines a neural pace prior, deterministic strategy and race logic, dynamic event simulation, and Monte Carlo aggregation inside a serious, product-grade web interface.
+Orya One RaceSim is an open-source Grand Prix race simulator built for scenario analysis. It combines a neural pace prior, deterministic race and strategy logic, dynamic event simulation, and Monte Carlo aggregation in a web app that is meant to be useful, inspectable, and easy to extend.
 
-The goal is not to imitate betting products or flashy fan dashboards. The goal is to offer a credible, elegant, technically interesting simulation workspace that feels worth publishing, forking, and building on.
+It is not trying to look like a betting product or a fan dashboard. The project exists to explore a more grounded approach: clear assumptions, believable abstractions, and outputs that are easier to reason about.
 
 ## Why this project exists
 
-Most public motorsport simulators land in one of three weak categories:
+Most public motorsport simulators fall into one of three buckets:
 
 - toy products with noisy UI and weak assumptions
 - static dashboards with little real scenario value
 - black-box predictors that hide how the result was produced
 
-Orya One RaceSim takes the opposite path:
+This project takes a different approach:
 
 - a small neural network estimates a pace prior
 - deterministic logic handles the race mechanics that should stay explicit
 - an event engine introduces believable uncertainty
 - Monte Carlo aggregation turns everything into probability distributions, not hard claims
 
-The result is a research/product-grade MVP with a clear path to deeper realism.
+The current MVP focuses on being coherent and extensible first, with a clear path to deeper realism later.
 
 ## Feature highlights
 
-- Premium simulator workspace with grouped control layers
+- Simulator workspace with grouped control layers
 - Grand Prix selection, weather presets, and event-pressure tuning
 - Strategy assignment plus scenario-aware strategy recommendations
 - Driver-level adjustments for controlled experimentation
 - Monte Carlo results for win, podium, top-10, DNF, and expected finish
-- Event-impact summaries and confidence language
+- Event-impact summaries and confidence signals
 - Team-level outlook and explainability cards
 - Original branding and synthetic public-safe sample data
 
@@ -77,13 +77,13 @@ The frontend targets `http://localhost:8000/api` by default.
 
 ## Demo-ready simulator presets
 
-The simulator includes showcase presets intended for screenshots and walkthroughs:
+The simulator includes a few presets intended for screenshots and walkthroughs:
 
 - `Harbor volatility`
 - `Street-track control`
 - `Thermal deg pressure`
 
-The best all-around preset for demos is `Harbor volatility`, which produces the richest balance of event activity, strategy variation, and visually interesting outputs.
+The best all-around preset for demos is `Harbor volatility`. It usually gives the most readable mix of event activity, strategy variation, and chart movement.
 
 See [docs/demo-guide.md](docs/demo-guide.md) for exact capture guidance.
 
@@ -91,11 +91,11 @@ See [docs/demo-guide.md](docs/demo-guide.md) for exact capture guidance.
 
 ### Landing page
 
-Frames the product as a serious motorsport analytics tool and explains the hybrid architecture clearly.
+Introduces the project and explains the hybrid model at a high level.
 
 ### Simulator workspace
 
-Organized into five grouped control areas:
+Organized into five control groups:
 
 1. GP & Scenario
 2. Environment & Dynamic Events
@@ -117,7 +117,7 @@ Presents:
 
 ### Methodology page
 
-Explains the neural model, deterministic logic, event engine, Monte Carlo aggregation, and current simplifications.
+Explains the neural model, deterministic logic, event engine, Monte Carlo aggregation, and the main simplifications in the MVP.
 
 ## Hybrid simulation overview
 
@@ -136,8 +136,8 @@ A compact PyTorch MLP estimates a baseline pace prior from tabular features such
 
 Important boundary:
 
-- it does not directly predict the finishing order
-- it provides the pace signal that the wider simulation builds on
+- it does not directly predict finishing order
+- it provides the pace signal that the rest of the simulation builds on
 
 ### Deterministic race logic
 
@@ -183,7 +183,7 @@ The event engine models:
 - DNFs
 - late-race disruptions
 
-These alter degradation pressure, pit-value timing, reliability stress, and finish-position variance.
+These alter degradation pressure, pit timing, reliability stress, and finish-position variance.
 
 ### Monte Carlo engine
 
@@ -310,7 +310,7 @@ Note on API tests:
 
 ## Suggested screenshots
 
-Recommended static captures for a public GitHub README or social post:
+Recommended captures for the README or a launch post:
 
 1. Landing page hero on desktop
 2. Simulator control column with `Harbor volatility` preset loaded
@@ -336,14 +336,14 @@ Suggested demo additions:
 
 ## Project status
 
-Current status: `showcase-quality MVP`
+Current status: `public MVP`
 
 What that means:
 
-- the product is intentionally polished and public-ready
-- the modeling approach is coherent and documented
-- the current realism level is meaningful, but not maximal
-- the codebase is structured for future calibration and realism upgrades
+- the app is in good shape for a public repo and live demo
+- the modeling approach is documented and internally consistent
+- the realism level is useful for scenario exploration, but still limited
+- the codebase is structured so realism can be improved without a rewrite
 
 ## Current limitations
 
@@ -353,7 +353,7 @@ What that means:
 - safety-car behavior is abstracted into pit-value and compression effects
 - strategy recommendations are scenario-aware but not exhaustive optimization outputs
 
-These are deliberate MVP boundaries, not hidden caveats.
+These are deliberate MVP boundaries, not things the project is trying to hide.
 
 ## Future realism improvements
 
@@ -392,4 +392,4 @@ Released under the [MIT License](LICENSE).
 
 ## Research notice
 
-Orya One RaceSim is a research/demo simulator. It is not a guaranteed predictor of real-world race outcomes and is not intended for wagering, betting, or unauthorized use of protected motorsport branding.
+Orya One RaceSim is a research/demo simulator. It is not a guaranteed predictor of real race outcomes and is not intended for wagering, betting, or unauthorized use of protected motorsport branding.
