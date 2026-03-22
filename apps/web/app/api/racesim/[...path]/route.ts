@@ -40,6 +40,30 @@ function normalizeBackendError(text: string, status: number) {
   return new NextResponse(text, { status });
 }
 
+function normalizeGatewayError(error: unknown) {
+  const message = error instanceof Error ? error.message : "";
+  const lowered = message.toLowerCase();
+  if (lowered.includes("aborted") || lowered.includes("timeout")) {
+    return NextResponse.json(
+      {
+        detail:
+          "The RaceSim backend did not respond before the Vercel proxy timeout. If Render is cold or still redeploying, wait a moment and try again.",
+      },
+      { status: 504 },
+    );
+  }
+
+  return NextResponse.json(
+    {
+      detail:
+        error instanceof Error
+          ? error.message
+          : "The RaceSim API request failed before the backend responded.",
+    },
+    { status: 504 },
+  );
+}
+
 async function forward(request: NextRequest, path: string[], method: "GET" | "POST") {
   if (method === "GET" && path.join("/") === "defaults") {
     return NextResponse.json(catalogFallback, {
@@ -64,7 +88,7 @@ async function forward(request: NextRequest, path: string[], method: "GET" | "PO
       headers,
       body: method === "POST" ? await request.text() : undefined,
       cache: "no-store",
-      signal: AbortSignal.timeout(method === "GET" ? 8000 : 25000),
+      signal: AbortSignal.timeout(method === "GET" ? 8000 : 55000),
     });
 
     const text = await response.text();
@@ -84,15 +108,7 @@ async function forward(request: NextRequest, path: string[], method: "GET" | "PO
       headers: responseHeaders,
     });
   } catch (error) {
-    return NextResponse.json(
-      {
-        detail:
-          error instanceof Error
-            ? error.message
-            : "The RaceSim API request failed before the backend responded.",
-      },
-      { status: 504 },
-    );
+    return normalizeGatewayError(error);
   }
 }
 
