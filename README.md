@@ -6,15 +6,14 @@
 ![Python](https://img.shields.io/badge/Python-3.11+-1d4ed8?style=flat-square&logo=python)
 ![License](https://img.shields.io/badge/license-MIT-b45309?style=flat-square)
 
-Orya One RaceSim is a premium open-source motorsport simulation platform for Grand Prix scenario analysis. It combines a neural pace prior, deterministic strategy and race logic, dynamic event simulation, and Monte Carlo aggregation inside a serious, product-grade web interface.
+Orya One RaceSim is an open-source motorsport simulation platform for Grand Prix scenario analysis. It combines a neural pace prior, deterministic strategy and race logic, dynamic event simulation, and Monte Carlo aggregation inside a serious, product-grade web interface.
 
-The goal is not to imitate betting products or flashy fan dashboards. The goal is to offer a credible, elegant, technically interesting simulation workspace that feels worth publishing, forking, and building on.
+The goal is to offer a credible, technically interesting simulation workspace that feels worth publishing, forking, and building on.
 
 ## Why this project exists
 
 Most public motorsport simulators land in one of three weak categories:
 
-- toy products with noisy UI and weak assumptions
 - static dashboards with little real scenario value
 - black-box predictors that hide how the result was produced
 
