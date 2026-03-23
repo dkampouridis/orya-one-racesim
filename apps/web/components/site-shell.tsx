@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import type { Route } from "next";
 
+import { OryaMark } from "@/components/orya-mark";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -26,8 +27,8 @@ export function SiteShell({
         <header className="sticky top-4 z-40 mb-8 rounded-[14px] border border-white/8 bg-[rgba(8,10,14,0.9)] px-4 py-3 shadow-[0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur-xl">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <Link href="/" className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-[10px] border border-primary/25 bg-primary/10 font-display text-sm tracking-[0.28em] text-primary shadow-[0_0_24px_rgba(225,41,68,0.18)]">
-                OO
+              <div className="flex h-11 w-11 items-center justify-center rounded-[10px] border border-white/8 bg-white/[0.03] shadow-[0_0_24px_rgba(225,41,68,0.14)]">
+                <OryaMark className="h-7 w-7" />
               </div>
               <div>
                 <div className="font-display text-sm tracking-[0.24em] text-white">ORYA ONE</div>
