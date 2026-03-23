@@ -95,6 +95,12 @@ class DriverResult(BaseModel):
     event_exposure: float
     strategy_fit_score: float
     expected_pace_score: float
+    expected_grid_position: float = 0.0
+    expected_stop_count: float = 0.0
+    average_first_pit_lap: float | None = None
+    average_overtakes: float = 0.0
+    average_stint_length: float = 0.0
+    net_position_delta: float = 0.0
     explanation: list[str]
     position_distribution: list[PositionProbability]
     diagnostics: dict[str, float]
@@ -111,6 +117,10 @@ class EventSummary(BaseModel):
     volatility_index: float
     dominant_factor: str
     impact_summary: list[str]
+    avg_pit_stops_per_driver: float = 0.0
+    avg_green_flag_overtakes: float = 0.0
+    avg_safety_car_lap: float | None = None
+    turning_points: list[str] = Field(default_factory=list)
 
 
 class TeamSummary(BaseModel):
@@ -127,6 +137,7 @@ class ScenarioSummary(BaseModel):
     grand_prix_name: str
     weather_preset_id: str
     weather_preset_name: str
+    simulation_engine: Literal["lap-by-lap"]
     simulation_runs: int
     complexity_level: str
     sprint_weekend: bool

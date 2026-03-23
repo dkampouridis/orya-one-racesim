@@ -4,7 +4,14 @@ import random
 from dataclasses import dataclass
 
 from racesim.api.contracts import EnvironmentControls
-from racesim.data.models import DriverProfile, TrackProfile, WeatherPreset
+from racesim.data.models import TrackProfile, WeatherPreset
+
+
+@dataclass
+class NeutralizationWindow:
+    kind: str
+    start_lap: int
+    end_lap: int
 
 
 @dataclass
@@ -16,19 +23,23 @@ class RaceEvents:
     safety_car: bool
     red_flag: bool
     late_incident: bool
+    weather_shift_lap: int | None
+    drying_lap: int | None
+    peak_wetness: float
     degradation_multiplier: float
     overtaking_window: float
     energy_management_multiplier: float
     pit_discount: float
     event_pressure: float
+    neutralizations: list[NeutralizationWindow]
+    restart_laps: set[int]
     narrative: list[str]
 
-
-@dataclass
-class DriverIncident:
-    dnf: bool
-    time_loss_sec: float
-    notes: list[str]
+    def status_for_lap(self, lap: int) -> str:
+        for window in self.neutralizations:
+            if window.start_lap <= lap <= window.end_lap:
+                return window.kind
+        return "green"
 
 
 class EventEngine:
@@ -37,89 +48,132 @@ class EventEngine:
 
     def race_events(self, track: TrackProfile, weather: WeatherPreset, env: EnvironmentControls) -> RaceEvents:
         complexity_multiplier = 1.0 + (env.randomness_intensity - 0.5) * 0.8
-        wet_start = self.rng.random() < max(0.02, (1.0 - env.dry_race) * weather.rain_onset_probability * 0.8)
-        weather_shift_probability = max(
-            env.rain_onset,
-            weather.rain_onset_probability * (0.7 + track.weather_volatility),
-        )
+        mixed_pressure = max(env.mixed_conditions, weather.rain_onset_probability, track.weather_volatility)
+        wet_start = self.rng.random() < max(0.02, (1.0 - env.dry_race) * mixed_pressure * 0.78)
+        weather_shift_probability = max(env.rain_onset, weather.rain_onset_probability * (0.7 + track.weather_volatility))
         weather_shift = not wet_start and self.rng.random() < min(0.82, weather_shift_probability * complexity_multiplier)
 
         caution_pressure = (
-            max(env.yellow_flags, weather.yellow_flag_probability) * 0.46
-            + max(env.virtual_safety_cars, weather.vsc_probability) * 0.22
-            + max(env.full_safety_cars, weather.safety_car_probability) * 0.22
-            + env.crashes * 0.1
+            max(env.yellow_flags, weather.yellow_flag_probability) * 0.42
+            + max(env.virtual_safety_cars, weather.vsc_probability) * 0.2
+            + max(env.full_safety_cars, weather.safety_car_probability) * 0.26
+            + env.crashes * 0.12
         ) * (
             0.88
-            + track.track_position_importance * 0.18
-            + track.safety_car_risk * 0.22
-            + (0.08 if track.circuit_type == "street" else 0.03 if track.circuit_type == "semi-street" else 0.0)
+            + track.track_position_importance * 0.16
+            + track.safety_car_risk * 0.24
+            + (0.1 if track.circuit_type == "street" else 0.04 if track.circuit_type == "semi-street" else 0.0)
         )
-        yellow_flag = self.rng.random() < min(0.86, caution_pressure * complexity_multiplier)
 
+        yellow_flag = self.rng.random() < min(0.9, caution_pressure * complexity_multiplier)
         vsc_probability = max(env.virtual_safety_cars, weather.vsc_probability) * (
-            0.72 + track.overtaking_difficulty * 0.18 + track.safety_car_risk * 0.1
+            0.72 + track.overtaking_difficulty * 0.16 + track.safety_car_risk * 0.12
         )
         vsc = yellow_flag and self.rng.random() < min(0.74, vsc_probability * complexity_multiplier)
 
         safety_car_probability = (
             max(env.full_safety_cars, weather.safety_car_probability, track.safety_car_risk)
-            * (0.76 + track.track_position_importance * 0.2)
-            * (1.0 + 0.2 * int(wet_start or weather_shift))
+            * (0.76 + track.track_position_importance * 0.18)
+            * (1.0 + 0.18 * int(wet_start or weather_shift))
         )
-        safety_car = self.rng.random() < min(0.64, safety_car_probability * complexity_multiplier)
+        safety_car = self.rng.random() < min(0.66, safety_car_probability * complexity_multiplier)
 
         red_flag_probability = max(env.red_flags, weather.red_flag_probability) * (
-            0.9 + 0.35 * int(wet_start or weather_shift) + 0.15 * int(safety_car)
+            0.9 + 0.35 * int(wet_start or weather_shift) + 0.18 * int(safety_car)
         )
-        red_flag = self.rng.random() < min(0.22, red_flag_probability * complexity_multiplier)
+        red_flag = self.rng.random() < min(0.24, red_flag_probability * complexity_multiplier)
         late_incident = self.rng.random() < min(
-            0.58,
-            env.late_race_incidents * (0.9 + track.weather_volatility * 0.4 + track.overtaking_difficulty * 0.2),
+            0.62,
+            env.late_race_incidents * (0.92 + track.weather_volatility * 0.34 + track.overtaking_difficulty * 0.24),
         )
+
+        weather_shift_lap: int | None = None
+        drying_lap: int | None = None
+        peak_wetness = 0.0
+        narrative: list[str] = []
+        if wet_start:
+            peak_wetness = min(0.92, 0.52 + mixed_pressure * 0.42)
+            if env.dry_race > 0.5 and env.mixed_conditions > 0.2:
+                drying_lap = int(track.laps * self.rng.uniform(0.45, 0.72))
+            narrative.append("wet conditions are live from the opening laps")
+        elif weather_shift:
+            weather_shift_lap = max(6, min(track.laps - 8, int(track.laps * self.rng.uniform(0.2, 0.72))))
+            peak_wetness = min(0.9, 0.38 + mixed_pressure * 0.48)
+            if env.dry_race > 0.4:
+                drying_lap = min(track.laps - 2, weather_shift_lap + int(track.laps * self.rng.uniform(0.14, 0.24)))
+            narrative.append("a mid-race weather shift opens a real crossover window")
 
         degradation_multiplier = 1.0
-        overtaking_window = 1.0 + track.energy_sensitivity * 0.05 - track.overtaking_difficulty * 0.04
+        overtaking_window = 1.0 + track.energy_sensitivity * 0.06 - track.overtaking_difficulty * 0.06
         energy_management_multiplier = 1.0
         pit_discount = 1.0
-        narrative: list[str] = []
 
-        if wet_start:
-            degradation_multiplier += 0.08
-            overtaking_window -= 0.06
-            energy_management_multiplier += 0.04
-            narrative.append("the race starts with reduced grip and a less stable deployment picture")
-        if weather_shift:
-            degradation_multiplier += 0.12
-            overtaking_window -= 0.08
-            energy_management_multiplier += 0.08
-            narrative.append("a mid-race weather crossover increases strategy timing pressure")
-        if safety_car:
-            pit_discount -= 0.17
-            energy_management_multiplier -= 0.03
-            narrative.append("a safety-car phase compresses gaps and lowers the cost of stopping")
-        elif vsc:
+        neutralizations: list[NeutralizationWindow] = []
+        restart_laps: set[int] = set()
+        safety_car_lap_seed: list[int] = []
+
+        if vsc:
+            start_lap = int(track.laps * self.rng.uniform(0.18, 0.68))
+            duration = 1 if track.laps < 60 else self.rng.randint(1, 2)
+            neutralizations.append(
+                NeutralizationWindow(kind="vsc", start_lap=start_lap, end_lap=min(track.laps, start_lap + duration - 1))
+            )
             pit_discount -= 0.08
             energy_management_multiplier -= 0.02
-            narrative.append("VSC exposure modestly improves opportunistic pit timing")
+            narrative.append("VSC exposure improves opportunistic stop timing")
+
+        if safety_car:
+            start_lap = int(track.laps * self.rng.uniform(0.16, 0.74))
+            duration = self.rng.randint(2, 4)
+            end_lap = min(track.laps, start_lap + duration - 1)
+            neutralizations.append(NeutralizationWindow(kind="safety_car", start_lap=start_lap, end_lap=end_lap))
+            safety_car_lap_seed.extend(list(range(start_lap, end_lap + 1)))
+            restart_laps.add(min(track.laps, end_lap + 1))
+            pit_discount -= 0.18
+            energy_management_multiplier -= 0.03
+            overtaking_window -= 0.04
+            narrative.append("a safety car compresses the field and changes pit-loss math")
+
+        if late_incident:
+            start_lap = max(4, int(track.laps * self.rng.uniform(0.72, 0.92)))
+            if not any(window.start_lap <= start_lap <= window.end_lap for window in neutralizations):
+                kind = "safety_car" if track.safety_car_risk > 0.42 or wet_start or weather_shift else "vsc"
+                end_lap = min(track.laps, start_lap + (2 if kind == "safety_car" else 1))
+                neutralizations.append(NeutralizationWindow(kind=kind, start_lap=start_lap, end_lap=end_lap))
+                if kind == "safety_car":
+                    safety_car_lap_seed.extend(list(range(start_lap, end_lap + 1)))
+                    restart_laps.add(min(track.laps, end_lap + 1))
+                narrative.append("late disruption keeps the final phase unstable")
+
         if red_flag:
+            start_lap = int(track.laps * self.rng.uniform(0.22, 0.78))
+            neutralizations.append(NeutralizationWindow(kind="red_flag", start_lap=start_lap, end_lap=min(track.laps, start_lap + 1)))
+            restart_laps.add(min(track.laps, start_lap + 2))
             degradation_multiplier -= 0.04
             energy_management_multiplier -= 0.05
-            narrative.append("a red flag resets tire age pressure more than a normal caution window")
-        if late_incident:
-            overtaking_window -= 0.05
+            narrative.append("a red flag resets tire pressure more than a normal caution")
+
+        if wet_start:
+            degradation_multiplier += 0.12
+            overtaking_window -= 0.08
             energy_management_multiplier += 0.05
-            narrative.append("late-race disruption raises closing-lap volatility")
+        if weather_shift:
+            degradation_multiplier += 0.1
+            overtaking_window -= 0.06
+            energy_management_multiplier += 0.06
 
         event_pressure = min(
             1.0,
-            0.28
+            0.24
             + 0.18 * int(wet_start or weather_shift)
-            + 0.16 * int(yellow_flag)
-            + 0.18 * int(safety_car)
+            + 0.12 * int(yellow_flag)
+            + 0.18 * int(vsc)
+            + 0.2 * int(safety_car)
             + 0.12 * int(red_flag)
             + 0.1 * int(late_incident),
         )
+
+        neutralizations.sort(key=lambda item: item.start_lap)
         return RaceEvents(
             wet_start=wet_start,
             weather_shift=weather_shift,
@@ -128,51 +182,15 @@ class EventEngine:
             safety_car=safety_car,
             red_flag=red_flag,
             late_incident=late_incident,
+            weather_shift_lap=weather_shift_lap,
+            drying_lap=drying_lap,
+            peak_wetness=peak_wetness,
             degradation_multiplier=degradation_multiplier,
-            overtaking_window=max(0.78, overtaking_window),
-            energy_management_multiplier=max(0.82, energy_management_multiplier),
-            pit_discount=max(0.72, pit_discount),
+            overtaking_window=max(0.72, overtaking_window),
+            energy_management_multiplier=max(0.8, energy_management_multiplier),
+            pit_discount=max(0.7, pit_discount),
             event_pressure=event_pressure,
+            neutralizations=neutralizations,
+            restart_laps=restart_laps,
             narrative=narrative,
         )
-
-    def driver_incident(
-        self,
-        driver: DriverProfile,
-        track: TrackProfile,
-        weather: WeatherPreset,
-        env: EnvironmentControls,
-        events: RaceEvents,
-    ) -> DriverIncident:
-        notes: list[str] = []
-        base_dnf = max(env.dnfs, weather.dnf_probability) * (
-            0.92 + driver.aggression / 240.0 + events.event_pressure * 0.22
-        )
-        reliability_shield = (driver.reliability / 100.0) * 0.55
-        dnf_probability = max(0.01, base_dnf - reliability_shield)
-        if events.wet_start or events.weather_shift:
-            dnf_probability += 0.022 * (1.0 - driver.wet_weather_skill / 100.0)
-        if events.red_flag:
-            dnf_probability += 0.008
-        if self.rng.random() < dnf_probability:
-            notes.append("retired after a high-cost reliability or incident event")
-            return DriverIncident(dnf=True, time_loss_sec=9999.0, notes=notes)
-
-        local_incident_probability = min(
-            0.5,
-            env.crashes
-            + driver.aggression / 260.0
-            + (1.0 - driver.consistency / 100.0) * 0.12
-            + track.overtaking_difficulty * 0.06
-            + track.safety_car_risk * 0.05
-            + events.event_pressure * 0.08,
-        )
-        time_loss = 0.0
-        if self.rng.random() < local_incident_probability:
-            severity = self.rng.uniform(3.5, 12.0) * (1.0 + events.event_pressure * 0.32)
-            time_loss += severity
-            notes.append("lost time in traffic or a recoverable on-track incident")
-        if events.late_incident and self.rng.random() < 0.35 + track.overtaking_difficulty * 0.12:
-            time_loss += self.rng.uniform(1.0, 4.5)
-            notes.append("late-race disruption introduced additional volatility")
-        return DriverIncident(dnf=False, time_loss_sec=time_loss, notes=notes)

@@ -165,6 +165,12 @@ export type DriverResult = {
   event_exposure: number;
   strategy_fit_score: number;
   expected_pace_score: number;
+  expected_grid_position: number;
+  expected_stop_count: number;
+  average_first_pit_lap?: number | null;
+  average_overtakes: number;
+  average_stint_length: number;
+  net_position_delta: number;
   explanation: string[];
   position_distribution: PositionProbability[];
   diagnostics: Record<string, number>;
@@ -190,6 +196,10 @@ export type EventSummary = {
   volatility_index: number;
   dominant_factor: string;
   impact_summary: string[];
+  avg_pit_stops_per_driver: number;
+  avg_green_flag_overtakes: number;
+  avg_safety_car_lap?: number | null;
+  turning_points: string[];
 };
 
 export type ScenarioSummary = {
@@ -197,6 +207,7 @@ export type ScenarioSummary = {
   grand_prix_name: string;
   weather_preset_id: string;
   weather_preset_name: string;
+  simulation_engine: "lap-by-lap";
   simulation_runs: number;
   complexity_level: string;
   sprint_weekend: boolean;

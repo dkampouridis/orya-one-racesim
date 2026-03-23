@@ -9,7 +9,11 @@ service = SimulationService()
 
 @router.get("/health")
 def health_check():
-    return {"status": "ok", "service": "orya-one-racesim-api"}
+    return {
+        "status": "ok",
+        "service": "orya-one-racesim-api",
+        "simulation_engine": "lap-by-lap",
+    }
 
 
 @router.get("/defaults")
