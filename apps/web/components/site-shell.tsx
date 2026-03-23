@@ -23,7 +23,7 @@ export function SiteShell({
     <div className={cn("relative min-h-screen overflow-hidden bg-background text-foreground", className)}>
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(224,40,66,0.2),transparent_24%),radial-gradient(circle_at_top_left,rgba(255,182,72,0.06),transparent_20%),linear-gradient(180deg,rgba(255,255,255,0.02),transparent_18%)]" />
       <div className="pointer-events-none absolute inset-0 bg-telemetry-grid bg-[size:78px_78px] opacity-[0.09]" />
-      <div className="relative mx-auto flex min-h-screen max-w-[1600px] flex-col px-4 pb-8 pt-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto flex min-h-screen w-full max-w-none flex-col px-2 pb-8 pt-4 sm:px-3 lg:px-4 xl:px-5 2xl:px-6">
         <header className="sticky top-4 z-40 mb-8 rounded-[14px] border border-white/8 bg-[rgba(8,10,14,0.9)] px-4 py-3 shadow-[0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur-xl">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <Link href="/" className="flex items-center gap-3">

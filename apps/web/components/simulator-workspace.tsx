@@ -7,15 +7,10 @@ import {
   AlertTriangle,
   ArrowRight,
   BarChart3,
-  ChevronDown,
-  CloudRain,
   Flag,
-  Gauge,
   Loader2,
   Radar,
   ShieldAlert,
-  SlidersHorizontal,
-  Target,
   Thermometer,
   Trophy,
   Zap,
@@ -381,44 +376,6 @@ function HeaderMetric({
   );
 }
 
-function RailSection({
-  eyebrow,
-  title,
-  summary,
-  description,
-  icon: Icon,
-  children,
-  defaultOpen = true,
-}: {
-  eyebrow: string;
-  title: string;
-  summary: string;
-  description?: string;
-  icon: ComponentType<{ className?: string }>;
-  children: ReactNode;
-  defaultOpen?: boolean;
-}) {
-  return (
-    <details open={defaultOpen} className="group rounded-[14px] border border-white/8 bg-[linear-gradient(180deg,rgba(16,19,24,0.98),rgba(9,11,15,1))] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
-      <summary className="flex cursor-pointer items-start justify-between gap-3 px-3.5 py-3">
-        <div className="flex items-start gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-[9px] border border-primary/15 bg-primary/10">
-            <Icon className="h-4 w-4 text-primary" />
-          </div>
-          <div>
-            <div className="text-[10px] uppercase tracking-[0.24em] text-primary/90">{eyebrow}</div>
-            <div className="mt-0.5 text-[0.9rem] font-medium uppercase tracking-[0.06em] text-white">{title}</div>
-            <div className="mt-0.5 text-[10px] leading-4 text-muted-foreground">{summary}</div>
-            {description ? <div className="mt-0.5 hidden font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground/75 sm:block">{description}</div> : null}
-          </div>
-        </div>
-        <ChevronDown className="mt-1 h-4 w-4 shrink-0 text-muted-foreground transition duration-200 group-open:rotate-180" />
-      </summary>
-      <div className="border-t border-white/6 px-3.5 pb-3.5 pt-3">{children}</div>
-    </details>
-  );
-}
-
 function SelectField({
   label,
   value,
@@ -593,6 +550,47 @@ function AnalyticsTabs({
   );
 }
 
+function ControlTabs({
+  value,
+  onChange,
+}: {
+  value: "weekend" | "conditions" | "strategy" | "drivers" | "simulation";
+  onChange: (value: "weekend" | "conditions" | "strategy" | "drivers" | "simulation") => void;
+}) {
+  const items: Array<{
+    id: "weekend" | "conditions" | "strategy" | "drivers" | "simulation";
+    label: string;
+  }> = [
+    { id: "weekend", label: "Weekend" },
+    { id: "conditions", label: "Conditions" },
+    { id: "strategy", label: "Strategy" },
+    { id: "drivers", label: "Drivers" },
+    { id: "simulation", label: "Simulation" },
+  ];
+
+  return (
+    <div className="overflow-x-auto">
+      <div className="inline-flex min-w-full rounded-[12px] border border-white/8 bg-black/30 p-1">
+        {items.map((item) => {
+          const active = value === item.id;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => onChange(item.id)}
+              className={`rounded-[10px] px-3 py-2 text-[10px] uppercase tracking-[0.22em] transition duration-200 ${
+                active ? "bg-primary text-white shadow-[0_0_18px_rgba(225,41,68,0.25)]" : "text-muted-foreground hover:text-white"
+              }`}
+            >
+              {item.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function TimingStrip({ drivers }: { drivers: DriverResult[] }) {
   return (
     <div className="space-y-2">
@@ -677,6 +675,7 @@ export function SimulatorWorkspace() {
   const [simulation, setSimulation] = useState<SimulationResponse | null>(null);
   const [suggestions, setSuggestions] = useState<StrategySuggestion[]>([]);
   const [analyticsView, setAnalyticsView] = useState<"order" | "strategy" | "diagnostics">("order");
+  const [controlTab, setControlTab] = useState<"weekend" | "conditions" | "strategy" | "drivers" | "simulation">("weekend");
   const [loadingDefaults, setLoadingDefaults] = useState(true);
   const [loadingSimulation, setLoadingSimulation] = useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
@@ -772,7 +771,7 @@ export function SimulatorWorkspace() {
     return (
       <div className="space-y-6">
         <Skeleton className="h-[190px] rounded-[20px]" />
-        <div className="grid gap-6 xl:grid-cols-[340px_minmax(0,1fr)_300px]">
+        <div className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)_320px] 2xl:grid-cols-[390px_minmax(0,1fr)_340px]">
           <Skeleton className="order-3 h-[980px] rounded-[20px] xl:order-1" />
           <Skeleton className="order-1 h-[1120px] rounded-[20px] xl:order-2" />
           <Skeleton className="order-2 h-[680px] rounded-[20px] xl:order-3" />
@@ -890,7 +889,7 @@ export function SimulatorWorkspace() {
                 </div>
               </div>
 
-              <div className="flex w-full flex-col gap-2.5 xl:w-[332px]">
+              <div className="flex w-full flex-col gap-2.5 xl:w-[360px] 2xl:w-[384px]">
                 <div className="grid gap-2 sm:grid-cols-2">
                   <Button className="w-full justify-center" onClick={() => void executeSimulation()} disabled={loadingSimulation}>
                     {loadingSimulation ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
@@ -916,7 +915,7 @@ export function SimulatorWorkspace() {
               </div>
             </div>
 
-            <div className="mt-3 grid gap-2.5 xl:grid-cols-[1.24fr_0.76fr]">
+            <div className="mt-3 grid gap-2.5 xl:grid-cols-[1.38fr_0.82fr] 2xl:grid-cols-[1.52fr_0.78fr]">
               <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                 <HeaderMetric
                   label="Lead car"
@@ -965,329 +964,308 @@ export function SimulatorWorkspace() {
         </Card>
       </motion.section>
 
-      <div className="grid gap-3 xl:grid-cols-[320px_minmax(0,1fr)_284px]">
-        <aside className="order-3 space-y-2.5 xl:order-1 xl:sticky xl:top-[14.75rem] xl:h-[calc(100vh-15.5rem)] xl:overflow-auto xl:pr-1">
-          <RailSection
-            eyebrow="01 · Grand Prix setup"
-            title="Weekend and circuit"
-            summary="Race, preset, circuit."
-            icon={Gauge}
+      <div className="grid gap-3 xl:grid-cols-[380px_minmax(0,1fr)_340px] 2xl:grid-cols-[420px_minmax(0,1fr)_360px]">
+        <aside className="order-3 space-y-2.5 xl:order-1 xl:pr-1">
+          <SectionFrame
+            eyebrow="Control rail"
+            title="Strategy inputs"
+            action={<ControlTabs value={controlTab} onChange={setControlTab} />}
           >
-            <div className="grid gap-2.5">
-              <div className="grid gap-1.5">
-                {DEMO_PRESETS.map((preset) => (
-                  <button
-                    key={preset.id}
-                    type="button"
-                    onClick={() => {
-                      const next = applyDemoPreset(defaults, form, preset.id);
-                      setForm(next);
-                      void requestSuggestions(next, { suppressError: true });
-                    }}
-                    className="rounded-[10px] border border-white/8 bg-white/[0.03] px-3 py-2.5 text-left transition duration-200 hover:border-primary/30 hover:bg-white/[0.05] active:scale-[0.99]"
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="text-sm text-white">{preset.label}</div>
-                      <Badge variant="muted">{preset.simulation_runs}</Badge>
-                    </div>
-                    <div className="mt-1 line-clamp-1 font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">{preset.description}</div>
-                  </button>
-                ))}
-              </div>
-              <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-1">
-                <SelectField
-                  label="Grand Prix"
-                  value={form.grand_prix_id}
-                  onChange={(value) => setForm({ ...form, grand_prix_id: value })}
-                  options={defaults.grands_prix.map((item) => ({ value: item.id, label: item.name }))}
-                />
-                <SelectField
-                  label="Weather mode"
-                  value={form.weather_preset_id}
-                  onChange={(value) => setForm({ ...form, weather_preset_id: value })}
-                  options={defaults.weather_presets.map((item) => ({ value: item.id, label: item.label }))}
-                />
-              </div>
-              <div className="rounded-[10px] border border-primary/15 bg-primary/8 p-3">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <div className="text-[10px] uppercase tracking-[0.24em] text-primary/90">Circuit card</div>
-                    <div className="mt-1.5 text-sm text-white">{activeTrack.circuit_name}</div>
-                    <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">{activeTrack.summary}</div>
-                  </div>
-                  <div className="flex flex-col items-end gap-2">
-                    {activeTrack.sprint_weekend ? <Badge variant="warning">Sprint</Badge> : null}
-                    <Badge variant="muted">{activeTrack.country}</Badge>
-                  </div>
+            {controlTab === "weekend" ? (
+              <div className="grid gap-2.5">
+                <div className="grid gap-1.5">
+                  {DEMO_PRESETS.map((preset) => (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => {
+                        const next = applyDemoPreset(defaults, form, preset.id);
+                        setForm(next);
+                        void requestSuggestions(next, { suppressError: true });
+                      }}
+                      className="rounded-[10px] border border-white/8 bg-white/[0.03] px-3 py-2.5 text-left transition duration-200 hover:border-primary/30 hover:bg-white/[0.05] active:scale-[0.99]"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="text-sm text-white">{preset.label}</div>
+                        <Badge variant="muted">{preset.simulation_runs}</Badge>
+                      </div>
+                      <div className="mt-1 line-clamp-1 font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">{preset.description}</div>
+                    </button>
+                  ))}
                 </div>
-                {activeTrack.homologation_note ? (
-                  <div className="mt-2 rounded-[10px] border border-amber-300/20 bg-amber-400/10 p-2.5 text-[11px] leading-5 text-amber-100">
-                    {activeTrack.homologation_note}
-                  </div>
-                ) : null}
-              </div>
-            </div>
-          </RailSection>
-
-          <RailSection
-            eyebrow="02 · Track conditions"
-            title="Race control and risk"
-            summary="Weather, cautions, attrition."
-            icon={CloudRain}
-          >
-            <div className="grid gap-2.5">
-              <SliderField
-                label="Weather swing"
-                value={form.environment.rain_onset}
-                onChange={(value) => setForm({ ...form, environment: { ...form.environment, rain_onset: value } })}
-                description="Raises crossover pressure and wet-phase adaptation."
-              />
-              <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-1">
-                <SliderField
-                  label="SC / VSC risk"
-                  value={form.environment.full_safety_cars}
-                  onChange={(value) => setForm({ ...form, environment: { ...form.environment, full_safety_cars: value } })}
-                  description="Higher neutralization rate, smaller pit-loss penalty."
-                />
-                <SliderField
-                  label="Yellow flags"
-                  value={form.environment.yellow_flags}
-                  onChange={(value) => setForm({ ...form, environment: { ...form.environment, yellow_flags: value } })}
-                  description="Short local cautions and tactical noise."
-                />
-              </div>
-              <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-1">
-                <SliderField
-                  label="Energy deployment"
-                  value={form.environment.energy_deployment_intensity}
-                  onChange={(value) =>
-                    setForm({ ...form, environment: { ...form.environment, energy_deployment_intensity: value } })
-                  }
-                  description="Changes how strongly active-aero and deployment windows shape pace."
-                />
-                <SliderField
-                  label="Retirement pressure"
-                  value={form.environment.dnfs}
-                  onChange={(value) => setForm({ ...form, environment: { ...form.environment, dnfs: value } })}
-                  description="Mechanical and incident attrition."
-                />
-              </div>
-              <SliderField
-                label="Late-race incidents"
-                value={form.environment.late_race_incidents}
-                onChange={(value) =>
-                  setForm({ ...form, environment: { ...form.environment, late_race_incidents: value } })
-                }
-                description="Adds restart pressure and closing-lap volatility."
-              />
-            </div>
-          </RailSection>
-
-          <RailSection
-            eyebrow="03 · Strategy inputs"
-            title="Strategy wall"
-            summary="Preset plus manual calls."
-            icon={Target}
-          >
-            <div className="space-y-2.5">
-              <SelectField
-                label="Field"
-                value={form.field_strategy_preset}
-                onChange={(value) => setForm({ ...form, field_strategy_preset: value })}
-                options={[{ value: "", label: "Suggested / manual mix" }].concat(
-                  defaults.strategy_templates.map((item) => ({ value: item.id, label: item.name })),
-                )}
-              />
-              <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-1">
-                <Button variant="secondary" onClick={() => void requestSuggestions()} disabled={loadingSuggestions}>
-                  {loadingSuggestions ? <Loader2 className="h-4 w-4 animate-spin" /> : <BarChart3 className="h-4 w-4" />}
-                  Refresh strategy
-                </Button>
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    const nextStrategies = { ...form.strategies };
-                    for (const suggestion of suggestions) {
-                      nextStrategies[suggestion.driver_id] = suggestion.strategy_id;
-                    }
-                    setForm({ ...form, field_strategy_preset: "", strategies: nextStrategies });
-                  }}
-                  disabled={!suggestions.length}
-                >
-                  Apply field calls
-                </Button>
-              </div>
-              <div className="space-y-1.5">
-                {suggestions.slice(0, 3).map((suggestion) => (
-                  <div key={suggestion.driver_id} className="rounded-[10px] border border-white/8 bg-white/[0.03] p-2.5">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="text-sm text-white">
-                          {defaults.drivers.find((driver) => driver.id === suggestion.driver_id)?.name}
-                        </div>
-                        <div className="mt-1 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                          {suggestion.strategy_name}
-                        </div>
-                      </div>
-                      <Badge variant={badgeVariantForRisk(suggestion.risk_profile)}>{suggestion.risk_profile}</Badge>
-                    </div>
-                    <div className="mt-1.5 line-clamp-2 text-[11px] leading-5 text-muted-foreground">{suggestion.rationale[0]}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </RailSection>
-
-          <RailSection
-            eyebrow="04 · Driver and team"
-            title="Driver assumptions"
-            summary="Manual call plus form delta."
-            icon={Radar}
-            defaultOpen={false}
-          >
-            <div className="max-h-[380px] space-y-1.5 overflow-auto pr-1">
-              {defaults.drivers.map((driver) => {
-                const team = defaults.teams.find((item) => item.id === driver.team_id);
-                const override = form.driver_overrides.find((item) => item.driver_id === driver.id);
-                return (
-                  <div key={driver.id} className="rounded-[10px] border border-white/8 bg-white/[0.03] p-2.5">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="text-sm text-white">{driver.name}</div>
-                        <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{team?.name}</div>
-                      </div>
-                      <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                        Q {driver.qualifying_strength} · E {driver.energy_management}
-                      </div>
-                    </div>
-                    <div className="mt-2 grid gap-2 sm:grid-cols-[minmax(0,1fr)_72px]">
-                      <select
-                        value={form.strategies[driver.id] ?? ""}
-                        onChange={(event) =>
-                          setForm({
-                            ...form,
-                            field_strategy_preset: "",
-                            strategies: { ...form.strategies, [driver.id]: event.target.value },
-                          })
-                        }
-                        className="min-h-10 rounded-[10px] border border-white/10 bg-[#090c11] px-3 py-2 text-sm text-white outline-none focus:border-primary/60"
-                      >
-                        <option value="">Suggested / auto</option>
-                        {defaults.strategy_templates.map((item) => (
-                          <option key={item.id} value={item.id}>
-                            {item.name}
-                          </option>
-                        ))}
-                      </select>
-                      <input
-                        type="number"
-                        min={-15}
-                        max={15}
-                        step={1}
-                        value={override?.recent_form_delta ?? 0}
-                        onChange={(event) =>
-                          setForm({
-                            ...form,
-                            driver_overrides: form.driver_overrides.map((item) =>
-                              item.driver_id === driver.id
-                                ? { ...item, recent_form_delta: Number(event.target.value) }
-                                : item,
-                            ),
-                          })
-                        }
-                        className="min-h-10 rounded-[10px] border border-white/10 bg-[#090c11] px-3 py-2 text-sm text-white outline-none focus:border-primary/60"
-                      />
-                    </div>
-                    <div className="mt-1.5 flex items-center justify-between text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
-                      <span>Form delta</span>
-                      <span>{formatSigned(override?.recent_form_delta ?? 0)}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </RailSection>
-
-          <RailSection
-            eyebrow="05 · Simulation tuning"
-            title="Run depth and weighting"
-            summary="Runs plus core race weights."
-            icon={SlidersHorizontal}
-            defaultOpen={false}
-          >
-            <div className="grid gap-2.5">
-              <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-1">
-                <label className="flex flex-col gap-2">
-                  <span className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Simulation runs</span>
-                  <input
-                    type="number"
-                    min={50}
-                    max={5000}
-                    value={form.simulation_runs}
-                    onChange={(event) => setForm({ ...form, simulation_runs: Number(event.target.value) })}
-                    className="min-h-10 rounded-[10px] border border-white/10 bg-[#090c11] px-3.5 py-2.5 text-sm text-white outline-none focus:border-primary/60"
+                <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-1">
+                  <SelectField
+                    label="Grand Prix"
+                    value={form.grand_prix_id}
+                    onChange={(value) => setForm({ ...form, grand_prix_id: value })}
+                    options={defaults.grands_prix.map((item) => ({ value: item.id, label: item.name }))}
                   />
-                  <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">200-400 live-safe.</span>
-                </label>
+                  <SelectField
+                    label="Weather mode"
+                    value={form.weather_preset_id}
+                    onChange={(value) => setForm({ ...form, weather_preset_id: value })}
+                    options={defaults.weather_presets.map((item) => ({ value: item.id, label: item.label }))}
+                  />
+                </div>
+                <div className="rounded-[10px] border border-primary/15 bg-primary/8 p-3">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <div className="text-[10px] uppercase tracking-[0.24em] text-primary/90">Circuit card</div>
+                      <div className="mt-1.5 text-sm text-white">{activeTrack.circuit_name}</div>
+                      <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">{activeTrack.summary}</div>
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                      {activeTrack.sprint_weekend ? <Badge variant="warning">Sprint</Badge> : null}
+                      <Badge variant="muted">{activeTrack.country}</Badge>
+                    </div>
+                  </div>
+                  {activeTrack.homologation_note ? (
+                    <div className="mt-2 rounded-[10px] border border-amber-300/20 bg-amber-400/10 p-2.5 text-[11px] leading-5 text-amber-100">
+                      {activeTrack.homologation_note}
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            ) : null}
+
+            {controlTab === "conditions" ? (
+              <div className="grid gap-2.5">
+                <SliderField
+                  label="Weather swing"
+                  value={form.environment.rain_onset}
+                  onChange={(value) => setForm({ ...form, environment: { ...form.environment, rain_onset: value } })}
+                  description="Raises crossover pressure and wet-phase adaptation."
+                />
+                <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-1">
+                  <SliderField
+                    label="SC / VSC risk"
+                    value={form.environment.full_safety_cars}
+                    onChange={(value) => setForm({ ...form, environment: { ...form.environment, full_safety_cars: value } })}
+                    description="Higher neutralization rate, smaller pit-loss penalty."
+                  />
+                  <SliderField
+                    label="Yellow flags"
+                    value={form.environment.yellow_flags}
+                    onChange={(value) => setForm({ ...form, environment: { ...form.environment, yellow_flags: value } })}
+                    description="Short local cautions and tactical noise."
+                  />
+                </div>
+                <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-1">
+                  <SliderField
+                    label="Energy deployment"
+                    value={form.environment.energy_deployment_intensity}
+                    onChange={(value) =>
+                      setForm({ ...form, environment: { ...form.environment, energy_deployment_intensity: value } })
+                    }
+                    description="Changes how strongly active-aero and deployment windows shape pace."
+                  />
+                  <SliderField
+                    label="Retirement pressure"
+                    value={form.environment.dnfs}
+                    onChange={(value) => setForm({ ...form, environment: { ...form.environment, dnfs: value } })}
+                    description="Mechanical and incident attrition."
+                  />
+                </div>
+                <SliderField
+                  label="Late-race incidents"
+                  value={form.environment.late_race_incidents}
+                  onChange={(value) =>
+                    setForm({ ...form, environment: { ...form.environment, late_race_incidents: value } })
+                  }
+                  description="Adds restart pressure and closing-lap volatility."
+                />
+              </div>
+            ) : null}
+
+            {controlTab === "strategy" ? (
+              <div className="space-y-2.5">
                 <SelectField
-                  label="Simulation detail"
-                  value={form.complexity_level}
-                  onChange={(value) =>
-                    setForm({ ...form, complexity_level: value as SimulationFormState["complexity_level"] })
-                  }
-                  options={[
-                    { value: "low", label: "Low detail" },
-                    { value: "balanced", label: "Balanced" },
-                    { value: "high", label: "High detail" },
-                  ]}
+                  label="Field"
+                  value={form.field_strategy_preset}
+                  onChange={(value) => setForm({ ...form, field_strategy_preset: value })}
+                  options={[{ value: "", label: "Suggested / manual mix" }].concat(
+                    defaults.strategy_templates.map((item) => ({ value: item.id, label: item.name })),
+                  )}
                 />
+                <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-1">
+                  <Button variant="secondary" onClick={() => void requestSuggestions()} disabled={loadingSuggestions}>
+                    {loadingSuggestions ? <Loader2 className="h-4 w-4 animate-spin" /> : <BarChart3 className="h-4 w-4" />}
+                    Refresh strategy
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      const nextStrategies = { ...form.strategies };
+                      for (const suggestion of suggestions) {
+                        nextStrategies[suggestion.driver_id] = suggestion.strategy_id;
+                      }
+                      setForm({ ...form, field_strategy_preset: "", strategies: nextStrategies });
+                    }}
+                    disabled={!suggestions.length}
+                  >
+                    Apply field calls
+                  </Button>
+                </div>
+                <div className="space-y-1.5">
+                  {suggestions.slice(0, 4).map((suggestion) => (
+                    <div key={suggestion.driver_id} className="rounded-[10px] border border-white/8 bg-white/[0.03] p-2.5">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <div className="text-sm text-white">
+                            {defaults.drivers.find((driver) => driver.id === suggestion.driver_id)?.name}
+                          </div>
+                          <div className="mt-1 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                            {suggestion.strategy_name}
+                          </div>
+                        </div>
+                        <Badge variant={badgeVariantForRisk(suggestion.risk_profile)}>{suggestion.risk_profile}</Badge>
+                      </div>
+                      <div className="mt-1.5 line-clamp-2 text-[11px] leading-5 text-muted-foreground">{suggestion.rationale[0]}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-1">
-                <SliderField
-                  label="Qualifying weight"
-                  value={form.weights.qualifying_importance}
-                  onChange={(value) => setForm({ ...form, weights: { ...form.weights, qualifying_importance: value } })}
-                  description="Higher Saturday carry-over and grid leverage."
-                />
-                <SliderField
-                  label="Tire wear"
-                  value={form.weights.tire_wear_weight}
-                  onChange={(value) => setForm({ ...form, weights: { ...form.weights, tire_wear_weight: value } })}
-                  description="Long-run deg and stint fade."
-                />
-                <SliderField
-                  label="Overtake sensitivity"
-                  value={form.weights.overtaking_sensitivity}
-                  onChange={(value) => setForm({ ...form, weights: { ...form.weights, overtaking_sensitivity: value } })}
-                  description="How much passing skill matters."
-                />
-                <SliderField
-                  label="Energy deployment"
-                  value={form.weights.energy_deployment_weight}
-                  onChange={(value) =>
-                    setForm({ ...form, weights: { ...form.weights, energy_deployment_weight: value } })
-                  }
-                  description="2026 deployment and low-drag payoff."
-                />
-                <SliderField
-                  label="Pit loss"
-                  value={form.weights.pit_stop_delta_sensitivity}
-                  onChange={(value) =>
-                    setForm({ ...form, weights: { ...form.weights, pit_stop_delta_sensitivity: value } })
-                  }
-                  description="Extra-stop penalty and bad timing cost."
-                />
-                <SliderField
-                  label="Reliability"
-                  value={form.weights.reliability_sensitivity}
-                  onChange={(value) =>
-                    setForm({ ...form, weights: { ...form.weights, reliability_sensitivity: value } })
-                  }
-                  description="How hard chaos and attrition bite."
-                />
+            ) : null}
+
+            {controlTab === "drivers" ? (
+              <div className="space-y-1.5">
+                {defaults.drivers.map((driver) => {
+                  const team = defaults.teams.find((item) => item.id === driver.team_id);
+                  const override = form.driver_overrides.find((item) => item.driver_id === driver.id);
+                  return (
+                    <div key={driver.id} className="rounded-[10px] border border-white/8 bg-white/[0.03] p-2.5">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <div className="text-sm text-white">{driver.name}</div>
+                          <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{team?.name}</div>
+                        </div>
+                        <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                          Q {driver.qualifying_strength} · E {driver.energy_management}
+                        </div>
+                      </div>
+                      <div className="mt-2 grid gap-2 sm:grid-cols-[minmax(0,1fr)_72px]">
+                        <select
+                          value={form.strategies[driver.id] ?? ""}
+                          onChange={(event) =>
+                            setForm({
+                              ...form,
+                              field_strategy_preset: "",
+                              strategies: { ...form.strategies, [driver.id]: event.target.value },
+                            })
+                          }
+                          className="min-h-10 rounded-[10px] border border-white/10 bg-[#090c11] px-3 py-2 text-sm text-white outline-none focus:border-primary/60"
+                        >
+                          <option value="">Suggested / auto</option>
+                          {defaults.strategy_templates.map((item) => (
+                            <option key={item.id} value={item.id}>
+                              {item.name}
+                            </option>
+                          ))}
+                        </select>
+                        <input
+                          type="number"
+                          min={-15}
+                          max={15}
+                          step={1}
+                          value={override?.recent_form_delta ?? 0}
+                          onChange={(event) =>
+                            setForm({
+                              ...form,
+                              driver_overrides: form.driver_overrides.map((item) =>
+                                item.driver_id === driver.id
+                                  ? { ...item, recent_form_delta: Number(event.target.value) }
+                                  : item,
+                              ),
+                            })
+                          }
+                          className="min-h-10 rounded-[10px] border border-white/10 bg-[#090c11] px-3 py-2 text-sm text-white outline-none focus:border-primary/60"
+                        />
+                      </div>
+                      <div className="mt-1.5 flex items-center justify-between text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                        <span>Form delta</span>
+                        <span>{formatSigned(override?.recent_form_delta ?? 0)}</span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            </div>
-          </RailSection>
+            ) : null}
+
+            {controlTab === "simulation" ? (
+              <div className="grid gap-2.5">
+                <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-1">
+                  <label className="flex flex-col gap-2">
+                    <span className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Simulation runs</span>
+                    <input
+                      type="number"
+                      min={50}
+                      max={5000}
+                      value={form.simulation_runs}
+                      onChange={(event) => setForm({ ...form, simulation_runs: Number(event.target.value) })}
+                      className="min-h-10 rounded-[10px] border border-white/10 bg-[#090c11] px-3.5 py-2.5 text-sm text-white outline-none focus:border-primary/60"
+                    />
+                    <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">200-400 live-safe.</span>
+                  </label>
+                  <SelectField
+                    label="Simulation detail"
+                    value={form.complexity_level}
+                    onChange={(value) =>
+                      setForm({ ...form, complexity_level: value as SimulationFormState["complexity_level"] })
+                    }
+                    options={[
+                      { value: "low", label: "Low detail" },
+                      { value: "balanced", label: "Balanced" },
+                      { value: "high", label: "High detail" },
+                    ]}
+                  />
+                </div>
+                <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-1">
+                  <SliderField
+                    label="Qualifying weight"
+                    value={form.weights.qualifying_importance}
+                    onChange={(value) => setForm({ ...form, weights: { ...form.weights, qualifying_importance: value } })}
+                    description="Higher Saturday carry-over and grid leverage."
+                  />
+                  <SliderField
+                    label="Tire wear"
+                    value={form.weights.tire_wear_weight}
+                    onChange={(value) => setForm({ ...form, weights: { ...form.weights, tire_wear_weight: value } })}
+                    description="Long-run deg and stint fade."
+                  />
+                  <SliderField
+                    label="Overtake sensitivity"
+                    value={form.weights.overtaking_sensitivity}
+                    onChange={(value) => setForm({ ...form, weights: { ...form.weights, overtaking_sensitivity: value } })}
+                    description="How much passing skill matters."
+                  />
+                  <SliderField
+                    label="Energy deployment"
+                    value={form.weights.energy_deployment_weight}
+                    onChange={(value) =>
+                      setForm({ ...form, weights: { ...form.weights, energy_deployment_weight: value } })
+                    }
+                    description="2026 deployment and low-drag payoff."
+                  />
+                  <SliderField
+                    label="Pit loss"
+                    value={form.weights.pit_stop_delta_sensitivity}
+                    onChange={(value) =>
+                      setForm({ ...form, weights: { ...form.weights, pit_stop_delta_sensitivity: value } })
+                    }
+                    description="Extra-stop penalty and bad timing cost."
+                  />
+                  <SliderField
+                    label="Reliability"
+                    value={form.weights.reliability_sensitivity}
+                    onChange={(value) =>
+                      setForm({ ...form, weights: { ...form.weights, reliability_sensitivity: value } })
+                    }
+                    description="How hard chaos and attrition bite."
+                  />
+                </div>
+              </div>
+            ) : null}
+          </SectionFrame>
         </aside>
 
         <main className="order-1 space-y-3 xl:order-2">
@@ -1558,7 +1536,7 @@ export function SimulatorWorkspace() {
           )}
         </main>
 
-        <aside className="order-2 space-y-3 xl:order-3 xl:sticky xl:top-[14.75rem] xl:h-[calc(100vh-15.5rem)] xl:overflow-auto xl:pl-1">
+        <aside className="order-2 grid gap-3 sm:grid-cols-2 xl:order-3 xl:grid-cols-1 xl:pl-1">
           <InsightCard
             title="Circuit sensitivity"
             subtitle="Track-led levers."
