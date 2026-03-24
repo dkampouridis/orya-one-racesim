@@ -353,22 +353,24 @@ function StatusChip({
   variant?: "default" | "muted" | "success" | "warning" | "info";
 }) {
   return (
-    <div className="flex items-center gap-2 rounded-[999px] border border-white/8 bg-black/30 px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-      <span
-        className={`h-1.5 w-1.5 rounded-full ${
-          variant === "success"
-            ? "bg-emerald-400"
-            : variant === "warning"
-              ? "bg-amber-300"
-              : variant === "info"
-                ? "bg-cyan-300"
-                : variant === "default"
-                  ? "bg-primary"
-                  : "bg-white/30"
-        }`}
-      />
-      <span>{label}</span>
-      <Badge variant={variant} className="px-2 py-0.5 text-[9px]">
+    <div className="flex min-w-0 max-w-full items-center gap-2 rounded-[999px] border border-white/8 bg-black/30 px-2.5 py-1.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+      <span className="shrink-0">
+        <span
+          className={`h-1.5 w-1.5 rounded-full ${
+            variant === "success"
+              ? "bg-emerald-400"
+              : variant === "warning"
+                ? "bg-amber-300"
+                : variant === "info"
+                  ? "bg-cyan-300"
+                  : variant === "default"
+                    ? "bg-primary"
+                    : "bg-white/30"
+          }`}
+        />
+      </span>
+      <span className="truncate">{label}</span>
+      <Badge variant={variant} className="max-w-full shrink min-w-0 truncate px-2 py-0.5 text-[9px]">
         {value}
       </Badge>
     </div>
@@ -545,10 +547,10 @@ function MetricPanel({
   badgeLabel?: string;
 }) {
   return (
-    <div className="rounded-[12px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.012))] px-3 py-2.5">
+    <div className="min-w-0 overflow-hidden rounded-[12px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.012))] px-3 py-2.5">
       <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{label}</div>
-        <Badge variant={tone} className="max-w-full shrink-0 px-2 py-0.5 text-[9px]">
+        <div className="min-w-0 pr-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
+        <Badge variant={tone} className="max-w-[48%] shrink min-w-0 truncate px-2 py-0.5 text-[9px]">
           {badgeLabel ?? label.split(" ")[0]}
         </Badge>
       </div>
@@ -650,13 +652,13 @@ function ControlRailNav({
 
 function TimingStrip({ drivers }: { drivers: DriverResult[] }) {
   return (
-    <div className="grid gap-2 md:grid-cols-2">
+    <div className="grid gap-1.5 md:grid-cols-2">
       {drivers.map((driver, index) => (
         <div
           key={driver.driver_id}
-          className="grid grid-cols-[30px_minmax(0,1fr)_repeat(3,52px)] items-center gap-2 rounded-[10px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.015))] px-2.5 py-2 md:grid-cols-[32px_minmax(0,1fr)_repeat(3,54px)]"
+          className="grid grid-cols-[28px_minmax(0,1fr)_repeat(3,48px)] items-center gap-1.5 rounded-[10px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.015))] px-2 py-1.5 md:grid-cols-[30px_minmax(0,1fr)_repeat(3,50px)]"
         >
-          <div className="font-display text-[1.05rem] leading-none text-white">P{index + 1}</div>
+          <div className="font-display text-[1rem] leading-none text-white">P{index + 1}</div>
           <div className="min-w-0">
             <div className="truncate text-[12px] text-white">{driver.driver_name}</div>
             <div className="mt-0.5 truncate font-mono text-[8px] uppercase tracking-[0.16em] text-muted-foreground">{driver.team_name}</div>
@@ -962,7 +964,7 @@ export function SimulatorWorkspace() {
                     Refresh
                   </Button>
                 </div>
-                <div className="flex flex-wrap items-center gap-2 rounded-[10px] border border-white/8 bg-white/[0.03] px-3 py-2.5">
+                <div className="grid gap-2 rounded-[10px] border border-white/8 bg-white/[0.03] px-3 py-2.5 sm:grid-cols-2">
                   <StatusChip label="Weekend" value={activeWeather.label} variant="info" />
                   <StatusChip label="Chaos" value={`${Math.round(form.environment.randomness_intensity * 100)}`} variant={signalVariant(form.environment.randomness_intensity)} />
                   <StatusChip label="Quali" value={`${Math.round(form.weights.qualifying_importance * 100)}`} variant="info" />
@@ -972,8 +974,8 @@ export function SimulatorWorkspace() {
               </div>
             </div>
 
-            <div className="mt-3 grid gap-2 xl:grid-cols-[1.45fr_0.78fr] 2xl:grid-cols-[1.58fr_0.74fr]">
-              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <div className="mt-3 grid gap-2 xl:grid-cols-[1.52fr_0.71fr] 2xl:grid-cols-[1.65fr_0.68fr]">
+              <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
                 <HeaderMetric
                   label="Lead car"
                   value={leadDriver ? leadDriver.driver_name : "Pending"}
@@ -999,7 +1001,7 @@ export function SimulatorWorkspace() {
                   tone="warning"
                 />
               </div>
-              <div className="rounded-[10px] border border-white/8 bg-black/25 p-2.5">
+              <div className="rounded-[10px] border border-white/8 bg-black/25 p-2">
                 <div className="flex items-center justify-between gap-3">
                   <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">Timing strip</div>
                   <Badge variant={leadDriver ? badgeVariantForConfidence(leadDriver.confidence_label) : signalVariant(currentVolatility)}>
@@ -1011,8 +1013,8 @@ export function SimulatorWorkspace() {
                     <TimingStrip drivers={topDrivers} />
                   </div>
                 ) : (
-                  <div className="mt-2 font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">
-                    Run to load the top four, win share, points load, and strategy fit.
+                  <div className="mt-2 line-clamp-2 font-mono text-[9px] uppercase tracking-[0.1em] text-muted-foreground">
+                    Run to load top four, win share, points, and strategy fit.
                   </div>
                 )}
               </div>
