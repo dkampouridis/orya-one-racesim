@@ -387,15 +387,15 @@ function HeaderMetric({
   tone?: "muted" | "default" | "success" | "warning" | "info";
 }) {
   return (
-    <div className="rounded-[10px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))] p-3">
+    <div className="rounded-[10px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))] px-3 py-2.5">
       <div className="flex items-center justify-between gap-2">
-        <div className="text-[9px] uppercase tracking-[0.22em] text-muted-foreground">{label}</div>
-        <Badge variant={tone} className="px-2 py-0.5 text-[8px]">
+        <div className="min-w-0 truncate text-[9px] uppercase tracking-[0.22em] text-muted-foreground">{label}</div>
+        <Badge variant={tone} className="shrink-0 px-2 py-0.5 text-[8px]">
           {tone === "default" ? "Attack" : tone === "success" ? "Stable" : tone === "warning" ? "Caution" : tone === "info" ? "Info" : "Neutral"}
         </Badge>
       </div>
-      <div className="mt-2 truncate font-display text-[1.15rem] leading-none text-white">{value}</div>
-      <div className="mt-1 truncate font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{detail}</div>
+      <div className="mt-1.5 truncate font-display text-[1rem] leading-none text-white">{value}</div>
+      <div className="mt-1 truncate font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">{detail}</div>
     </div>
   );
 }
@@ -536,20 +536,24 @@ function MetricPanel({
   value,
   detail,
   tone = "default",
+  badgeLabel,
 }: {
   label: string;
   value: string;
   detail: string;
   tone?: "default" | "muted" | "success" | "warning" | "info";
+  badgeLabel?: string;
 }) {
   return (
-    <div className="rounded-[12px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.012))] p-3.5">
-      <div className="flex items-center justify-between gap-3">
-        <div className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">{label}</div>
-        <Badge variant={tone}>{label.split(" ")[0]}</Badge>
+    <div className="rounded-[12px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.012))] px-3 py-2.5">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{label}</div>
+        <Badge variant={tone} className="max-w-full shrink-0 px-2 py-0.5 text-[9px]">
+          {badgeLabel ?? label.split(" ")[0]}
+        </Badge>
       </div>
-      <div className="mt-3 font-display text-[1.7rem] leading-none text-white">{value}</div>
-      <div className="mt-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">{detail}</div>
+      <div className="mt-2 font-display text-[1.35rem] leading-[0.92] text-white">{value}</div>
+      <div className="mt-1.5 line-clamp-2 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{detail}</div>
     </div>
   );
 }
@@ -646,28 +650,28 @@ function ControlRailNav({
 
 function TimingStrip({ drivers }: { drivers: DriverResult[] }) {
   return (
-    <div className="space-y-2">
+    <div className="grid gap-2 md:grid-cols-2">
       {drivers.map((driver, index) => (
         <div
           key={driver.driver_id}
-          className="grid grid-cols-[34px_minmax(0,1fr)_58px_58px_58px] items-center gap-2 rounded-[10px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.015))] px-2.5 py-2.5 md:grid-cols-[38px_minmax(0,1.2fr)_62px_62px_62px]"
+          className="grid grid-cols-[30px_minmax(0,1fr)_repeat(3,52px)] items-center gap-2 rounded-[10px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.015))] px-2.5 py-2 md:grid-cols-[32px_minmax(0,1fr)_repeat(3,54px)]"
         >
-          <div className="font-display text-lg leading-none text-white">P{index + 1}</div>
+          <div className="font-display text-[1.05rem] leading-none text-white">P{index + 1}</div>
           <div className="min-w-0">
-            <div className="truncate text-[13px] text-white">{driver.driver_name}</div>
-            <div className="mt-0.5 truncate font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground">{driver.team_name}</div>
+            <div className="truncate text-[12px] text-white">{driver.driver_name}</div>
+            <div className="mt-0.5 truncate font-mono text-[8px] uppercase tracking-[0.16em] text-muted-foreground">{driver.team_name}</div>
           </div>
-          <div className="rounded-[8px] border border-white/8 bg-black/25 px-1.5 py-1.5 text-center">
-            <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground">Win</div>
-            <div className="mt-0.5 text-[12px] text-white">{formatPct(driver.win_probability)}</div>
+          <div className="rounded-[8px] border border-white/8 bg-black/25 px-1.5 py-1 text-center">
+            <div className="font-mono text-[8px] uppercase tracking-[0.16em] text-muted-foreground">Win</div>
+            <div className="mt-0.5 text-[11px] leading-none text-white">{formatPct(driver.win_probability)}</div>
           </div>
-          <div className="rounded-[8px] border border-white/8 bg-black/25 px-1.5 py-1.5 text-center">
-            <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground">Pts</div>
-            <div className="mt-0.5 text-[12px] text-white">{driver.expected_points.toFixed(1)}</div>
+          <div className="rounded-[8px] border border-white/8 bg-black/25 px-1.5 py-1 text-center">
+            <div className="font-mono text-[8px] uppercase tracking-[0.16em] text-muted-foreground">Pts</div>
+            <div className="mt-0.5 text-[11px] leading-none text-white">{driver.expected_points.toFixed(1)}</div>
           </div>
-          <div className="rounded-[8px] border border-white/8 bg-black/25 px-1.5 py-1.5 text-center">
-            <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground">Fit</div>
-            <div className="mt-0.5 text-[12px] text-white">{driver.strategy_fit_score.toFixed(1)}</div>
+          <div className="rounded-[8px] border border-white/8 bg-black/25 px-1.5 py-1 text-center">
+            <div className="font-mono text-[8px] uppercase tracking-[0.16em] text-muted-foreground">Fit</div>
+            <div className="mt-0.5 text-[11px] leading-none text-white">{driver.strategy_fit_score.toFixed(1)}</div>
           </div>
         </div>
       ))}
@@ -968,7 +972,7 @@ export function SimulatorWorkspace() {
               </div>
             </div>
 
-            <div className="mt-3 grid gap-2.5 xl:grid-cols-[1.38fr_0.82fr] 2xl:grid-cols-[1.52fr_0.78fr]">
+            <div className="mt-3 grid gap-2 xl:grid-cols-[1.45fr_0.78fr] 2xl:grid-cols-[1.58fr_0.74fr]">
               <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                 <HeaderMetric
                   label="Lead car"
@@ -995,7 +999,7 @@ export function SimulatorWorkspace() {
                   tone="warning"
                 />
               </div>
-              <div className="rounded-[10px] border border-white/8 bg-black/25 p-3">
+              <div className="rounded-[10px] border border-white/8 bg-black/25 p-2.5">
                 <div className="flex items-center justify-between gap-3">
                   <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">Timing strip</div>
                   <Badge variant={leadDriver ? badgeVariantForConfidence(leadDriver.confidence_label) : signalVariant(currentVolatility)}>
@@ -1003,11 +1007,11 @@ export function SimulatorWorkspace() {
                   </Badge>
                 </div>
                 {deferredSimulation ? (
-                  <div className="mt-2.5">
+                  <div className="mt-2">
                     <TimingStrip drivers={topDrivers} />
                   </div>
                 ) : (
-                  <div className="mt-2.5 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+                  <div className="mt-2 font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">
                     Run to load the top four, win share, points load, and strategy fit.
                   </div>
                 )}
@@ -1339,11 +1343,11 @@ export function SimulatorWorkspace() {
                       <div className="font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">Order, fit, points, and disruption load after the first simulation.</div>
                     </div>
                   </div>
-                  <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-4">
-                    <MetricPanel label="Weekend state" value={activeWeather.label} detail="Current weather mode" tone="info" />
-                    <MetricPanel label="Circuit pressure" value={volatilityLabel(currentVolatility)} detail="SC risk + weather swing + noise" tone={signalVariant(currentVolatility)} />
-                    <MetricPanel label="Qualifying value" value={`${Math.round(activeTrack.qualifying_importance * 100)}/100`} detail="Grid leverage" tone="info" />
-                    <MetricPanel label="Energy demand" value={`${Math.round(activeTrack.energy_sensitivity * 100)}/100`} detail="Deployment payoff" tone="default" />
+                  <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+                    <MetricPanel label="Weekend state" value={activeWeather.label} detail="Current weather mode" tone="info" badgeLabel="Weekend" />
+                    <MetricPanel label="Circuit pressure" value={volatilityLabel(currentVolatility)} detail="SC risk + weather swing + noise" tone={signalVariant(currentVolatility)} badgeLabel="Circuit" />
+                    <MetricPanel label="Qualifying value" value={`${Math.round(activeTrack.qualifying_importance * 100)}/100`} detail="Grid leverage" tone="info" badgeLabel="Quali" />
+                    <MetricPanel label="Energy demand" value={`${Math.round(activeTrack.energy_sensitivity * 100)}/100`} detail="Deployment payoff" tone="default" badgeLabel="Energy" />
                   </div>
                 </div>
               ) : (
