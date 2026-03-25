@@ -106,6 +106,36 @@ class DriverResult(BaseModel):
     diagnostics: dict[str, float]
 
 
+class CircuitDiagnostics(BaseModel):
+    circuit_type: str
+    degradation_profile: str
+    track_position_importance: float
+    overtaking_difficulty: float
+    qualifying_importance: float
+    tire_stress: float
+    safety_car_risk: float
+    weather_volatility: float
+    energy_sensitivity: float
+    strategy_flexibility: float
+    track_position_multiplier: float
+    qualifying_carryover_factor: float
+    dirty_air_factor: float
+    overtake_suppression_factor: float
+    degradation_factor: float
+    pit_window_pressure_factor: float
+    disruption_leverage_factor: float
+    restart_factor: float
+    weather_sensitivity_factor: float
+    deployment_sensitivity_factor: float
+    strategy_flex_factor: float
+    recovery_factor: float
+    clean_air_factor: float
+    order_lock_factor: float
+    undercut_factor: float
+    alternate_strategy_factor: float
+    disruption_reshuffle_factor: float
+
+
 class EventSummary(BaseModel):
     weather_shift_rate: float
     yellow_flag_rate: float
@@ -121,6 +151,7 @@ class EventSummary(BaseModel):
     avg_green_flag_overtakes: float = 0.0
     avg_safety_car_lap: float | None = None
     turning_points: list[str] = Field(default_factory=list)
+    circuit_diagnostics: CircuitDiagnostics
 
 
 class TeamSummary(BaseModel):

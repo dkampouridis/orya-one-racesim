@@ -9,7 +9,14 @@ from racesim.api.contracts import EnvironmentControls, SimulationRequest, Simula
 from racesim.data.loaders import get_team
 from racesim.data.models import TrackProfile, WeatherPreset
 from racesim.sim.events import EventEngine, RaceEvents
-from racesim.sim.state import DriverRaceState, DriverRunSummary, DriverStaticProfile, PitStopRecord, RaceRunResult
+from racesim.sim.state import (
+    DriverRaceState,
+    DriverRunSummary,
+    DriverStaticProfile,
+    PitStopRecord,
+    RaceRunResult,
+    build_circuit_leverage,
+)
 
 
 COMPOUND_SPECS = {
@@ -40,6 +47,7 @@ class LapRaceEngine:
         self.weather = weather
         self.request = request
         self.profiles = profiles
+        self.leverage = build_circuit_leverage(track)
         self.base_lap_time = track.base_race_time_sec / track.laps
 
     def simulate_run(self, rng: random.Random) -> RaceRunResult:
@@ -54,6 +62,8 @@ class LapRaceEngine:
             wetness = self._wetness_for_lap(lap, events)
             track_grip = self._track_grip_for_lap(lap, wetness)
             sorted_states = self._ordered_active_states(states)
+            for position, ordered_state in enumerate(sorted_states, start=1):
+                ordered_state.current_position = position
             attack_plan = self._build_attack_plan(sorted_states, lap, wetness, status, events, rng)
 
             for state in sorted_states:
@@ -210,8 +220,9 @@ class LapRaceEngine:
             states[driver_id] = DriverRaceState(
                 profile=profile,
                 starting_position=grid_position,
+                current_position=grid_position,
                 qualifying_baseline=qualifying_score,
-                total_time=(grid_position - 1) * (0.14 + self.track.track_position_importance * 0.26),
+                total_time=(grid_position - 1) * (0.08 + self.leverage.track_position_multiplier * 0.18),
                 current_compound=compound,
                 compound_index=0,
                 fuel_load=1.0,
@@ -236,50 +247,94 @@ class LapRaceEngine:
         if status != "green":
             return plan
 
-        restart_bonus = 0.18 if lap in events.restart_laps else 0.0
+        restart_bonus = 0.0
+        if lap in events.restart_laps:
+            restart_bonus = 0.07 + max(
+                0.0,
+                self.leverage.restart_factor - self.leverage.overtake_suppression_factor * 0.45,
+            ) * 0.11 + max(0.0, self.leverage.disruption_reshuffle_factor - 1.0) * 0.03
         for index in range(1, len(ordered_states)):
             follower = ordered_states[index]
             leader = ordered_states[index - 1]
             gap = max(0.0, follower.total_time - leader.total_time)
-            if gap > 1.8:
+            attack_gap_limit = (
+                0.82
+                + self.leverage.alternate_strategy_factor * 0.52
+                + self.leverage.deployment_sensitivity_factor * 0.24
+                - self.leverage.order_lock_factor * 0.31
+                + restart_bonus * 2.2
+            )
+            if gap > attack_gap_limit:
                 continue
 
             dirty_air_penalty = (
-                self.track.overtaking_difficulty
-                * 0.08
-                + self.track.track_position_importance * 0.18
-                + follower.profile.strategy.track_position_bias * 0.06
+                0.045
+                + self.leverage.dirty_air_factor * 0.05
+                + follower.profile.strategy.track_position_bias * 0.04
             )
             plan[follower.profile.driver.id].traffic_penalty += max(0.04, dirty_air_penalty)
-            plan[follower.profile.driver.id].compression_penalty += self.track.track_position_importance * max(0.0, 0.9 - gap) * 0.04
+            plan[follower.profile.driver.id].compression_penalty += (
+                self.leverage.clean_air_factor * max(0.0, 1.1 - gap) * 0.07
+            )
 
             relative_attack = (
-                (follower.profile.pace_edge - leader.profile.pace_edge) * 0.46
-                + (follower.profile.driver.overtaking - leader.profile.driver.overtaking) / 180.0
-                + (follower.profile.energy_strength - leader.profile.energy_strength) * 0.34
-                + (leader.tire_wear - follower.tire_wear) * 0.76
-                + (follower.profile.strategy.aggression - leader.profile.strategy.aggression) * 0.28
+                (follower.profile.pace_edge - leader.profile.pace_edge)
+                * (0.32 + self.leverage.recovery_factor * 0.28)
+                + (follower.profile.driver.overtaking - leader.profile.driver.overtaking)
+                / 180.0
+                * (0.72 + self.leverage.deployment_sensitivity_factor * 0.22)
+                + (follower.profile.energy_strength - leader.profile.energy_strength)
+                * (0.18 + self.leverage.deployment_sensitivity_factor * 0.22)
+                + (leader.tire_wear - follower.tire_wear) * (0.48 + self.leverage.degradation_factor * 0.26)
+                + (follower.profile.strategy.aggression - leader.profile.strategy.aggression)
+                * (0.14 + self.leverage.strategy_flex_factor * 0.1)
                 + restart_bonus
-                + (0.08 if follower.pit_stops < leader.pit_stops else 0.0)
-                - self.track.overtaking_difficulty * 0.72
-                - wetness * 0.24
-                - self.track.track_position_importance * 0.22
+                + (0.06 + self.leverage.track_position_multiplier * 0.03 if follower.pit_stops < leader.pit_stops else 0.0)
+                - self.leverage.overtake_suppression_factor * 1.02
+                - wetness * (0.16 + self.leverage.weather_sensitivity_factor * 0.07)
             )
             if follower.current_compound == "Intermediate" and wetness > 0.45:
-                relative_attack += 0.08
+                relative_attack += 0.08 + max(0.0, self.leverage.weather_sensitivity_factor - 1.2) * 0.03
+            fresher_tire_push = max(0.0, leader.tire_age - follower.tire_age) * (
+                0.012 + self.leverage.alternate_strategy_factor * 0.008
+            )
+            offset_strategy_push = max(0, leader.pit_stops - follower.pit_stops) * (
+                0.03 + self.leverage.alternate_strategy_factor * 0.04
+            )
+            relative_attack += fresher_tire_push + offset_strategy_push
+            if (
+                self.leverage.order_lock_factor > 1.75
+                and lap not in events.restart_laps
+                and gap > 0.45
+                and fresher_tire_push + offset_strategy_push < 0.08
+            ):
+                relative_attack -= 0.28 + self.leverage.order_lock_factor * 0.11
+            if self.leverage.alternate_strategy_factor > 1.35 and follower.pit_stops < leader.pit_stops:
+                relative_attack += 0.1
+            max_pass_probability = min(
+                0.78,
+                0.42
+                + self.leverage.recovery_factor * 0.16
+                + self.leverage.deployment_sensitivity_factor * 0.08
+                + restart_bonus * 0.8
+                - self.leverage.overtake_suppression_factor * 0.11,
+            )
             pass_probability = max(
-                0.02,
+                0.004 if self.leverage.overtake_suppression_factor > 1.6 else 0.01,
                 min(
-                    0.62,
-                    0.14
-                    + relative_attack * 0.2
-                    + (1.2 - gap) * 0.1
-                    + self.request.weights.overtaking_sensitivity * 0.08
-                    + events.overtaking_window * 0.04,
+                    max_pass_probability,
+                    0.07
+                    + relative_attack * 0.25
+                    + (1.35 - gap) * (0.08 + self.leverage.recovery_factor * 0.05)
+                    + self.request.weights.overtaking_sensitivity * 0.06
+                    + (events.overtaking_window - 1.0) * 0.18
+                    - self.leverage.dirty_air_factor * 0.035,
                 ),
             )
+            if self.leverage.order_lock_factor > 1.8 and lap not in events.restart_laps:
+                pass_probability *= max(0.12, 1.0 - (self.leverage.order_lock_factor - 1.4) * 0.58)
             if relative_attack > -0.05 and rng.random() < pass_probability:
-                bonus = 0.12 + max(0.0, relative_attack) * 0.22
+                bonus = 0.08 + max(0.0, relative_attack) * (0.17 + self.leverage.recovery_factor * 0.08)
                 plan[follower.profile.driver.id].attack_bonus += bonus
                 plan[follower.profile.driver.id].overtake_success = True
 
@@ -302,20 +357,38 @@ class LapRaceEngine:
         tire_delta = self._tire_delta(state, wetness, compound)
         energy_delta, energy_penalty = self._energy_delta(state, wetness, events)
         track_position_bonus = self._track_position_bonus(state, lap)
-        qualifying_bonus = max(0.0, state.profile.qualifying_leverage * self.track.track_position_importance * (1.0 - lap / max(1, self.track.laps)) * 0.16)
+        qualifying_bonus = max(
+            0.0,
+            state.profile.qualifying_leverage
+            * self.leverage.qualifying_carryover_factor
+            * (1.0 - lap / max(1, self.track.laps))
+            * 0.14,
+        )
         pace_component = state.profile.pace_edge * (0.28 + self.request.weights.driver_form_weight * 0.18)
         track_fit_bonus = state.profile.track_fit_score / 28.0
-        strategy_component = ((state.profile.strategy_fit.score - 50.0) / 24.0) * (0.16 + self.track.strategy_flexibility * 0.1)
+        strategy_component = ((state.profile.strategy_fit.score - 50.0) / 20.0) * (
+            0.1 + self.leverage.strategy_flex_factor * 0.08 + self.leverage.pit_window_pressure_factor * 0.04
+        )
         chaos_bonus = state.profile.chaos_resilience * events.event_pressure * self.request.weights.reliability_sensitivity * 0.22
         flexibility_bonus = (
             state.profile.strategy.flexibility
-            * (0.08 + 0.12 * int(status in {"vsc", "safety_car", "red_flag"} or wetness > 0.35))
+            * (
+                0.04
+                + max(0.0, self.leverage.strategy_flex_factor - 1.0) * 0.16
+                + self.leverage.disruption_leverage_factor
+                * 0.06
+                * int(status in {"vsc", "safety_car", "red_flag"} or wetness > 0.35)
+            )
         )
         weather_bonus = 0.0
         if wetness > 0.25:
-            weather_bonus += (state.profile.driver.wet_weather_skill / 100.0) * wetness * 0.34
+            weather_bonus += (
+                (state.profile.driver.wet_weather_skill / 100.0)
+                * wetness
+                * (0.2 + self.leverage.weather_sensitivity_factor * 0.14)
+            )
         if pit_reason == "weather_crossover":
-            weather_bonus += state.profile.strategy.weather_adaptability * 0.22
+            weather_bonus += state.profile.strategy.weather_adaptability * (0.12 + self.leverage.weather_sensitivity_factor * 0.08)
 
         track_evo_bonus = self.request.environment.track_evolution * self.track.surface_evolution * (lap / self.track.laps) * 0.08
         fuel_penalty = fuel_factor * self.track.fuel_sensitivity * self.request.weights.fuel_effect_weight * 0.82
@@ -371,19 +444,33 @@ class LapRaceEngine:
         )
 
         if pit_reason:
-            lap_time += self._execute_pit_stop(state, lap, pit_reason, status)
+            lap_time += self._execute_pit_stop(state, lap, pit_reason, status, events)
 
         state.tire_age += 1
         wear_gain = compound["deg_rate"] * self.track.tire_stress * events.degradation_multiplier
-        wear_gain *= 0.86 + state.profile.strategy.tire_load * 0.42 + self.request.weights.tire_wear_weight * 0.26
+        wear_gain *= (
+            0.82
+            + self.leverage.degradation_factor * 0.25
+            + state.profile.strategy.tire_load * 0.38
+            + self.request.weights.tire_wear_weight * 0.24
+        )
         wear_gain *= 1.05 - state.profile.driver.tire_management / 220.0
         if wetness > 0.35 and state.current_compound != "Intermediate":
             wear_gain *= 1.12
         if state.clean_air is False:
-            wear_gain *= 1.04
+            wear_gain *= 1.02 + self.leverage.clean_air_factor * 0.03
         state.tire_wear = min(1.4, state.tire_wear + wear_gain)
         state.fuel_load = max(0.0, 1.0 - lap / self.track.laps)
-        state.energy_store = max(0.28, min(1.0, state.energy_store + 0.06 - self.track.energy_sensitivity * 0.04 - state.profile.strategy.aggression * 0.03))
+        state.energy_store = max(
+            0.24,
+            min(
+                1.0,
+                state.energy_store
+                + 0.06
+                - self.leverage.deployment_sensitivity_factor * 0.025
+                - state.profile.strategy.aggression * 0.03,
+            ),
+        )
         state.clean_air = attack.traffic_penalty <= 0.08
         state.traffic_load = attack.traffic_penalty
 
@@ -413,39 +500,50 @@ class LapRaceEngine:
     def _tire_delta(self, state: DriverRaceState, wetness: float, compound: dict[str, float]) -> float:
         mismatch_penalty = 0.0
         if state.current_compound == "Intermediate":
-            mismatch_penalty = max(0.0, 0.22 - wetness) * 4.0
+            mismatch_penalty = max(0.0, 0.22 - wetness) * (3.4 + self.leverage.weather_sensitivity_factor * 0.55)
         else:
-            mismatch_penalty = max(0.0, wetness - 0.22) * 4.6
+            mismatch_penalty = max(0.0, wetness - 0.22) * (4.0 + self.leverage.weather_sensitivity_factor * 0.62)
 
-        wear_factor = state.tire_wear * (0.44 + self.request.weights.tire_wear_weight * 0.68)
-        age_factor = state.tire_age * compound["deg_rate"] * (0.32 + self.track.tire_stress * 0.38)
-        cliff_penalty = max(0.0, state.tire_wear - compound["cliff"]) * (1.8 + self.track.tire_stress * 0.8)
+        wear_factor = state.tire_wear * (
+            0.32 + self.request.weights.tire_wear_weight * 0.62 + self.leverage.degradation_factor * 0.26
+        )
+        age_factor = state.tire_age * compound["deg_rate"] * (0.2 + self.leverage.degradation_factor * 0.42)
+        cliff_penalty = max(0.0, state.tire_wear - compound["cliff"]) * (1.2 + self.leverage.degradation_factor * 1.8)
         return mismatch_penalty + wear_factor + age_factor + cliff_penalty
 
     def _energy_delta(self, state: DriverRaceState, wetness: float, events: RaceEvents) -> tuple[float, float]:
         available = state.energy_store * state.profile.energy_strength
-        deployment_bonus = available * self.track.energy_sensitivity * self.request.weights.energy_deployment_weight * 0.38
+        deployment_bonus = (
+            available
+            * self.leverage.deployment_sensitivity_factor
+            * self.request.weights.energy_deployment_weight
+            * 0.28
+        )
         if wetness > 0.35:
             deployment_bonus *= 0.82
         if state.current_compound == "Intermediate":
             deployment_bonus *= 0.9
         deployment_bonus *= events.energy_management_multiplier
 
-        target_spend = 0.08 + self.track.energy_sensitivity * 0.06 + state.profile.strategy.energy_bias * 0.04
+        target_spend = 0.06 + self.leverage.deployment_sensitivity_factor * 0.05 + state.profile.strategy.energy_bias * 0.05
         if wetness > 0.35:
             target_spend *= 0.88
         state.energy_store = max(0.25, min(1.0, state.energy_store - target_spend + 0.05))
 
-        energy_penalty = max(0.0, 0.52 - state.energy_store) * self.track.energy_sensitivity * 0.52
+        energy_penalty = max(0.0, 0.5 - state.energy_store) * self.leverage.deployment_sensitivity_factor * 0.42
         return deployment_bonus, energy_penalty
 
     def _track_position_bonus(self, state: DriverRaceState, lap: int) -> float:
+        live_position = 1.0 - (state.current_position - 1) / max(1, len(self.profiles) - 1)
+        grid_position = 1.0 - (state.starting_position - 1) / max(1, len(self.profiles) - 1)
+        field_position = live_position * 0.7 + grid_position * 0.3
+        race_phase = max(0.22, ((self.track.laps - lap) / self.track.laps) ** (0.8 + (1.0 - self.track.strategy_flexibility) * 0.45))
         return (
-            self.track.track_position_importance
+            self.leverage.track_position_multiplier
             * self.request.weights.qualifying_importance
-            * max(0.0, (self.track.laps - lap) / self.track.laps)
-            * (1.0 - (state.starting_position - 1) / max(1, len(self.profiles) - 1))
-            * 0.22
+            * race_phase
+            * field_position
+            * 0.18
         )
 
     def _track_grip_for_lap(self, lap: int, wetness: float) -> float:
@@ -490,20 +588,70 @@ class LapRaceEngine:
             return None
 
         target_lap = strategy.pit_windows[min(state.next_planned_stop_index, len(strategy.pit_windows) - 1)]
-        window = max(1, int(1 + self.track.strategy_flexibility * 3 + strategy.flexibility * 2))
-        undercut_pull = strategy.aggression * (1.0 - self.track.overtaking_difficulty) * 3
+        window = max(
+            1,
+            min(
+                4,
+                int(
+                    round(
+                        1
+                        + self.track.strategy_flexibility * 2.5
+                        + strategy.flexibility * 1.8
+                        - self.track.track_position_importance * 0.9
+                    )
+                ),
+            ),
+        )
+        undercut_pull = strategy.aggression * (
+            0.45
+            + self.track.overtaking_difficulty * 0.4
+            + self.track.tire_stress * 1.2
+            + self.track.track_position_importance * 0.18
+            - min(0.22, self.track.pit_loss_seconds / 100.0)
+        )
+        if self.leverage.weather_sensitivity_factor > 1.7 and wetness > 0.24 and state.current_compound != "Intermediate":
+            return "weather_crossover"
+        if self.leverage.weather_sensitivity_factor > 1.7 and wetness < 0.22 and state.current_compound == "Intermediate":
+            return "weather_crossover"
+        position_loss = max(0, state.current_position - state.starting_position)
+        stuck_in_train = self.leverage.order_lock_factor > 1.7 and not state.clean_air and state.traffic_load > 0.14
+        recovery_track = self.leverage.alternate_strategy_factor > 1.3
+        cliff_threshold = max(
+            0.48,
+            COMPOUND_SPECS.get(state.current_compound, COMPOUND_SPECS["Medium"])["cliff"]
+            + 0.1
+            - self.leverage.degradation_factor * 0.08,
+        )
 
-        if status in {"vsc", "safety_car"} and strategy.safety_car_bias > 0.55 and lap > 6:
+        if (
+            status in {"vsc", "safety_car"}
+            and lap > 6
+            and strategy.safety_car_bias + max(0.0, self.leverage.disruption_reshuffle_factor - 1.0) * 0.28 > 0.5
+        ):
             return "neutralized_window"
-        if state.tire_wear > COMPOUND_SPECS.get(state.current_compound, COMPOUND_SPECS["Medium"])["cliff"] + 0.08:
+        if state.tire_wear > cliff_threshold:
             return "tire_cliff"
+        if (
+            recovery_track
+            and position_loss >= 2
+            and lap >= max(7, target_lap - 4)
+            and lap < target_lap
+            and state.tire_wear > 0.31
+        ):
+            return "offset_window"
+        if (
+            stuck_in_train
+            and lap >= max(6, target_lap - 2 - int(round(undercut_pull)))
+            and state.tire_wear > 0.27
+        ):
+            return "undercut_window"
         if lap >= target_lap + window:
             return "late_window"
-        if target_lap - undercut_pull <= lap <= target_lap + window and state.tire_wear > 0.52:
+        if target_lap - undercut_pull <= lap <= target_lap + window and state.tire_wear > 0.46 + self.track.tire_stress * 0.08:
             return "planned_window"
         return None
 
-    def _execute_pit_stop(self, state: DriverRaceState, lap: int, reason: str, status: str) -> float:
+    def _execute_pit_stop(self, state: DriverRaceState, lap: int, reason: str, status: str, events: RaceEvents) -> float:
         team = get_team(state.profile.driver.team_id)
         compound_out = state.current_compound
         next_index = state.compound_index
@@ -519,7 +667,10 @@ class LapRaceEngine:
             compound_in = state.profile.strategy.compound_sequence[next_index]
 
         stationary = max(1.9, 2.5 - team.pit_crew_efficiency * 0.5 + state.damage * 0.08)
-        total_loss = self.track.pit_loss_seconds * (0.82 if status in {"vsc", "safety_car"} else 1.0) + stationary
+        pit_lane_loss = self.track.pit_loss_seconds
+        if status in {"vsc", "safety_car", "red_flag"}:
+            pit_lane_loss *= events.pit_discount
+        total_loss = pit_lane_loss + stationary
         state.diagnostics.pit_penalty += total_loss
         state.stint_laps.append(max(1, state.tire_age))
         state.pit_records.append(
@@ -560,6 +711,7 @@ class LapRaceEngine:
             + (1.0 - state.profile.driver.reliability / 100.0) * 0.9
             + wetness * 0.38
             + events.event_pressure * 0.24
+            + self.leverage.disruption_leverage_factor * 0.08
         )
         if status in {"safety_car", "red_flag"}:
             lap_dnf_probability *= 0.7
@@ -573,8 +725,8 @@ class LapRaceEngine:
             1.1
             + state.profile.driver.aggression / 200.0
             + (1.0 - state.profile.driver.consistency / 100.0) * 0.8
-            + self.track.safety_car_risk * 0.6
-            + wetness * 0.5
+            + self.leverage.disruption_leverage_factor * 0.3
+            + wetness * (0.36 + self.leverage.weather_sensitivity_factor * 0.08)
         )
         if status == "green" and rng.random() < incident_probability:
             loss = rng.uniform(1.6, 7.8) * (1.0 + wetness * 0.3 + state.damage * 0.08)
@@ -592,7 +744,13 @@ class LapRaceEngine:
             return
         leader_time = active[0].total_time
         for index, state in enumerate(active[1:], start=1):
-            target_gap = index * (0.42 if status == "red_flag" else 0.55)
+            gap_step = max(
+                0.18,
+                (0.48 if status == "red_flag" else 0.62)
+                - self.leverage.disruption_leverage_factor * 0.14
+                - self.leverage.restart_factor * 0.08,
+            )
+            target_gap = index * gap_step
             state.total_time = min(state.total_time, leader_time + target_gap + rng.uniform(0.0, 0.12))
 
     def _final_order(self, states: dict[str, DriverRaceState]) -> list[str]:

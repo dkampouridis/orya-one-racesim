@@ -18,7 +18,7 @@ from racesim.data.loaders import build_defaults_payload, get_team, get_track, ge
 from racesim.data.models import DriverProfile, StrategyTemplate, TrackProfile, WeatherPreset
 from racesim.model.predictor import PacePredictor
 from racesim.sim.lap_engine import LapRaceEngine
-from racesim.sim.state import DriverStaticProfile
+from racesim.sim.state import DriverStaticProfile, build_circuit_leverage
 from racesim.sim.strategies import StrategyFit, apply_overrides, evaluate_strategy, strategy_lookup, suggest_strategies
 
 RACE_POINTS = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1]
@@ -245,19 +245,20 @@ class SimulationService:
             profile.pace_score = round(
                 62.0
                 + profile.pace_edge * 4.8
-                + profile.track_fit_score * 0.9
-                + (profile.strategy_fit.score - 50.0) * 0.08,
+                + profile.track_fit_score * 1.2
+                + (profile.strategy_fit.score - 50.0) * 0.1,
                 2,
             )
 
         ranked = sorted(
             raw_profiles,
             key=lambda item: (
-                item.pace_edge * 8.8
-                + item.track_fit_score * 1.6
-                + (item.strategy_fit.score - 50.0) * 0.34
-                + item.qualifying_leverage * (1.3 + track.qualifying_importance * 1.1)
-                - item.tire_risk * 5.0
+                item.pace_edge * 8.1
+                + item.track_fit_score
+                * (1.6 + track.track_position_importance * 1.2 + track.energy_sensitivity * 0.4 + track.tire_stress * 0.3)
+                + (item.strategy_fit.score - 50.0) * (0.28 + track.strategy_flexibility * 0.16 + track.tire_stress * 0.08)
+                + item.qualifying_leverage * (1.0 + track.qualifying_importance * 1.8 + track.track_position_importance * 0.9)
+                - item.tire_risk * (3.8 + track.tire_stress * 2.4)
             ),
             reverse=True,
         )
@@ -471,6 +472,7 @@ class SimulationService:
         turning_point_counts: Counter[str],
         avg_safety_car_lap: float | None,
     ) -> EventSummary:
+        leverage = build_circuit_leverage(track)
         runs = request.simulation_runs
         rates = {
             "Weather shift": tallies["weather_shift"] / runs,
@@ -522,6 +524,19 @@ class SimulationService:
             avg_green_flag_overtakes=avg_green_flag_overtakes,
             avg_safety_car_lap=avg_safety_car_lap,
             turning_points=turning_points,
+            circuit_diagnostics={
+                "circuit_type": track.circuit_type,
+                "degradation_profile": track.degradation_profile,
+                "track_position_importance": round(track.track_position_importance, 4),
+                "overtaking_difficulty": round(track.overtaking_difficulty, 4),
+                "qualifying_importance": round(track.qualifying_importance, 4),
+                "tire_stress": round(track.tire_stress, 4),
+                "safety_car_risk": round(track.safety_car_risk, 4),
+                "weather_volatility": round(track.weather_volatility, 4),
+                "energy_sensitivity": round(track.energy_sensitivity, 4),
+                "strategy_flexibility": round(track.strategy_flexibility, 4),
+                **leverage.as_dict(),
+            },
         )
 
     def _headline(self, track: TrackProfile, weather: WeatherPreset, request: SimulationRequest) -> str:
