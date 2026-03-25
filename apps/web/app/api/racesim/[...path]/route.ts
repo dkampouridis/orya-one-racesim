@@ -7,6 +7,21 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 export const preferredRegion = "iad1";
 
+type LiveSimulationPayload = {
+  simulation_runs?: number;
+  complexity_level?: "low" | "balanced" | "high";
+  weather_preset_id?: string;
+  grand_prix_id?: string;
+  environment?: {
+    rain_onset?: number;
+    virtual_safety_cars?: number;
+    full_safety_cars?: number;
+    red_flags?: number;
+    late_race_incidents?: number;
+    randomness_intensity?: number;
+  };
+};
+
 function resolveApiBaseUrl() {
   const value =
     process.env.API_URL?.replace(/\/$/, "") ??
@@ -18,6 +33,52 @@ function resolveApiBaseUrl() {
   }
 
   return value;
+}
+
+function getLiveSafeSimulationRuns(payload: LiveSimulationPayload) {
+  let maxRuns = 260;
+
+  if (payload.complexity_level === "balanced") {
+    maxRuns = 240;
+  } else if (payload.complexity_level === "high") {
+    maxRuns = 200;
+  }
+
+  if (payload.weather_preset_id && /(rain|crossover|storm|mixed|wet)/i.test(payload.weather_preset_id)) {
+    maxRuns -= 30;
+  }
+
+  if (
+    payload.grand_prix_id &&
+    ["belgian-grand-prix", "singapore-grand-prix", "azerbaijan-grand-prix", "las-vegas-grand-prix"].includes(
+      payload.grand_prix_id,
+    )
+  ) {
+    maxRuns -= 20;
+  }
+
+  const environment = payload.environment;
+  if (environment) {
+    const incidentPressure =
+      (environment.full_safety_cars ?? 0) +
+      (environment.virtual_safety_cars ?? 0) +
+      (environment.red_flags ?? 0) +
+      (environment.late_race_incidents ?? 0);
+
+    if ((environment.rain_onset ?? 0) >= 0.35) {
+      maxRuns -= 20;
+    }
+
+    if (incidentPressure >= 0.48) {
+      maxRuns -= 20;
+    }
+
+    if ((environment.randomness_intensity ?? 0) >= 0.58) {
+      maxRuns -= 10;
+    }
+  }
+
+  return Math.max(160, Math.min(260, maxRuns));
 }
 
 function isHtmlErrorPayload(text: string, contentType: string | null) {
@@ -131,9 +192,10 @@ async function forward(request: NextRequest, path: string[], method: "GET" | "PO
     body = await request.text();
     if (requestPath === "simulate" && contentType?.includes("application/json") && process.env.NODE_ENV !== "development") {
       try {
-        const payload = JSON.parse(body) as { simulation_runs?: number };
-        if (typeof payload.simulation_runs === "number" && payload.simulation_runs > 400) {
-          body = JSON.stringify({ ...payload, simulation_runs: 400 });
+        const payload = JSON.parse(body) as LiveSimulationPayload;
+        const liveSafeRuns = getLiveSafeSimulationRuns(payload);
+        if (typeof payload.simulation_runs === "number" && payload.simulation_runs > liveSafeRuns) {
+          body = JSON.stringify({ ...payload, simulation_runs: liveSafeRuns });
         }
       } catch {
         // Preserve the raw request body if it is not valid JSON.
