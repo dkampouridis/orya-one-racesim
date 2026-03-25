@@ -12,3 +12,22 @@ def repo_root() -> Path:
 def data_root() -> Path:
     return repo_root() / "data"
 
+
+def historical_root() -> Path:
+    return data_root() / "historical"
+
+
+def historical_raw_root() -> Path:
+    return historical_root() / "raw"
+
+
+def historical_normalized_root() -> Path:
+    return historical_root() / "normalized"
+
+
+def historical_catalog_root() -> Path:
+    return historical_root() / "catalog"
+
+
+def historical_reports_root() -> Path:
+    return historical_root() / "reports"

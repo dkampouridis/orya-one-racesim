@@ -68,6 +68,9 @@ Important modules:
 - `sim/events.py`: weather and race-control timeline generation
 - `sim/state.py`: race-state dataclasses
 - `sim/strategies.py`: strategy fit and suggestions
+- `historical/normalize.py`: official extract normalization into weekend fixtures
+- `historical/backtest.py`: historical weekend replay and calibration runner
+- `historical/metrics.py`: backtest scoring and calibration heuristics
 
 ## Why the split matters
 
@@ -121,3 +124,16 @@ The current architecture is materially stronger than the old aggregate ranking m
 - a full team-strategy optimizer
 
 Those are the next realism steps, not hidden gaps in the current design.
+
+## Historical calibration layer
+
+The repository now also includes a historical backtesting workflow under `packages/sim-core/src/racesim/historical`.
+
+That layer is intentionally separate from the public simulator path:
+
+- official historical extracts live in `data/historical/raw`
+- normalized weekend fixtures live in `data/historical/normalized`
+- modeled seed priors live in `data/historical/catalog`
+- calibration reports live in `data/historical/reports`
+
+This keeps official evidence, modeled assumptions, and tuned simulator behavior auditable instead of blending them together.

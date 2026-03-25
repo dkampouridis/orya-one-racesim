@@ -19,5 +19,8 @@ ml = [
   "torch>=2.4.0"
 ]
 
+[project.scripts]
+racesim-historical = "racesim.historical.cli:main"
+
 [tool.setuptools.packages.find]
 where = ["src"]

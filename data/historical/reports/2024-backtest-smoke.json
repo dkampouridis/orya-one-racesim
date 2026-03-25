@@ -1,0 +1,4196 @@
+{
+  "season": 2024,
+  "aggregate": {
+    "weekends": 2,
+    "winner_hit_rate": 0.0,
+    "avg_actual_winner_probability": 0.1333,
+    "avg_podium_overlap_rate": 0.5,
+    "avg_top_10_overlap_rate": 1.0,
+    "avg_finish_mae": 1.456,
+    "avg_qualifying_conversion_mae": 1.456,
+    "avg_stop_count_mae": 0.4183,
+    "avg_first_stop_mae": 17.0234,
+    "avg_dnf_brier": 0.0149,
+    "avg_volatility_proxy_error": 2.625,
+    "avg_track_behavior_error": 0.1733
+  },
+  "weekends": [
+    {
+      "season": 2024,
+      "grand_prix_id": "italian-grand-prix",
+      "grand_prix_name": "Italian Grand Prix",
+      "metrics": {
+        "covered_driver_count": 10,
+        "winner_hit": 0.0,
+        "actual_winner_probability": 0.0,
+        "podium_overlap_rate": 0.6667,
+        "top_10_overlap_rate": 1.0,
+        "mean_abs_finish_error": 1.322,
+        "qualifying_conversion_mae": 1.322,
+        "stop_count_mae": 0.395,
+        "first_stop_mae": 11.3467,
+        "dnf_brier": 0.016,
+        "actual_avg_position_change": 1.2,
+        "simulated_avg_position_change": 2.27,
+        "volatility_proxy_error": 1.07,
+        "track_behavior_error": 0.1258
+      },
+      "simulation": {
+        "scenario": {
+          "grand_prix_id": "italian-grand-prix",
+          "grand_prix_name": "Italian Grand Prix",
+          "weather_preset_id": "dry-baseline",
+          "weather_preset_name": "Dry baseline",
+          "simulation_engine": "lap-by-lap",
+          "simulation_runs": 60,
+          "complexity_level": "balanced",
+          "sprint_weekend": false,
+          "headline": "Italian Grand Prix puts real weight on 2026 energy release and active-aero transitions across the lap sequence.",
+          "strategy_outlook": "Deployment management and low-drag efficiency are a bigger part of the race than usual, especially in traffic.",
+          "event_outlook": "Safety car is the strongest race-control channel, with a lap-model volatility index of 0.30.",
+          "confidence_note": "Confidence is moderate overall; race flow matters enough that a single fixed ranking would overstate certainty."
+        },
+        "drivers": [
+          {
+            "driver_id": "max-verstappen",
+            "driver_name": "Max Verstappen",
+            "team_id": "red-bull-racing",
+            "team_name": "Red Bull Racing",
+            "assigned_strategy_id": "long-first-stint",
+            "assigned_strategy_name": "Long first stint",
+            "expected_finish_position": 2.43,
+            "win_probability": 0.4667,
+            "podium_probability": 0.85,
+            "top_10_probability": 1.0,
+            "points_probability": 1.0,
+            "dnf_probability": 0.0833,
+            "expected_points": 19.07,
+            "strategy_success_rate": 0.8333,
+            "uncertainty_index": 0.2283,
+            "confidence_label": "Exposed",
+            "scenario_sensitivity": 0.3406,
+            "event_exposure": 0.5222,
+            "strategy_fit_score": 68.87,
+            "expected_pace_score": 73.05,
+            "expected_grid_position": 7.0,
+            "expected_stop_count": 1.43,
+            "average_first_pit_lap": 27.61,
+            "average_overtakes": 0.02,
+            "average_stint_length": 22.68,
+            "average_position_changes": 7.55,
+            "net_position_delta": 4.57,
+            "primary_stint_path": [
+              "Hard",
+              "Medium"
+            ],
+            "primary_stint_lengths": [
+              30.5,
+              22.5
+            ],
+            "alternate_stint_path": [
+              "Hard",
+              "Intermediate",
+              "Medium",
+              "Intermediate",
+              "Medium"
+            ],
+            "alternate_stint_lengths": [
+              12.6,
+              19.9,
+              1.0,
+              13.4,
+              6.3
+            ],
+            "first_pit_window_start": 16,
+            "first_pit_window_end": 35,
+            "explanation": [
+              "the lap-by-lap model expects this driver to gain track position over the race distance",
+              "incident and race-control exposure remain high enough to weaken confidence in the median finish"
+            ],
+            "position_distribution": [
+              {
+                "position": 1,
+                "probability": 0.4667
+              },
+              {
+                "position": 2,
+                "probability": 0.25
+              },
+              {
+                "position": 3,
+                "probability": 0.1333
+              },
+              {
+                "position": 4,
+                "probability": 0.0333
+              },
+              {
+                "position": 5,
+                "probability": 0.0333
+              },
+              {
+                "position": 6,
+                "probability": 0.0
+              },
+              {
+                "position": 7,
+                "probability": 0.0
+              },
+              {
+                "position": 8,
+                "probability": 0.0167
+              },
+              {
+                "position": 9,
+                "probability": 0.0333
+              },
+              {
+                "position": 10,
+                "probability": 0.0333
+              }
+            ],
+            "diagnostics": {
+              "pace_component": 0.318,
+              "track_fit_bonus": 0.1597,
+              "strategy_component": 0.3956,
+              "qualifying_bonus": 0.045,
+              "overtaking_bonus": 0.0001,
+              "energy_bonus": 0.1347,
+              "track_position_bonus": 0.0655,
+              "flexibility_bonus": 0.1389,
+              "chaos_bonus": 0.0348,
+              "weather_event_bonus": 0.0188,
+              "track_evolution_bonus": 0.0108,
+              "tire_penalty": 0.3084,
+              "fuel_penalty": 0.1061,
+              "energy_penalty": 0.2577,
+              "temperature_penalty": 0.0218,
+              "pit_penalty": 0.634,
+              "traffic_penalty": 0.0961,
+              "post_pit_traffic_penalty": 0.0047,
+              "pit_timing_regret": 0.0015,
+              "undercut_delta": 0.0016,
+              "overcut_delta": 0.0003,
+              "post_pit_position_delta": 0.005,
+              "reliability_penalty": 0.0598,
+              "risk_penalty": 0.0182,
+              "compression_penalty": 0.1155,
+              "incident_penalty": 0.0401,
+              "stochastic_contribution": 0.0082,
+              "projected_score": -0.2313,
+              "raw_pace_score": 70.0316,
+              "team_baseline": 7.85,
+              "pace_edge": 0.7904,
+              "track_fit_score": 4.4722,
+              "chaos_resilience": 0.9224,
+              "event_exposure": 0.5222,
+              "average_first_pit_lap": 27.61,
+              "average_overtakes": 0.0167,
+              "average_position_changes": 7.55,
+              "net_position_delta": 4.5667,
+              "undercut_success_rate": 0.3125,
+              "overcut_success_rate": 0.875
+            }
+          },
+          {
+            "driver_id": "lando-norris",
+            "driver_name": "Lando Norris",
+            "team_id": "mclaren",
+            "team_name": "McLaren",
+            "assigned_strategy_id": "long-first-stint",
+            "assigned_strategy_name": "Long first stint",
+            "expected_finish_position": 2.77,
+            "win_probability": 0.4333,
+            "podium_probability": 0.7667,
+            "top_10_probability": 1.0,
+            "points_probability": 1.0,
+            "dnf_probability": 0.1167,
+            "expected_points": 18.08,
+            "strategy_success_rate": 0.6833,
+            "uncertainty_index": 0.2506,
+            "confidence_label": "Exposed",
+            "scenario_sensitivity": 0.3393,
+            "event_exposure": 0.517,
+            "strategy_fit_score": 68.87,
+            "expected_pace_score": 70.06,
+            "expected_grid_position": 1.0,
+            "expected_stop_count": 1.45,
+            "average_first_pit_lap": 27.6,
+            "average_overtakes": 0.02,
+            "average_stint_length": 23.08,
+            "average_position_changes": 2.65,
+            "net_position_delta": -1.77,
+            "primary_stint_path": [
+              "Hard",
+              "Medium"
+            ],
+            "primary_stint_lengths": [
+              30.2,
+              22.0
+            ],
+            "alternate_stint_path": [
+              "Hard",
+              "Intermediate",
+              "Medium",
+              "Intermediate",
+              "Medium"
+            ],
+            "alternate_stint_lengths": [
+              12.2,
+              21.5,
+              1.0,
+              12.7,
+              6.2
+            ],
+            "first_pit_window_start": 16,
+            "first_pit_window_end": 35,
+            "explanation": [
+              "incident and race-control exposure remain high enough to weaken confidence in the median finish"
+            ],
+            "position_distribution": [
+              {
+                "position": 1,
+                "probability": 0.4333
+              },
+              {
+                "position": 2,
+                "probability": 0.2333
+              },
+              {
+                "position": 3,
+                "probability": 0.1
+              },
+              {
+                "position": 4,
+                "probability": 0.0667
+              },
+              {
+                "position": 5,
+                "probability": 0.0333
+              },
+              {
+                "position": 6,
+                "probability": 0.0
+              },
+              {
+                "position": 7,
+                "probability": 0.0333
+              },
+              {
+                "position": 8,
+                "probability": 0.0167
+              },
+              {
+                "position": 9,
+                "probability": 0.0667
+              },
+              {
+                "position": 10,
+                "probability": 0.0167
+              }
+            ],
+            "diagnostics": {
+              "pace_component": 0.2193,
+              "track_fit_bonus": 0.1059,
+              "strategy_component": 0.3956,
+              "qualifying_bonus": 0.0423,
+              "overtaking_bonus": 0.0001,
+              "energy_bonus": 0.1303,
+              "track_position_bonus": 0.1026,
+              "flexibility_bonus": 0.1395,
+              "chaos_bonus": 0.034,
+              "weather_event_bonus": 0.0188,
+              "track_evolution_bonus": 0.011,
+              "tire_penalty": 0.3148,
+              "fuel_penalty": 0.1044,
+              "energy_penalty": 0.2621,
+              "temperature_penalty": 0.0218,
+              "pit_penalty": 0.6763,
+              "traffic_penalty": 0.0278,
+              "post_pit_traffic_penalty": 0.0015,
+              "pit_timing_regret": 0.0025,
+              "undercut_delta": 0.0,
+              "overcut_delta": -0.0003,
+              "post_pit_position_delta": -0.0045,
+              "reliability_penalty": 0.0284,
+              "risk_penalty": 0.0182,
+              "compression_penalty": 0.0329,
+              "incident_penalty": 0.0513,
+              "stochastic_contribution": 0.0008,
+              "projected_score": -0.3102,
+              "raw_pace_score": 68.5355,
+              "team_baseline": 7.85,
+              "pace_edge": 0.545,
+              "track_fit_score": 2.9654,
+              "chaos_resilience": 0.9006,
+              "event_exposure": 0.517,
+              "average_first_pit_lap": 27.6,
+              "average_overtakes": 0.0167,
+              "average_position_changes": 2.65,
+              "net_position_delta": -1.7667,
+              "undercut_success_rate": 0.0556,
+              "overcut_success_rate": 0.878
+            }
+          },
+          {
+            "driver_id": "oscar-piastri",
+            "driver_name": "Oscar Piastri",
+            "team_id": "mclaren",
+            "team_name": "McLaren",
+            "assigned_strategy_id": "long-first-stint",
+            "assigned_strategy_name": "Long first stint",
+            "expected_finish_position": 4.0,
+            "win_probability": 0.0667,
+            "podium_probability": 0.5333,
+            "top_10_probability": 1.0,
+            "points_probability": 1.0,
+            "dnf_probability": 0.0833,
+            "expected_points": 13.17,
+            "strategy_success_rate": 0.6667,
+            "uncertainty_index": 0.2236,
+            "confidence_label": "Exposed",
+            "scenario_sensitivity": 0.3378,
+            "event_exposure": 0.5114,
+            "strategy_fit_score": 68.87,
+            "expected_pace_score": 68.13,
+            "expected_grid_position": 2.0,
+            "expected_stop_count": 1.43,
+            "average_first_pit_lap": 27.34,
+            "average_overtakes": 0.05,
+            "average_stint_length": 22.54,
+            "average_position_changes": 5.07,
+            "net_position_delta": -2.0,
+            "primary_stint_path": [
+              "Hard",
+              "Medium"
+            ],
+            "primary_stint_lengths": [
+              30.0,
+              22.9
+            ],
+            "alternate_stint_path": [
+              "Hard",
+              "Intermediate",
+              "Medium",
+              "Intermediate",
+              "Medium"
+            ],
+            "alternate_stint_lengths": [
+              12.6,
+              19.0,
+              1.0,
+              14.3,
+              6.6
+            ],
+            "first_pit_window_start": 16,
+            "first_pit_window_end": 35,
+            "explanation": [
+              "incident and race-control exposure remain high enough to weaken confidence in the median finish"
+            ],
+            "position_distribution": [
+              {
+                "position": 1,
+                "probability": 0.0667
+              },
+              {
+                "position": 2,
+                "probability": 0.1833
+              },
+              {
+                "position": 3,
+                "probability": 0.2833
+              },
+              {
+                "position": 4,
+                "probability": 0.15
+              },
+              {
+                "position": 5,
+                "probability": 0.1167
+              },
+              {
+                "position": 6,
+                "probability": 0.0833
+              },
+              {
+                "position": 7,
+                "probability": 0.0333
+              },
+              {
+                "position": 8,
+                "probability": 0.0
+              },
+              {
+                "position": 9,
+                "probability": 0.0333
+              },
+              {
+                "position": 10,
+                "probability": 0.05
+              }
+            ],
+            "diagnostics": {
+              "pace_component": 0.1505,
+              "track_fit_bonus": 0.0728,
+              "strategy_component": 0.3956,
+              "qualifying_bonus": 0.042,
+              "overtaking_bonus": 0.0002,
+              "energy_bonus": 0.1407,
+              "track_position_bonus": 0.0885,
+              "flexibility_bonus": 0.1386,
+              "chaos_bonus": 0.0334,
+              "weather_event_bonus": 0.0161,
+              "track_evolution_bonus": 0.0108,
+              "tire_penalty": 0.3128,
+              "fuel_penalty": 0.1059,
+              "energy_penalty": 0.2536,
+              "temperature_penalty": 0.0218,
+              "pit_penalty": 0.6472,
+              "traffic_penalty": 0.0657,
+              "post_pit_traffic_penalty": 0.0034,
+              "pit_timing_regret": 0.0029,
+              "undercut_delta": -0.0029,
+              "overcut_delta": 0.0,
+              "post_pit_position_delta": -0.0029,
+              "reliability_penalty": 0.2177,
+              "risk_penalty": 0.0173,
+              "compression_penalty": 0.0788,
+              "incident_penalty": 0.0409,
+              "stochastic_contribution": 0.0078,
+              "projected_score": -0.5993,
+              "raw_pace_score": 67.4926,
+              "team_baseline": 7.85,
+              "pace_edge": 0.3739,
+              "track_fit_score": 2.0382,
+              "chaos_resilience": 0.884,
+              "event_exposure": 0.5114,
+              "average_first_pit_lap": 27.34,
+              "average_overtakes": 0.05,
+              "average_position_changes": 5.0667,
+              "net_position_delta": -2.0,
+              "undercut_success_rate": 0.1111,
+              "overcut_success_rate": 0.8718
+            }
+          },
+          {
+            "driver_id": "charles-leclerc",
+            "driver_name": "Charles Leclerc",
+            "team_id": "ferrari",
+            "team_name": "Ferrari",
+            "assigned_strategy_id": "long-first-stint",
+            "assigned_strategy_name": "Long first stint",
+            "expected_finish_position": 4.18,
+            "win_probability": 0.0,
+            "podium_probability": 0.45,
+            "top_10_probability": 1.0,
+            "points_probability": 1.0,
+            "dnf_probability": 0.0667,
+            "expected_points": 12.37,
+            "strategy_success_rate": 0.75,
+            "uncertainty_index": 0.2086,
+            "confidence_label": "Exposed",
+            "scenario_sensitivity": 0.3415,
+            "event_exposure": 0.5258,
+            "strategy_fit_score": 68.87,
+            "expected_pace_score": 69.25,
+            "expected_grid_position": 4.0,
+            "expected_stop_count": 1.45,
+            "average_first_pit_lap": 27.21,
+            "average_overtakes": 0.07,
+            "average_stint_length": 22.38,
+            "average_position_changes": 7.17,
+            "net_position_delta": -0.18,
+            "primary_stint_path": [
+              "Hard",
+              "Medium"
+            ],
+            "primary_stint_lengths": [
+              29.9,
+              22.5
+            ],
+            "alternate_stint_path": [
+              "Hard",
+              "Intermediate",
+              "Medium",
+              "Intermediate",
+              "Medium"
+            ],
+            "alternate_stint_lengths": [
+              12.6,
+              19.9,
+              1.0,
+              13.4,
+              6.6
+            ],
+            "first_pit_window_start": 16,
+            "first_pit_window_end": 35,
+            "explanation": [
+              "incident and race-control exposure remain high enough to weaken confidence in the median finish"
+            ],
+            "position_distribution": [
+              {
+                "position": 1,
+                "probability": 0.0
+              },
+              {
+                "position": 2,
+                "probability": 0.2167
+              },
+              {
+                "position": 3,
+                "probability": 0.2333
+              },
+              {
+                "position": 4,
+                "probability": 0.2167
+              },
+              {
+                "position": 5,
+                "probability": 0.1167
+              },
+              {
+                "position": 6,
+                "probability": 0.1167
+              },
+              {
+                "position": 7,
+                "probability": 0.0333
+              },
+              {
+                "position": 8,
+                "probability": 0.0
+              },
+              {
+                "position": 9,
+                "probability": 0.0
+              },
+              {
+                "position": 10,
+                "probability": 0.0667
+              }
+            ],
+            "diagnostics": {
+              "pace_component": 0.1717,
+              "track_fit_bonus": 0.0986,
+              "strategy_component": 0.3956,
+              "qualifying_bonus": 0.0455,
+              "overtaking_bonus": 0.0003,
+              "energy_bonus": 0.1371,
+              "track_position_bonus": 0.0748,
+              "flexibility_bonus": 0.1391,
+              "chaos_bonus": 0.0332,
+              "weather_event_bonus": 0.0174,
+              "track_evolution_bonus": 0.0108,
+              "tire_penalty": 0.31,
+              "fuel_penalty": 0.1061,
+              "energy_penalty": 0.2563,
+              "temperature_penalty": 0.0218,
+              "pit_penalty": 0.6439,
+              "traffic_penalty": 0.0946,
+              "post_pit_traffic_penalty": 0.0041,
+              "pit_timing_regret": 0.0018,
+              "undercut_delta": 0.0018,
+              "overcut_delta": 0.0,
+              "post_pit_position_delta": 0.0025,
+              "reliability_penalty": 0.1319,
+              "risk_penalty": 0.0187,
+              "compression_penalty": 0.1128,
+              "incident_penalty": 0.0436,
+              "stochastic_contribution": 0.0002,
+              "projected_score": -0.5208,
+              "raw_pace_score": 67.8146,
+              "team_baseline": 7.3,
+              "pace_edge": 0.4267,
+              "track_fit_score": 2.7607,
+              "chaos_resilience": 0.879,
+              "event_exposure": 0.5258,
+              "average_first_pit_lap": 27.21,
+              "average_overtakes": 0.0667,
+              "average_position_changes": 7.1667,
+              "net_position_delta": -0.1833,
+              "undercut_success_rate": 0.2778,
+              "overcut_success_rate": 0.8718
+            }
+          },
+          {
+            "driver_id": "lewis-hamilton",
+            "driver_name": "Lewis Hamilton",
+            "team_id": "mercedes",
+            "team_name": "Mercedes",
+            "assigned_strategy_id": "long-first-stint",
+            "assigned_strategy_name": "Long first stint",
+            "expected_finish_position": 4.6,
+            "win_probability": 0.0167,
+            "podium_probability": 0.2333,
+            "top_10_probability": 1.0,
+            "points_probability": 1.0,
+            "dnf_probability": 0.0667,
+            "expected_points": 11.23,
+            "strategy_success_rate": 0.8167,
+            "uncertainty_index": 0.1772,
+            "confidence_label": "Measured",
+            "scenario_sensitivity": 0.3357,
+            "event_exposure": 0.5026,
+            "strategy_fit_score": 68.87,
+            "expected_pace_score": 69.74,
+            "expected_grid_position": 6.0,
+            "expected_stop_count": 1.4,
+            "average_first_pit_lap": 27.38,
+            "average_overtakes": 0.0,
+            "average_stint_length": 23.24,
+            "average_position_changes": 6.68,
+            "net_position_delta": 1.4,
+            "primary_stint_path": [
+              "Hard",
+              "Medium"
+            ],
+            "primary_stint_lengths": [
+              30.0,
+              23.0
+            ],
+            "alternate_stint_path": [
+              "Hard",
+              "Intermediate",
+              "Medium",
+              "Intermediate",
+              "Medium"
+            ],
+            "alternate_stint_lengths": [
+              14.5,
+              17.5,
+              1.0,
+              13.7,
+              6.7
+            ],
+            "first_pit_window_start": 16,
+            "first_pit_window_end": 35,
+            "explanation": [
+              "the lap-by-lap model expects this driver to gain track position over the race distance",
+              "incident and race-control exposure remain high enough to weaken confidence in the median finish"
+            ],
+            "position_distribution": [
+              {
+                "position": 1,
+                "probability": 0.0167
+              },
+              {
+                "position": 2,
+                "probability": 0.0833
+              },
+              {
+                "position": 3,
+                "probability": 0.1333
+              },
+              {
+                "position": 4,
+                "probability": 0.3167
+              },
+              {
+                "position": 5,
+                "probability": 0.2
+              },
+              {
+                "position": 6,
+                "probability": 0.1333
+              },
+              {
+                "position": 7,
+                "probability": 0.05
+              },
+              {
+                "position": 8,
+                "probability": 0.0167
+              },
+              {
+                "position": 9,
+                "probability": 0.0333
+              },
+              {
+                "position": 10,
+                "probability": 0.0167
+              }
+            ],
+            "diagnostics": {
+              "pace_component": 0.141,
+              "track_fit_bonus": 0.1242,
+              "strategy_component": 0.3956,
+              "qualifying_bonus": 0.0419,
+              "overtaking_bonus": 0.0,
+              "energy_bonus": 0.131,
+              "track_position_bonus": 0.0563,
+              "flexibility_bonus": 0.1395,
+              "chaos_bonus": 0.0345,
+              "weather_event_bonus": 0.0197,
+              "track_evolution_bonus": 0.0109,
+              "tire_penalty": 0.3149,
+              "fuel_penalty": 0.105,
+              "energy_penalty": 0.261,
+              "temperature_penalty": 0.0218,
+              "pit_penalty": 0.6462,
+              "traffic_penalty": 0.1125,
+              "post_pit_traffic_penalty": 0.0058,
+              "pit_timing_regret": 0.0019,
+              "undercut_delta": 0.0009,
+              "overcut_delta": 0.0013,
+              "post_pit_position_delta": 0.0058,
+              "reliability_penalty": 0.0291,
+              "risk_penalty": 0.0163,
+              "compression_penalty": 0.133,
+              "incident_penalty": 0.0322,
+              "stochastic_contribution": -0.0016,
+              "projected_score": -0.4664,
+              "raw_pace_score": 67.3499,
+              "team_baseline": 6.57,
+              "pace_edge": 0.3505,
+              "track_fit_score": 3.4765,
+              "chaos_resilience": 0.9148,
+              "event_exposure": 0.5026,
+              "average_first_pit_lap": 27.38,
+              "average_overtakes": 0.0,
+              "average_position_changes": 6.6833,
+              "net_position_delta": 1.4,
+              "undercut_success_rate": 0.2353,
+              "overcut_success_rate": 0.925
+            }
+          },
+          {
+            "driver_id": "carlos-sainz",
+            "driver_name": "Carlos Sainz",
+            "team_id": "ferrari",
+            "team_name": "Ferrari",
+            "assigned_strategy_id": "long-first-stint",
+            "assigned_strategy_name": "Long first stint",
+            "expected_finish_position": 5.43,
+            "win_probability": 0.0,
+            "podium_probability": 0.15,
+            "top_10_probability": 1.0,
+            "points_probability": 1.0,
+            "dnf_probability": 0.1667,
+            "expected_points": 9.43,
+            "strategy_success_rate": 0.7833,
+            "uncertainty_index": 0.2148,
+            "confidence_label": "Exposed",
+            "scenario_sensitivity": 0.3378,
+            "event_exposure": 0.5114,
+            "strategy_fit_score": 68.87,
+            "expected_pace_score": 68.09,
+            "expected_grid_position": 5.0,
+            "expected_stop_count": 1.33,
+            "average_first_pit_lap": 27.34,
+            "average_overtakes": 0.0,
+            "average_stint_length": 22.48,
+            "average_position_changes": 7.0,
+            "net_position_delta": -0.43,
+            "primary_stint_path": [
+              "Hard",
+              "Medium"
+            ],
+            "primary_stint_lengths": [
+              30.2,
+              22.0
+            ],
+            "alternate_stint_path": [
+              "Hard",
+              "Intermediate",
+              "Medium",
+              "Intermediate",
+              "Medium"
+            ],
+            "alternate_stint_lengths": [
+              14.0,
+              18.6,
+              1.0,
+              13.2,
+              6.6
+            ],
+            "first_pit_window_start": 16,
+            "first_pit_window_end": 35,
+            "explanation": [
+              "incident and race-control exposure remain high enough to weaken confidence in the median finish"
+            ],
+            "position_distribution": [
+              {
+                "position": 1,
+                "probability": 0.0
+              },
+              {
+                "position": 2,
+                "probability": 0.0333
+              },
+              {
+                "position": 3,
+                "probability": 0.1167
+              },
+              {
+                "position": 4,
+                "probability": 0.1833
+              },
+              {
+                "position": 5,
+                "probability": 0.35
+              },
+              {
+                "position": 6,
+                "probability": 0.1167
+              },
+              {
+                "position": 7,
+                "probability": 0.0333
+              },
+              {
+                "position": 8,
+                "probability": 0.0167
+              },
+              {
+                "position": 9,
+                "probability": 0.0333
+              },
+              {
+                "position": 10,
+                "probability": 0.1167
+              }
+            ],
+            "diagnostics": {
+              "pace_component": 0.1305,
+              "track_fit_bonus": 0.0787,
+              "strategy_component": 0.3956,
+              "qualifying_bonus": 0.0434,
+              "overtaking_bonus": 0.0,
+              "energy_bonus": 0.1352,
+              "track_position_bonus": 0.0603,
+              "flexibility_bonus": 0.1389,
+              "chaos_bonus": 0.0336,
+              "weather_event_bonus": 0.0177,
+              "track_evolution_bonus": 0.0104,
+              "tire_penalty": 0.317,
+              "fuel_penalty": 0.1093,
+              "energy_penalty": 0.2554,
+              "temperature_penalty": 0.0218,
+              "pit_penalty": 0.7378,
+              "traffic_penalty": 0.107,
+              "post_pit_traffic_penalty": 0.0056,
+              "pit_timing_regret": 0.0017,
+              "undercut_delta": 0.0006,
+              "overcut_delta": 0.0,
+              "post_pit_position_delta": 0.0006,
+              "reliability_penalty": 0.0924,
+              "risk_penalty": 0.0171,
+              "compression_penalty": 0.1284,
+              "incident_penalty": 0.023,
+              "stochastic_contribution": -0.0097,
+              "projected_score": -0.6676,
+              "raw_pace_score": 67.1901,
+              "team_baseline": 7.3,
+              "pace_edge": 0.3243,
+              "track_fit_score": 2.2042,
+              "chaos_resilience": 0.8892,
+              "event_exposure": 0.5114,
+              "average_first_pit_lap": 27.34,
+              "average_overtakes": 0.0,
+              "average_position_changes": 7.0,
+              "net_position_delta": -0.4333,
+              "undercut_success_rate": 0.2667,
+              "overcut_success_rate": 0.8205
+            }
+          },
+          {
+            "driver_id": "george-russell",
+            "driver_name": "George Russell",
+            "team_id": "mercedes",
+            "team_name": "Mercedes",
+            "assigned_strategy_id": "long-first-stint",
+            "assigned_strategy_name": "Long first stint",
+            "expected_finish_position": 6.82,
+            "win_probability": 0.0167,
+            "podium_probability": 0.0167,
+            "top_10_probability": 1.0,
+            "points_probability": 1.0,
+            "dnf_probability": 0.1667,
+            "expected_points": 6.62,
+            "strategy_success_rate": 0.65,
+            "uncertainty_index": 0.1688,
+            "confidence_label": "Exposed",
+            "scenario_sensitivity": 0.3394,
+            "event_exposure": 0.5174,
+            "strategy_fit_score": 64.07,
+            "expected_pace_score": 66.59,
+            "expected_grid_position": 3.0,
+            "expected_stop_count": 1.35,
+            "average_first_pit_lap": 27.24,
+            "average_overtakes": 0.0,
+            "average_stint_length": 21.68,
+            "average_position_changes": 7.32,
+            "net_position_delta": -3.82,
+            "primary_stint_path": [
+              "Hard",
+              "Medium"
+            ],
+            "primary_stint_lengths": [
+              29.8,
+              22.3
+            ],
+            "alternate_stint_path": [
+              "Hard",
+              "Intermediate",
+              "Medium",
+              "Intermediate",
+              "Medium"
+            ],
+            "alternate_stint_lengths": [
+              12.6,
+              17.6,
+              1.0,
+              15.7,
+              6.6
+            ],
+            "first_pit_window_start": 16,
+            "first_pit_window_end": 35,
+            "explanation": [
+              "incident and race-control exposure remain high enough to weaken confidence in the median finish"
+            ],
+            "position_distribution": [
+              {
+                "position": 1,
+                "probability": 0.0167
+              },
+              {
+                "position": 2,
+                "probability": 0.0
+              },
+              {
+                "position": 3,
+                "probability": 0.0
+              },
+              {
+                "position": 4,
+                "probability": 0.0167
+              },
+              {
+                "position": 5,
+                "probability": 0.1
+              },
+              {
+                "position": 6,
+                "probability": 0.3667
+              },
+              {
+                "position": 7,
+                "probability": 0.25
+              },
+              {
+                "position": 8,
+                "probability": 0.1
+              },
+              {
+                "position": 9,
+                "probability": 0.0167
+              },
+              {
+                "position": 10,
+                "probability": 0.1333
+              }
+            ],
+            "diagnostics": {
+              "pace_component": 0.0444,
+              "track_fit_bonus": 0.0789,
+              "strategy_component": 0.295,
+              "qualifying_bonus": 0.0453,
+              "overtaking_bonus": 0.0,
+              "energy_bonus": 0.1444,
+              "track_position_bonus": 0.066,
+              "flexibility_bonus": 0.1387,
+              "chaos_bonus": 0.033,
+              "weather_event_bonus": 0.0164,
+              "track_evolution_bonus": 0.0101,
+              "tire_penalty": 0.2966,
+              "fuel_penalty": 0.112,
+              "energy_penalty": 0.2498,
+              "temperature_penalty": 0.0218,
+              "pit_penalty": 0.6331,
+              "traffic_penalty": 0.0905,
+              "post_pit_traffic_penalty": 0.003,
+              "pit_timing_regret": 0.0037,
+              "undercut_delta": -0.0019,
+              "overcut_delta": -0.0006,
+              "post_pit_position_delta": -0.0043,
+              "reliability_penalty": 0.1999,
+              "risk_penalty": 0.0183,
+              "compression_penalty": 0.1086,
+              "incident_penalty": 0.0394,
+              "stochastic_contribution": -0.0005,
+              "projected_score": -0.8075,
+              "raw_pace_score": 65.8863,
+              "team_baseline": 6.57,
+              "pace_edge": 0.1105,
+              "track_fit_score": 2.2091,
+              "chaos_resilience": 0.8738,
+              "event_exposure": 0.5174,
+              "average_first_pit_lap": 27.24,
+              "average_overtakes": 0.0,
+              "average_position_changes": 7.3167,
+              "net_position_delta": -3.8167,
+              "undercut_success_rate": 0.0625,
+              "overcut_success_rate": 0.7838
+            }
+          },
+          {
+            "driver_id": "sergio-perez",
+            "driver_name": "Sergio Perez",
+            "team_id": "red-bull-racing",
+            "team_name": "Red Bull Racing",
+            "assigned_strategy_id": "long-first-stint",
+            "assigned_strategy_name": "Long first stint",
+            "expected_finish_position": 7.47,
+            "win_probability": 0.0,
+            "podium_probability": 0.0,
+            "top_10_probability": 1.0,
+            "points_probability": 1.0,
+            "dnf_probability": 0.1833,
+            "expected_points": 5.18,
+            "strategy_success_rate": 0.6833,
+            "uncertainty_index": 0.136,
+            "confidence_label": "Measured",
+            "scenario_sensitivity": 0.3387,
+            "event_exposure": 0.515,
+            "strategy_fit_score": 64.07,
+            "expected_pace_score": 64.99,
+            "expected_grid_position": 8.0,
+            "expected_stop_count": 1.28,
+            "average_first_pit_lap": 26.98,
+            "average_overtakes": 0.08,
+            "average_stint_length": 21.55,
+            "average_position_changes": 2.68,
+            "net_position_delta": 0.53,
+            "primary_stint_path": [
+              "Hard",
+              "Medium"
+            ],
+            "primary_stint_lengths": [
+              29.6,
+              22.4
+            ],
+            "alternate_stint_path": [
+              "Hard"
+            ],
+            "alternate_stint_lengths": [
+              9.6
+            ],
+            "first_pit_window_start": 16,
+            "first_pit_window_end": 35,
+            "explanation": [
+              "the lap-by-lap model expects this driver to gain track position over the race distance",
+              "incident and race-control exposure remain high enough to weaken confidence in the median finish"
+            ],
+            "position_distribution": [
+              {
+                "position": 1,
+                "probability": 0.0
+              },
+              {
+                "position": 2,
+                "probability": 0.0
+              },
+              {
+                "position": 3,
+                "probability": 0.0
+              },
+              {
+                "position": 4,
+                "probability": 0.0167
+              },
+              {
+                "position": 5,
+                "probability": 0.05
+              },
+              {
+                "position": 6,
+                "probability": 0.1333
+              },
+              {
+                "position": 7,
+                "probability": 0.35
+              },
+              {
+                "position": 8,
+                "probability": 0.2667
+              },
+              {
+                "position": 9,
+                "probability": 0.0667
+              },
+              {
+                "position": 10,
+                "probability": 0.1167
+              }
+            ],
+            "diagnostics": {
+              "pace_component": 0.0235,
+              "track_fit_bonus": 0.0386,
+              "strategy_component": 0.295,
+              "qualifying_bonus": 0.0407,
+              "overtaking_bonus": 0.0003,
+              "energy_bonus": 0.1413,
+              "track_position_bonus": 0.0297,
+              "flexibility_bonus": 0.1387,
+              "chaos_bonus": 0.0323,
+              "weather_event_bonus": 0.0161,
+              "track_evolution_bonus": 0.01,
+              "tire_penalty": 0.2957,
+              "fuel_penalty": 0.1128,
+              "energy_penalty": 0.2513,
+              "temperature_penalty": 0.0218,
+              "pit_penalty": 0.5824,
+              "traffic_penalty": 0.0664,
+              "post_pit_traffic_penalty": 0.0023,
+              "pit_timing_regret": 0.0016,
+              "undercut_delta": -0.0003,
+              "overcut_delta": 0.0003,
+              "post_pit_position_delta": -0.0003,
+              "reliability_penalty": 0.1395,
+              "risk_penalty": 0.0172,
+              "compression_penalty": 0.0755,
+              "incident_penalty": 0.0433,
+              "stochastic_contribution": 0.0045,
+              "projected_score": -0.7689,
+              "raw_pace_score": 65.5695,
+              "team_baseline": 7.85,
+              "pace_edge": 0.0585,
+              "track_fit_score": 1.082,
+              "chaos_resilience": 0.8556,
+              "event_exposure": 0.515,
+              "average_first_pit_lap": 26.98,
+              "average_overtakes": 0.0833,
+              "average_position_changes": 2.6833,
+              "net_position_delta": 0.5333,
+              "undercut_success_rate": 0.0588,
+              "overcut_success_rate": 0.9143
+            }
+          },
+          {
+            "driver_id": "alexander-albon",
+            "driver_name": "Alexander Albon",
+            "team_id": "williams",
+            "team_name": "Williams",
+            "assigned_strategy_id": "long-first-stint",
+            "assigned_strategy_name": "Long first stint",
+            "expected_finish_position": 8.42,
+            "win_probability": 0.0,
+            "podium_probability": 0.0,
+            "top_10_probability": 1.0,
+            "points_probability": 1.0,
+            "dnf_probability": 0.1667,
+            "expected_points": 3.28,
+            "strategy_success_rate": 0.7667,
+            "uncertainty_index": 0.0988,
+            "confidence_label": "Measured",
+            "scenario_sensitivity": 0.3375,
+            "event_exposure": 0.5098,
+            "strategy_fit_score": 64.07,
+            "expected_pace_score": 57.18,
+            "expected_grid_position": 9.0,
+            "expected_stop_count": 1.32,
+            "average_first_pit_lap": 27.19,
+            "average_overtakes": 0.0,
+            "average_stint_length": 21.49,
+            "average_position_changes": 1.95,
+            "net_position_delta": 0.58,
+            "primary_stint_path": [
+              "Hard",
+              "Medium"
+            ],
+            "primary_stint_lengths": [
+              30.2,
+              21.8
+            ],
+            "alternate_stint_path": [
+              "Hard"
+            ],
+            "alternate_stint_lengths": [
+              9.4
+            ],
+            "first_pit_window_start": 16,
+            "first_pit_window_end": 35,
+            "explanation": [
+              "the lap-by-lap model expects this driver to gain track position over the race distance",
+              "incident and race-control exposure remain high enough to weaken confidence in the median finish"
+            ],
+            "position_distribution": [
+              {
+                "position": 1,
+                "probability": 0.0
+              },
+              {
+                "position": 2,
+                "probability": 0.0
+              },
+              {
+                "position": 3,
+                "probability": 0.0
+              },
+              {
+                "position": 4,
+                "probability": 0.0
+              },
+              {
+                "position": 5,
+                "probability": 0.0
+              },
+              {
+                "position": 6,
+                "probability": 0.0333
+              },
+              {
+                "position": 7,
+                "probability": 0.15
+              },
+              {
+                "position": 8,
+                "probability": 0.3
+              },
+              {
+                "position": 9,
+                "probability": 0.4
+              },
+              {
+                "position": 10,
+                "probability": 0.1167
+              }
+            ],
+            "diagnostics": {
+              "pace_component": -0.4867,
+              "track_fit_bonus": -0.0124,
+              "strategy_component": 0.295,
+              "qualifying_bonus": 0.0392,
+              "overtaking_bonus": 0.0,
+              "energy_bonus": 0.1349,
+              "track_position_bonus": 0.0156,
+              "flexibility_bonus": 0.1387,
+              "chaos_bonus": 0.0316,
+              "weather_event_bonus": 0.0155,
+              "track_evolution_bonus": 0.0101,
+              "tire_penalty": 0.2947,
+              "fuel_penalty": 0.1123,
+              "energy_penalty": 0.2498,
+              "temperature_penalty": 0.0218,
+              "pit_penalty": 0.61,
+              "traffic_penalty": 0.0326,
+              "post_pit_traffic_penalty": 0.0015,
+              "pit_timing_regret": 0.0007,
+              "undercut_delta": 0.0003,
+              "overcut_delta": 0.0003,
+              "post_pit_position_delta": 0.001,
+              "reliability_penalty": 0.2025,
+              "risk_penalty": 0.0168,
+              "compression_penalty": 0.0386,
+              "incident_penalty": 0.0269,
+              "stochastic_contribution": 0.0155,
+              "projected_score": -1.3766,
+              "raw_pace_score": 57.8386,
+              "team_baseline": 1.28,
+              "pace_edge": -1.2096,
+              "track_fit_score": -0.348,
+              "chaos_resilience": 0.836,
+              "event_exposure": 0.5098,
+              "average_first_pit_lap": 27.19,
+              "average_overtakes": 0.0,
+              "average_position_changes": 1.95,
+              "net_position_delta": 0.5833,
+              "undercut_success_rate": 0.0625,
+              "overcut_success_rate": 0.8919
+            }
+          },
+          {
+            "driver_id": "nico-hulkenberg",
+            "driver_name": "Nico Hulkenberg",
+            "team_id": "haas",
+            "team_name": "Haas F1 Team",
+            "assigned_strategy_id": "long-first-stint",
+            "assigned_strategy_name": "Long first stint",
+            "expected_finish_position": 8.88,
+            "win_probability": 0.0,
+            "podium_probability": 0.0,
+            "top_10_probability": 1.0,
+            "points_probability": 1.0,
+            "dnf_probability": 0.0833,
+            "expected_points": 2.57,
+            "strategy_success_rate": 0.8,
+            "uncertainty_index": 0.1002,
+            "confidence_label": "Measured",
+            "scenario_sensitivity": 0.3368,
+            "event_exposure": 0.5074,
+            "strategy_fit_score": 64.07,
+            "expected_pace_score": 54.38,
+            "expected_grid_position": 10.0,
+            "expected_stop_count": 1.4,
+            "average_first_pit_lap": 27.07,
+            "average_overtakes": 0.0,
+            "average_stint_length": 22.91,
+            "average_position_changes": 1.9,
+            "net_position_delta": 1.12,
+            "primary_stint_path": [
+              "Hard",
+              "Medium"
+            ],
+            "primary_stint_lengths": [
+              29.9,
+              23.0
+            ],
+            "alternate_stint_path": [
+              "Hard",
+              "Intermediate",
+              "Medium",
+              "Intermediate",
+              "Medium"
+            ],
+            "alternate_stint_lengths": [
+              12.6,
+              19.9,
+              1.0,
+              13.4,
+              6.6
+            ],
+            "first_pit_window_start": 16,
+            "first_pit_window_end": 35,
+            "explanation": [
+              "the lap-by-lap model expects this driver to gain track position over the race distance",
+              "incident and race-control exposure remain high enough to weaken confidence in the median finish"
+            ],
+            "position_distribution": [
+              {
+                "position": 1,
+                "probability": 0.0
+              },
+              {
+                "position": 2,
+                "probability": 0.0
+              },
+              {
+                "position": 3,
+                "probability": 0.0
+              },
+              {
+                "position": 4,
+                "probability": 0.0
+              },
+              {
+                "position": 5,
+                "probability": 0.0
+              },
+              {
+                "position": 6,
+                "probability": 0.0167
+              },
+              {
+                "position": 7,
+                "probability": 0.0667
+              },
+              {
+                "position": 8,
+                "probability": 0.2667
+              },
+              {
+                "position": 9,
+                "probability": 0.3167
+              },
+              {
+                "position": 10,
+                "probability": 0.3333
+              }
+            ],
+            "diagnostics": {
+              "pace_component": -0.6438,
+              "track_fit_bonus": -0.0401,
+              "strategy_component": 0.295,
+              "qualifying_bonus": 0.0364,
+              "overtaking_bonus": 0.0,
+              "energy_bonus": 0.1185,
+              "track_position_bonus": 0.0044,
+              "flexibility_bonus": 0.1388,
+              "chaos_bonus": 0.031,
+              "weather_event_bonus": 0.0154,
+              "track_evolution_bonus": 0.0108,
+              "tire_penalty": 0.3178,
+              "fuel_penalty": 0.1061,
+              "energy_penalty": 0.2599,
+              "temperature_penalty": 0.0218,
+              "pit_penalty": 0.6171,
+              "traffic_penalty": 0.0339,
+              "post_pit_traffic_penalty": 0.0016,
+              "pit_timing_regret": 0.0004,
+              "undercut_delta": 0.0,
+              "overcut_delta": 0.0009,
+              "post_pit_position_delta": 0.0022,
+              "reliability_penalty": 0.0469,
+              "risk_penalty": 0.0169,
+              "compression_penalty": 0.0392,
+              "incident_penalty": 0.0339,
+              "stochastic_contribution": -0.0009,
+              "projected_score": -1.4941,
+              "raw_pace_score": 54.4205,
+              "team_baseline": -1.64,
+              "pace_edge": -1.6,
+              "track_fit_score": -1.1221,
+              "chaos_resilience": 0.8206,
+              "event_exposure": 0.5074,
+              "average_first_pit_lap": 27.07,
+              "average_overtakes": 0.0,
+              "average_position_changes": 1.9,
+              "net_position_delta": 1.1167,
+              "undercut_success_rate": 0.0556,
+              "overcut_success_rate": 0.8947
+            }
+          }
+        ],
+        "team_summary": [
+          {
+            "team_id": "mclaren",
+            "team_name": "McLaren",
+            "avg_expected_finish": 3.38,
+            "expected_points": 31.25,
+            "combined_win_probability": 0.5,
+            "combined_podium_probability": 1.3
+          },
+          {
+            "team_id": "red-bull-racing",
+            "team_name": "Red Bull Racing",
+            "avg_expected_finish": 4.95,
+            "expected_points": 24.25,
+            "combined_win_probability": 0.4667,
+            "combined_podium_probability": 0.85
+          },
+          {
+            "team_id": "ferrari",
+            "team_name": "Ferrari",
+            "avg_expected_finish": 4.8,
+            "expected_points": 21.8,
+            "combined_win_probability": 0.0,
+            "combined_podium_probability": 0.6
+          },
+          {
+            "team_id": "mercedes",
+            "team_name": "Mercedes",
+            "avg_expected_finish": 5.71,
+            "expected_points": 17.85,
+            "combined_win_probability": 0.0334,
+            "combined_podium_probability": 0.25
+          },
+          {
+            "team_id": "williams",
+            "team_name": "Williams",
+            "avg_expected_finish": 8.42,
+            "expected_points": 3.28,
+            "combined_win_probability": 0.0,
+            "combined_podium_probability": 0.0
+          },
+          {
+            "team_id": "haas",
+            "team_name": "Haas F1 Team",
+            "avg_expected_finish": 8.88,
+            "expected_points": 2.57,
+            "combined_win_probability": 0.0,
+            "combined_podium_probability": 0.0
+          }
+        ],
+        "event_summary": {
+          "weather_shift_rate": 0.1667,
+          "yellow_flag_rate": 0.2333,
+          "vsc_rate": 0.05,
+          "safety_car_rate": 0.35,
+          "red_flag_rate": 0.0167,
+          "dnf_rate": 0.0538,
+          "late_incident_rate": 0.15,
+          "volatility_index": 0.3033,
+          "dominant_factor": "Safety car",
+          "impact_summary": [
+            "neutralized windows are materially changing pit-loss math and restart leverage"
+          ],
+          "avg_pit_stops_per_driver": 0.63,
+          "avg_green_flag_overtakes": 0.23,
+          "avg_safety_car_lap": 25.8,
+          "turning_points": [
+            "the race stays green enough for baseline pace and pit windows to decide the order",
+            "a safety car compresses the field and changes pit-loss math",
+            "a mid-race weather shift opens a real crossover window",
+            "late disruption keeps the final phase unstable"
+          ],
+          "circuit_diagnostics": {
+            "circuit_type": "permanent",
+            "degradation_profile": "low",
+            "track_position_importance": 0.41,
+            "overtaking_difficulty": 0.28,
+            "qualifying_importance": 0.44,
+            "tire_stress": 0.35,
+            "safety_car_risk": 0.29,
+            "weather_volatility": 0.24,
+            "energy_sensitivity": 0.92,
+            "strategy_flexibility": 0.74,
+            "track_position_multiplier": 1.4605,
+            "qualifying_carryover_factor": 1.4095,
+            "dirty_air_factor": 1.3055,
+            "overtake_suppression_factor": 0.7669,
+            "degradation_factor": 1.12,
+            "pit_window_pressure_factor": 1.2355,
+            "disruption_leverage_factor": 1.251,
+            "restart_factor": 1.8471,
+            "weather_sensitivity_factor": 1.1595,
+            "deployment_sensitivity_factor": 2.6324,
+            "strategy_flex_factor": 1.5755,
+            "recovery_factor": 1.5145,
+            "clean_air_factor": 1.176,
+            "order_lock_factor": 1.1173,
+            "undercut_factor": 1.1534,
+            "alternate_strategy_factor": 1.6344,
+            "disruption_reshuffle_factor": 1.231
+          },
+          "strategy_diagnostics": {
+            "avg_position_changes_per_driver": 2.27,
+            "avg_first_stop_lap": 27.3,
+            "avg_stop_count": 0.63,
+            "first_stop_window_start": 16,
+            "first_stop_window_end": 35,
+            "undercut_success_tendency": 0.1479,
+            "overcut_success_tendency": 0.8727,
+            "traffic_penalty_impact": 0.0331,
+            "post_pit_traffic_penalty": 0.0733,
+            "avg_post_pit_position_delta": 0.0091,
+            "pit_timing_regret": 0.0431,
+            "strategy_success_rate": 0.3379,
+            "strategy_sensitivity_index": 0.1919,
+            "stop_count_distribution": [
+              {
+                "stops": 0,
+                "share": 0.0295
+              },
+              {
+                "stops": 1,
+                "share": 0.3348
+              },
+              {
+                "stops": 2,
+                "share": 0.0235
+              },
+              {
+                "stops": 3,
+                "share": 0.0189
+              },
+              {
+                "stops": 4,
+                "share": 0.0477
+              }
+            ]
+          },
+          "movement_summary": {
+            "avg_overtakes_per_simulation": 0.23,
+            "avg_position_changes_per_driver": 2.27,
+            "race_fluidity_score": 0.3452,
+            "overtaking_intensity": "Measured"
+          },
+          "event_timing": {
+            "disruption_window_start": 16,
+            "disruption_window_end": 40,
+            "average_disruption_lap": 30.04,
+            "weather_crossover_window_start": 14,
+            "weather_crossover_window_end": 36,
+            "average_weather_shift_lap": 19.6,
+            "average_neutralized_pit_gain": 3.03,
+            "safety_car_leverage_score": 0.2673,
+            "leverage_phase": "L16-40",
+            "late_race_interruption_risk": 0.15
+          },
+          "race_phases": [
+            {
+              "phase_id": "opening",
+              "label": "Launch",
+              "start_lap": 1,
+              "end_lap": 15,
+              "volatility": 0.2468,
+              "pit_pressure": 0.0742,
+              "overtake_load": 0.17,
+              "summary": "the start phase still leaves room for early movement"
+            },
+            {
+              "phase_id": "first-stop",
+              "label": "Stop cycle",
+              "start_lap": 16,
+              "end_lap": 36,
+              "volatility": 0.2953,
+              "pit_pressure": 0.4826,
+              "overtake_load": 0.03,
+              "summary": "pit timing bites hardest here as stops cluster around L16-35"
+            },
+            {
+              "phase_id": "transition",
+              "label": "Middle phase",
+              "start_lap": 37,
+              "end_lap": 41,
+              "volatility": 0.267,
+              "pit_pressure": 0.0068,
+              "overtake_load": 0.0,
+              "summary": "crossover and offset strategies carry the biggest clean-air payoff"
+            },
+            {
+              "phase_id": "closing",
+              "label": "Final push",
+              "start_lap": 42,
+              "end_lap": 53,
+              "volatility": 0.2472,
+              "pit_pressure": 0.0659,
+              "overtake_load": 0.03,
+              "summary": "late interruptions can reopen the order and restart pressure remains live"
+            }
+          ],
+          "evolution_summary": [
+            "opening laps still allow measured early movement",
+            "first-stop pressure opens around laps 16-35",
+            "SC leverage peaks around L16-40",
+            "weather crossover pressure builds around laps 14-36"
+          ]
+        },
+        "strategy_suggestions": [
+          {
+            "driver_id": "max-verstappen",
+            "strategy_id": "long-first-stint",
+            "strategy_name": "Long first stint",
+            "score": 68.87,
+            "risk_profile": "Balanced",
+            "rationale": [
+              "strong tire conservation supports a longer opening stint",
+              "higher safety-car pressure increases the value of flexible stop timing",
+              "later pit windows preserve optionality if race control intervenes late"
+            ],
+            "tradeoff": "balanced race-day profile with moderate upside and limited downside if the weekend stays near baseline"
+          },
+          {
+            "driver_id": "sergio-perez",
+            "strategy_id": "long-first-stint",
+            "strategy_name": "Long first stint",
+            "score": 64.07,
+            "risk_profile": "Balanced",
+            "rationale": [
+              "strong tire conservation supports a longer opening stint",
+              "higher safety-car pressure increases the value of flexible stop timing",
+              "later pit windows preserve optionality if race control intervenes late"
+            ],
+            "tradeoff": "balanced race-day profile with moderate upside and limited downside if the weekend stays near baseline"
+          },
+          {
+            "driver_id": "charles-leclerc",
+            "strategy_id": "long-first-stint",
+            "strategy_name": "Long first stint",
+            "score": 68.87,
+            "risk_profile": "Balanced",
+            "rationale": [
+              "strong tire conservation supports a longer opening stint",
+              "higher safety-car pressure increases the value of flexible stop timing",
+              "later pit windows preserve optionality if race control intervenes late"
+            ],
+            "tradeoff": "balanced race-day profile with moderate upside and limited downside if the weekend stays near baseline"
+          },
+          {
+            "driver_id": "carlos-sainz",
+            "strategy_id": "long-first-stint",
+            "strategy_name": "Long first stint",
+            "score": 68.87,
+            "risk_profile": "Balanced",
+            "rationale": [
+              "strong tire conservation supports a longer opening stint",
+              "higher safety-car pressure increases the value of flexible stop timing",
+              "later pit windows preserve optionality if race control intervenes late"
+            ],
+            "tradeoff": "balanced race-day profile with moderate upside and limited downside if the weekend stays near baseline"
+          },
+          {
+            "driver_id": "lewis-hamilton",
+            "strategy_id": "long-first-stint",
+            "strategy_name": "Long first stint",
+            "score": 68.87,
+            "risk_profile": "Balanced",
+            "rationale": [
+              "strong tire conservation supports a longer opening stint",
+              "higher safety-car pressure increases the value of flexible stop timing",
+              "later pit windows preserve optionality if race control intervenes late"
+            ],
+            "tradeoff": "balanced race-day profile with moderate upside and limited downside if the weekend stays near baseline"
+          },
+          {
+            "driver_id": "george-russell",
+            "strategy_id": "long-first-stint",
+            "strategy_name": "Long first stint",
+            "score": 64.07,
+            "risk_profile": "Balanced",
+            "rationale": [
+              "strong tire conservation supports a longer opening stint",
+              "higher safety-car pressure increases the value of flexible stop timing",
+              "later pit windows preserve optionality if race control intervenes late"
+            ],
+            "tradeoff": "balanced race-day profile with moderate upside and limited downside if the weekend stays near baseline"
+          },
+          {
+            "driver_id": "lando-norris",
+            "strategy_id": "long-first-stint",
+            "strategy_name": "Long first stint",
+            "score": 68.87,
+            "risk_profile": "Balanced",
+            "rationale": [
+              "strong tire conservation supports a longer opening stint",
+              "higher safety-car pressure increases the value of flexible stop timing",
+              "later pit windows preserve optionality if race control intervenes late"
+            ],
+            "tradeoff": "balanced race-day profile with moderate upside and limited downside if the weekend stays near baseline"
+          },
+          {
+            "driver_id": "oscar-piastri",
+            "strategy_id": "long-first-stint",
+            "strategy_name": "Long first stint",
+            "score": 68.87,
+            "risk_profile": "Balanced",
+            "rationale": [
+              "strong tire conservation supports a longer opening stint",
+              "higher safety-car pressure increases the value of flexible stop timing",
+              "later pit windows preserve optionality if race control intervenes late"
+            ],
+            "tradeoff": "balanced race-day profile with moderate upside and limited downside if the weekend stays near baseline"
+          },
+          {
+            "driver_id": "alexander-albon",
+            "strategy_id": "long-first-stint",
+            "strategy_name": "Long first stint",
+            "score": 64.07,
+            "risk_profile": "Balanced",
+            "rationale": [
+              "strong tire conservation supports a longer opening stint",
+              "higher safety-car pressure increases the value of flexible stop timing",
+              "later pit windows preserve optionality if race control intervenes late"
+            ],
+            "tradeoff": "balanced race-day profile with moderate upside and limited downside if the weekend stays near baseline"
+          },
+          {
+            "driver_id": "nico-hulkenberg",
+            "strategy_id": "long-first-stint",
+            "strategy_name": "Long first stint",
+            "score": 64.07,
+            "risk_profile": "Balanced",
+            "rationale": [
+              "strong tire conservation supports a longer opening stint",
+              "higher safety-car pressure increases the value of flexible stop timing",
+              "later pit windows preserve optionality if race control intervenes late"
+            ],
+            "tradeoff": "balanced race-day profile with moderate upside and limited downside if the weekend stays near baseline"
+          }
+        ]
+      },
+      "actual_weekend": {
+        "season": 2024,
+        "round": 16,
+        "grand_prix_id": "italian-grand-prix",
+        "grand_prix_name": "Italian Grand Prix",
+        "circuit_id": "italian-grand-prix",
+        "circuit_name": "Autodromo Nazionale Monza",
+        "country": "Italy",
+        "source_refs": [
+          {
+            "authority": "Formula 1",
+            "source_type": "race_result",
+            "title": "2024 Italian Grand Prix race result",
+            "url": "https://www.formula1.com/en/results/2024/races/1244/italy/race-result",
+            "notes": null
+          },
+          {
+            "authority": "Formula 1",
+            "source_type": "starting_grid",
+            "title": "2024 Italian Grand Prix starting grid",
+            "url": "https://www.formula1.com/en/results/2024/races/1244/italy/starting-grid",
+            "notes": null
+          },
+          {
+            "authority": "Formula 1",
+            "source_type": "pit_stop_summary",
+            "title": "2024 Italian Grand Prix pit stop summary",
+            "url": "https://www.formula1.com/en/results/2024/races/1244/italy/pit-stop-summary",
+            "notes": null
+          }
+        ],
+        "coverage": {
+          "classification_depth": 10,
+          "grid_depth": 10,
+          "pit_stop_coverage": true,
+          "neutralization_coverage": false,
+          "weather_coverage": true,
+          "lap_trace_coverage": false
+        },
+        "entrants": [
+          {
+            "driver_id": "charles-leclerc",
+            "driver_name": "Charles Leclerc",
+            "team_id": "ferrari",
+            "team_name": "Ferrari",
+            "driver_code": "LEC",
+            "car_number": 16,
+            "qualifying_position": 4,
+            "grid_position": 4,
+            "finish_position": 1,
+            "points": 25.0,
+            "laps_completed": 53,
+            "status": "Finished",
+            "classified": true,
+            "dnf": false,
+            "pit_stops": 1,
+            "average_first_stop_lap": 16.0,
+            "average_position_change": 3.0
+          },
+          {
+            "driver_id": "oscar-piastri",
+            "driver_name": "Oscar Piastri",
+            "team_id": "mclaren",
+            "team_name": "McLaren",
+            "driver_code": "PIA",
+            "car_number": 81,
+            "qualifying_position": 2,
+            "grid_position": 2,
+            "finish_position": 2,
+            "points": 18.0,
+            "laps_completed": 53,
+            "status": "Finished",
+            "classified": true,
+            "dnf": false,
+            "pit_stops": 1,
+            "average_first_stop_lap": 16.0,
+            "average_position_change": 0.0
+          },
+          {
+            "driver_id": "lando-norris",
+            "driver_name": "Lando Norris",
+            "team_id": "mclaren",
+            "team_name": "McLaren",
+            "driver_code": "NOR",
+            "car_number": 4,
+            "qualifying_position": 1,
+            "grid_position": 1,
+            "finish_position": 3,
+            "points": 15.0,
+            "laps_completed": 53,
+            "status": "Finished",
+            "classified": true,
+            "dnf": false,
+            "pit_stops": 1,
+            "average_first_stop_lap": 17.0,
+            "average_position_change": 2.0
+          },
+          {
+            "driver_id": "carlos-sainz",
+            "driver_name": "Carlos Sainz",
+            "team_id": "ferrari",
+            "team_name": "Ferrari",
+            "driver_code": "SAI",
+            "car_number": 55,
+            "qualifying_position": 5,
+            "grid_position": 5,
+            "finish_position": 4,
+            "points": 12.0,
+            "laps_completed": 53,
+            "status": "Finished",
+            "classified": true,
+            "dnf": false,
+            "pit_stops": 1,
+            "average_first_stop_lap": 17.0,
+            "average_position_change": 1.0
+          },
+          {
+            "driver_id": "lewis-hamilton",
+            "driver_name": "Lewis Hamilton",
+            "team_id": "mercedes",
+            "team_name": "Mercedes",
+            "driver_code": "HAM",
+            "car_number": 44,
+            "qualifying_position": 6,
+            "grid_position": 6,
+            "finish_position": 5,
+            "points": 10.0,
+            "laps_completed": 53,
+            "status": "Finished",
+            "classified": true,
+            "dnf": false,
+            "pit_stops": null,
+            "average_first_stop_lap": null,
+            "average_position_change": 1.0
+          },
+          {
+            "driver_id": "max-verstappen",
+            "driver_name": "Max Verstappen",
+            "team_id": "red-bull-racing",
+            "team_name": "Red Bull Racing",
+            "driver_code": "VER",
+            "car_number": 1,
+            "qualifying_position": 7,
+            "grid_position": 7,
+            "finish_position": 6,
+            "points": 8.0,
+            "laps_completed": 53,
+            "status": "Finished",
+            "classified": true,
+            "dnf": false,
+            "pit_stops": 1,
+            "average_first_stop_lap": 15.0,
+            "average_position_change": 1.0
+          },
+          {
+            "driver_id": "george-russell",
+            "driver_name": "George Russell",
+            "team_id": "mercedes",
+            "team_name": "Mercedes",
+            "driver_code": "RUS",
+            "car_number": 63,
+            "qualifying_position": 3,
+            "grid_position": 3,
+            "finish_position": 7,
+            "points": 6.0,
+            "laps_completed": 53,
+            "status": "Finished",
+            "classified": true,
+            "dnf": false,
+            "pit_stops": null,
+            "average_first_stop_lap": null,
+            "average_position_change": 4.0
+          },
+          {
+            "driver_id": "sergio-perez",
+            "driver_name": "Sergio Perez",
+            "team_id": "red-bull-racing",
+            "team_name": "Red Bull Racing",
+            "driver_code": "PER",
+            "car_number": 11,
+            "qualifying_position": 8,
+            "grid_position": 8,
+            "finish_position": 8,
+            "points": 4.0,
+            "laps_completed": 53,
+            "status": "Finished",
+            "classified": true,
+            "dnf": false,
+            "pit_stops": 1,
+            "average_first_stop_lap": 15.0,
+            "average_position_change": 0.0
+          },
+          {
+            "driver_id": "alexander-albon",
+            "driver_name": "Alexander Albon",
+            "team_id": "williams",
+            "team_name": "Williams",
+            "driver_code": "ALB",
+            "car_number": 23,
+            "qualifying_position": 9,
+            "grid_position": 9,
+            "finish_position": 9,
+            "points": 2.0,
+            "laps_completed": 53,
+            "status": "Finished",
+            "classified": true,
+            "dnf": false,
+            "pit_stops": null,
+            "average_first_stop_lap": null,
+            "average_position_change": 0.0
+          },
+          {
+            "driver_id": "nico-hulkenberg",
+            "driver_name": "Nico Hulkenberg",
+            "team_id": "haas",
+            "team_name": "Haas F1 Team",
+            "driver_code": "HUL",
+            "car_number": 27,
+            "qualifying_position": 10,
+            "grid_position": 10,
+            "finish_position": 10,
+            "points": 1.0,
+            "laps_completed": 53,
+            "status": "Finished",
+            "classified": true,
+            "dnf": false,
+            "pit_stops": null,
+            "average_first_stop_lap": null,
+            "average_position_change": 0.0
+          }
+        ],
+        "pit_stop_events": [
+          {
+            "driver_id": "charles-leclerc",
+            "driver_name": "Charles Leclerc",
+            "team_id": "ferrari",
+            "lap": 16,
+            "stop_number": 1,
+            "duration_seconds": null,
+            "compound_out": "Medium",
+            "compound_in": "Hard"
+          },
+          {
+            "driver_id": "lando-norris",
+            "driver_name": "Lando Norris",
+            "team_id": "mclaren",
+            "lap": 17,
+            "stop_number": 1,
+            "duration_seconds": null,
+            "compound_out": "Medium",
+            "compound_in": "Hard"
+          },
+          {
+            "driver_id": "oscar-piastri",
+            "driver_name": "Oscar Piastri",
+            "team_id": "mclaren",
+            "lap": 16,
+            "stop_number": 1,
+            "duration_seconds": null,
+            "compound_out": "Medium",
+            "compound_in": "Hard"
+          },
+          {
+            "driver_id": "carlos-sainz",
+            "driver_name": "Carlos Sainz",
+            "team_id": "ferrari",
+            "lap": 17,
+            "stop_number": 1,
+            "duration_seconds": null,
+            "compound_out": "Medium",
+            "compound_in": "Hard"
+          },
+          {
+            "driver_id": "max-verstappen",
+            "driver_name": "Max Verstappen",
+            "team_id": "red-bull-racing",
+            "lap": 15,
+            "stop_number": 1,
+            "duration_seconds": null,
+            "compound_out": "Medium",
+            "compound_in": "Hard"
+          },
+          {
+            "driver_id": "sergio-perez",
+            "driver_name": "Sergio Perez",
+            "team_id": "red-bull-racing",
+            "lap": 15,
+            "stop_number": 1,
+            "duration_seconds": null,
+            "compound_out": "Medium",
+            "compound_in": "Hard"
+          }
+        ],
+        "neutralizations": [],
+        "weather_markers": [
+          {
+            "lap": 1,
+            "condition": "dry",
+            "provenance": "official",
+            "notes": "Dry and stable race."
+          }
+        ],
+        "notes": [
+          "Coverage focuses on the top-10 classification and the lead strategy group."
+        ]
+      }
+    },
+    {
+      "season": 2024,
+      "grand_prix_id": "monaco-grand-prix",
+      "grand_prix_name": "Monaco Grand Prix",
+      "metrics": {
+        "covered_driver_count": 10,
+        "winner_hit": 0.0,
+        "actual_winner_probability": 0.2667,
+        "podium_overlap_rate": 0.3333,
+        "top_10_overlap_rate": 1.0,
+        "mean_abs_finish_error": 1.59,
+        "qualifying_conversion_mae": 1.59,
+        "stop_count_mae": 0.4417,
+        "first_stop_mae": 22.7,
+        "dnf_brier": 0.0139,
+        "actual_avg_position_change": 0.0,
+        "simulated_avg_position_change": 4.18,
+        "volatility_proxy_error": 4.18,
+        "track_behavior_error": 0.2208
+      },
+      "simulation": {
+        "scenario": {
+          "grand_prix_id": "monaco-grand-prix",
+          "grand_prix_name": "Monaco Grand Prix",
+          "weather_preset_id": "dry-baseline",
+          "weather_preset_name": "Dry baseline",
+          "simulation_engine": "lap-by-lap",
+          "simulation_runs": 60,
+          "complexity_level": "balanced",
+          "sprint_weekend": false,
+          "headline": "Monaco Grand Prix remains heavily qualifying-led, but the result now still evolves through laps, traffic, and pit timing.",
+          "strategy_outlook": "Flexible and safety-car-aware plans gain value because the lap model can now reward neutralized stop timing directly.",
+          "event_outlook": "Safety car is the strongest race-control channel, with a lap-model volatility index of 0.33.",
+          "confidence_note": "Confidence is moderate overall; race flow matters enough that a single fixed ranking would overstate certainty."
+        },
+        "drivers": [
+          {
+            "driver_id": "max-verstappen",
+            "driver_name": "Max Verstappen",
+            "team_id": "red-bull-racing",
+            "team_name": "Red Bull Racing",
+            "assigned_strategy_id": "one-stop-control",
+            "assigned_strategy_name": "One-stop control",
+            "expected_finish_position": 2.2,
+            "win_probability": 0.6333,
+            "podium_probability": 0.8333,
+            "top_10_probability": 1.0,
+            "points_probability": 1.0,
+            "dnf_probability": 0.0667,
+            "expected_points": 20.4,
+            "strategy_success_rate": 0.7333,
+            "uncertainty_index": 0.2272,
+            "confidence_label": "Exposed",
+            "scenario_sensitivity": 0.346,
+            "event_exposure": 0.5642,
+            "strategy_fit_score": 70.99,
+            "expected_pace_score": 72.01,
+            "expected_grid_position": 6.0,
+            "expected_stop_count": 1.5,
+            "average_first_pit_lap": 23.72,
+            "average_overtakes": 0.0,
+            "average_stint_length": 33.59,
+            "average_position_changes": 10.1,
+            "net_position_delta": 3.8,
+            "primary_stint_path": [
+              "Medium",
+              "Hard"
+            ],
+            "primary_stint_lengths": [
+              24.0,
+              51.6
+            ],
+            "alternate_stint_path": [
+              "Medium",
+              "Hard",
+              "Intermediate",
+              "Hard"
+            ],
+            "alternate_stint_lengths": [
+              24.0,
+              17.3,
+              28.6,
+              8.1
+            ],
+            "first_pit_window_start": 25,
+            "first_pit_window_end": 25,
+            "explanation": [
+              "qualifying still matters here because track position shapes the early lap sequence",
+              "the race often tilts toward an earlier first stop, so undercut timing matters",
+              "the lap-by-lap model expects this driver to gain track position over the race distance"
+            ],
+            "position_distribution": [
+              {
+                "position": 1,
+                "probability": 0.6333
+              },
+              {
+                "position": 2,
+                "probability": 0.1333
+              },
+              {
+                "position": 3,
+                "probability": 0.0667
+              },
+              {
+                "position": 4,
+                "probability": 0.0333
+              },
+              {
+                "position": 5,
+                "probability": 0.0667
+              },
+              {
+                "position": 6,
+                "probability": 0.0
+              },
+              {
+                "position": 7,
+                "probability": 0.0
+              },
+              {
+                "position": 8,
+                "probability": 0.0
+              },
+              {
+                "position": 9,
+                "probability": 0.0333
+              },
+              {
+                "position": 10,
+                "probability": 0.0333
+              }
+            ],
+            "diagnostics": {
+              "pace_component": 0.335,
+              "track_fit_bonus": 0.1164,
+              "strategy_component": 0.3552,
+              "qualifying_bonus": 0.1911,
+              "overtaking_bonus": 0.0,
+              "energy_bonus": 0.0601,
+              "track_position_bonus": 0.122,
+              "flexibility_bonus": 0.0285,
+              "chaos_bonus": 0.0448,
+              "weather_event_bonus": 0.0168,
+              "track_evolution_bonus": 0.0101,
+              "tire_penalty": 0.4237,
+              "fuel_penalty": 0.0888,
+              "energy_penalty": 0.1195,
+              "temperature_penalty": 0.0199,
+              "pit_penalty": 0.4288,
+              "traffic_penalty": 0.0456,
+              "post_pit_traffic_penalty": 0.0021,
+              "pit_timing_regret": 0.0067,
+              "undercut_delta": 0.0,
+              "overcut_delta": -0.0115,
+              "post_pit_position_delta": -0.0115,
+              "reliability_penalty": 0.0158,
+              "risk_penalty": 0.0246,
+              "compression_penalty": 0.0654,
+              "incident_penalty": 0.0369,
+              "stochastic_contribution": 0.0047,
+              "projected_score": 0.0612,
+              "raw_pace_score": 69.2706,
+              "team_baseline": 7.85,
+              "pace_edge": 0.8324,
+              "track_fit_score": 3.2588,
+              "chaos_resilience": 0.9224,
+              "event_exposure": 0.5642,
+              "average_first_pit_lap": 23.72,
+              "average_overtakes": 0.0,
+              "average_position_changes": 10.1,
+              "net_position_delta": 3.8,
+              "undercut_success_rate": 0.0,
+              "overcut_success_rate": 0.4167
+            }
+          },
+          {
+            "driver_id": "charles-leclerc",
+            "driver_name": "Charles Leclerc",
+            "team_id": "ferrari",
+            "team_name": "Ferrari",
+            "assigned_strategy_id": "one-stop-control",
+            "assigned_strategy_name": "One-stop control",
+            "expected_finish_position": 2.82,
+            "win_probability": 0.2667,
+            "podium_probability": 0.8167,
+            "top_10_probability": 1.0,
+            "points_probability": 1.0,
+            "dnf_probability": 0.0833,
+            "expected_points": 17.17,
+            "strategy_success_rate": 0.7667,
+            "uncertainty_index": 0.2255,
+            "confidence_label": "Exposed",
+            "scenario_sensitivity": 0.3469,
+            "event_exposure": 0.5678,
+            "strategy_fit_score": 70.99,
+            "expected_pace_score": 69.57,
+            "expected_grid_position": 1.0,
+            "expected_stop_count": 1.45,
+            "average_first_pit_lap": 23.69,
+            "average_overtakes": 0.0,
+            "average_stint_length": 33.27,
+            "average_position_changes": 4.28,
+            "net_position_delta": -1.82,
+            "primary_stint_path": [
+              "Medium",
+              "Hard"
+            ],
+            "primary_stint_lengths": [
+              24.0,
+              50.8
+            ],
+            "alternate_stint_path": [
+              "Medium",
+              "Hard",
+              "Intermediate",
+              "Hard"
+            ],
+            "alternate_stint_lengths": [
+              24.0,
+              16.6,
+              29.0,
+              8.4
+            ],
+            "first_pit_window_start": 25,
+            "first_pit_window_end": 25,
+            "explanation": [
+              "qualifying still matters here because track position shapes the early lap sequence",
+              "the race often tilts toward an earlier first stop, so undercut timing matters",
+              "incident and race-control exposure remain high enough to weaken confidence in the median finish"
+            ],
+            "position_distribution": [
+              {
+                "position": 1,
+                "probability": 0.2667
+              },
+              {
+                "position": 2,
+                "probability": 0.3667
+              },
+              {
+                "position": 3,
+                "probability": 0.1833
+              },
+              {
+                "position": 4,
+                "probability": 0.0333
+              },
+              {
+                "position": 5,
+                "probability": 0.0333
+              },
+              {
+                "position": 6,
+                "probability": 0.0333
+              },
+              {
+                "position": 7,
+                "probability": 0.0
+              },
+              {
+                "position": 8,
+                "probability": 0.0
+              },
+              {
+                "position": 9,
+                "probability": 0.0667
+              },
+              {
+                "position": 10,
+                "probability": 0.0167
+              }
+            ],
+            "diagnostics": {
+              "pace_component": 0.2076,
+              "track_fit_bonus": 0.089,
+              "strategy_component": 0.3552,
+              "qualifying_bonus": 0.1971,
+              "overtaking_bonus": 0.0,
+              "energy_bonus": 0.058,
+              "track_position_bonus": 0.1949,
+              "flexibility_bonus": 0.0282,
+              "chaos_bonus": 0.0427,
+              "weather_event_bonus": 0.0149,
+              "track_evolution_bonus": 0.0099,
+              "tire_penalty": 0.4221,
+              "fuel_penalty": 0.0906,
+              "energy_penalty": 0.1189,
+              "temperature_penalty": 0.0199,
+              "pit_penalty": 0.4189,
+              "traffic_penalty": 0.0103,
+              "post_pit_traffic_penalty": 0.0008,
+              "pit_timing_regret": 0.0032,
+              "undercut_delta": 0.0,
+              "overcut_delta": -0.0043,
+              "post_pit_position_delta": -0.0053,
+              "reliability_penalty": 0.0238,
+              "risk_penalty": 0.0237,
+              "compression_penalty": 0.0151,
+              "incident_penalty": 0.026,
+              "stochastic_contribution": 0.0057,
+              "projected_score": 0.0441,
+              "raw_pace_score": 66.8846,
+              "team_baseline": 7.3,
+              "pace_edge": 0.516,
+              "track_fit_score": 2.493,
+              "chaos_resilience": 0.879,
+              "event_exposure": 0.5678,
+              "average_first_pit_lap": 23.69,
+              "average_overtakes": 0.0,
+              "average_position_changes": 4.2833,
+              "net_position_delta": -1.8167,
+              "undercut_success_rate": 0.0,
+              "overcut_success_rate": 0.7797
+            }
+          },
+          {
+            "driver_id": "lando-norris",
+            "driver_name": "Lando Norris",
+            "team_id": "mclaren",
+            "team_name": "McLaren",
+            "assigned_strategy_id": "one-stop-control",
+            "assigned_strategy_name": "One-stop control",
+            "expected_finish_position": 3.77,
+            "win_probability": 0.05,
+            "podium_probability": 0.5333,
+            "top_10_probability": 1.0,
+            "points_probability": 1.0,
+            "dnf_probability": 0.05,
+            "expected_points": 13.58,
+            "strategy_success_rate": 0.75,
+            "uncertainty_index": 0.1986,
+            "confidence_label": "Exposed",
+            "scenario_sensitivity": 0.3448,
+            "event_exposure": 0.559,
+            "strategy_fit_score": 70.99,
+            "expected_pace_score": 69.53,
+            "expected_grid_position": 4.0,
+            "expected_stop_count": 1.47,
+            "average_first_pit_lap": 23.67,
+            "average_overtakes": 0.0,
+            "average_stint_length": 33.44,
+            "average_position_changes": 9.67,
+            "net_position_delta": 0.23,
+            "primary_stint_path": [
+              "Medium",
+              "Hard"
+            ],
+            "primary_stint_lengths": [
+              24.0,
+              53.7
+            ],
+            "alternate_stint_path": [
+              "Medium",
+              "Hard",
+              "Intermediate",
+              "Hard"
+            ],
+            "alternate_stint_lengths": [
+              24.0,
+              17.3,
+              28.6,
+              8.1
+            ],
+            "first_pit_window_start": 25,
+            "first_pit_window_end": 25,
+            "explanation": [
+              "qualifying still matters here because track position shapes the early lap sequence",
+              "the race often tilts toward an earlier first stop, so undercut timing matters",
+              "incident and race-control exposure remain high enough to weaken confidence in the median finish"
+            ],
+            "position_distribution": [
+              {
+                "position": 1,
+                "probability": 0.05
+              },
+              {
+                "position": 2,
+                "probability": 0.25
+              },
+              {
+                "position": 3,
+                "probability": 0.2333
+              },
+              {
+                "position": 4,
+                "probability": 0.2
+              },
+              {
+                "position": 5,
+                "probability": 0.0833
+              },
+              {
+                "position": 6,
+                "probability": 0.1167
+              },
+              {
+                "position": 7,
+                "probability": 0.0167
+              },
+              {
+                "position": 8,
+                "probability": 0.0
+              },
+              {
+                "position": 9,
+                "probability": 0.0167
+              },
+              {
+                "position": 10,
+                "probability": 0.0333
+              }
+            ],
+            "diagnostics": {
+              "pace_component": 0.2407,
+              "track_fit_bonus": 0.0762,
+              "strategy_component": 0.3552,
+              "qualifying_bonus": 0.1843,
+              "overtaking_bonus": 0.0,
+              "energy_bonus": 0.0599,
+              "track_position_bonus": 0.1368,
+              "flexibility_bonus": 0.0284,
+              "chaos_bonus": 0.0438,
+              "weather_event_bonus": 0.0161,
+              "track_evolution_bonus": 0.01,
+              "tire_penalty": 0.4217,
+              "fuel_penalty": 0.0895,
+              "energy_penalty": 0.1175,
+              "temperature_penalty": 0.0199,
+              "pit_penalty": 0.4056,
+              "traffic_penalty": 0.0436,
+              "post_pit_traffic_penalty": 0.0026,
+              "pit_timing_regret": 0.0069,
+              "undercut_delta": 0.0,
+              "overcut_delta": -0.0121,
+              "post_pit_position_delta": -0.0131,
+              "reliability_penalty": 0.0646,
+              "risk_penalty": 0.0233,
+              "compression_penalty": 0.0623,
+              "incident_penalty": 0.027,
+              "stochastic_contribution": 0.0027,
+              "projected_score": -0.0773,
+              "raw_pace_score": 67.505,
+              "team_baseline": 7.85,
+              "pace_edge": 0.5983,
+              "track_fit_score": 2.1346,
+              "chaos_resilience": 0.9006,
+              "event_exposure": 0.559,
+              "average_first_pit_lap": 23.67,
+              "average_overtakes": 0.0,
+              "average_position_changes": 9.6667,
+              "net_position_delta": 0.2333,
+              "undercut_success_rate": 0.0,
+              "overcut_success_rate": 0.3621
+            }
+          },
+          {
+            "driver_id": "oscar-piastri",
+            "driver_name": "Oscar Piastri",
+            "team_id": "mclaren",
+            "team_name": "McLaren",
+            "assigned_strategy_id": "one-stop-control",
+            "assigned_strategy_name": "One-stop control",
+            "expected_finish_position": 4.43,
+            "win_probability": 0.0333,
+            "podium_probability": 0.4833,
+            "top_10_probability": 1.0,
+            "points_probability": 1.0,
+            "dnf_probability": 0.1333,
+            "expected_points": 12.12,
+            "strategy_success_rate": 0.7167,
+            "uncertainty_index": 0.2565,
+            "confidence_label": "Exposed",
+            "scenario_sensitivity": 0.3433,
+            "event_exposure": 0.5534,
+            "strategy_fit_score": 70.99,
+            "expected_pace_score": 68.0,
+            "expected_grid_position": 2.0,
+            "expected_stop_count": 1.48,
+            "average_first_pit_lap": 23.69,
+            "average_overtakes": 0.0,
+            "average_stint_length": 32.93,
+            "average_position_changes": 7.93,
+            "net_position_delta": -2.43,
+            "primary_stint_path": [
+              "Medium",
+              "Hard"
+            ],
+            "primary_stint_lengths": [
+              24.0,
+              50.7
+            ],
+            "alternate_stint_path": [
+              "Medium",
+              "Hard",
+              "Intermediate",
+              "Hard"
+            ],
+            "alternate_stint_lengths": [
+              24.0,
+              17.3,
+              28.6,
+              8.1
+            ],
+            "first_pit_window_start": 25,
+            "first_pit_window_end": 25,
+            "explanation": [
+              "qualifying still matters here because track position shapes the early lap sequence",
+              "the race often tilts toward an earlier first stop, so undercut timing matters",
+              "incident and race-control exposure remain high enough to weaken confidence in the median finish"
+            ],
+            "position_distribution": [
+              {
+                "position": 1,
+                "probability": 0.0333
+              },
+              {
+                "position": 2,
+                "probability": 0.1833
+              },
+              {
+                "position": 3,
+                "probability": 0.2667
+              },
+              {
+                "position": 4,
+                "probability": 0.1833
+              },
+              {
+                "position": 5,
+                "probability": 0.0667
+              },
+              {
+                "position": 6,
+                "probability": 0.0833
+              },
+              {
+                "position": 7,
+                "probability": 0.05
+              },
+              {
+                "position": 8,
+                "probability": 0.0
+              },
+              {
+                "position": 9,
+                "probability": 0.0167
+              },
+              {
+                "position": 10,
+                "probability": 0.1167
+              }
+            ],
+            "diagnostics": {
+              "pace_component": 0.1753,
+              "track_fit_bonus": 0.0539,
+              "strategy_component": 0.3552,
+              "qualifying_bonus": 0.1826,
+              "overtaking_bonus": 0.0,
+              "energy_bonus": 0.0577,
+              "track_position_bonus": 0.1652,
+              "flexibility_bonus": 0.0285,
+              "chaos_bonus": 0.043,
+              "weather_event_bonus": 0.0154,
+              "track_evolution_bonus": 0.0099,
+              "tire_penalty": 0.4204,
+              "fuel_penalty": 0.0907,
+              "energy_penalty": 0.1189,
+              "temperature_penalty": 0.0199,
+              "pit_penalty": 0.4291,
+              "traffic_penalty": 0.0252,
+              "post_pit_traffic_penalty": 0.002,
+              "pit_timing_regret": 0.0066,
+              "undercut_delta": 0.0,
+              "overcut_delta": -0.0108,
+              "post_pit_position_delta": -0.0131,
+              "reliability_penalty": 0.0268,
+              "risk_penalty": 0.0235,
+              "compression_penalty": 0.0363,
+              "incident_penalty": 0.0239,
+              "stochastic_contribution": -0.002,
+              "projected_score": -0.105,
+              "raw_pace_score": 66.279,
+              "team_baseline": 7.85,
+              "pace_edge": 0.4357,
+              "track_fit_score": 1.5089,
+              "chaos_resilience": 0.884,
+              "event_exposure": 0.5534,
+              "average_first_pit_lap": 23.69,
+              "average_overtakes": 0.0,
+              "average_position_changes": 7.9333,
+              "net_position_delta": -2.4333,
+              "undercut_success_rate": 0.0,
+              "overcut_success_rate": 0.4237
+            }
+          },
+          {
+            "driver_id": "lewis-hamilton",
+            "driver_name": "Lewis Hamilton",
+            "team_id": "mercedes",
+            "team_name": "Mercedes",
+            "assigned_strategy_id": "one-stop-control",
+            "assigned_strategy_name": "One-stop control",
+            "expected_finish_position": 5.3,
+            "win_probability": 0.0,
+            "podium_probability": 0.1667,
+            "top_10_probability": 1.0,
+            "points_probability": 1.0,
+            "dnf_probability": 0.1333,
+            "expected_points": 9.7,
+            "strategy_success_rate": 0.7667,
+            "uncertainty_index": 0.2068,
+            "confidence_label": "Exposed",
+            "scenario_sensitivity": 0.3411,
+            "event_exposure": 0.5446,
+            "strategy_fit_score": 70.99,
+            "expected_pace_score": 69.0,
+            "expected_grid_position": 7.0,
+            "expected_stop_count": 1.4,
+            "average_first_pit_lap": 23.62,
+            "average_overtakes": 0.0,
+            "average_stint_length": 32.37,
+            "average_position_changes": 9.42,
+            "net_position_delta": 1.7,
+            "primary_stint_path": [
+              "Medium",
+              "Hard"
+            ],
+            "primary_stint_lengths": [
+              24.0,
+              51.6
+            ],
+            "alternate_stint_path": [
+              "Medium",
+              "Hard",
+              "Intermediate",
+              "Hard"
+            ],
+            "alternate_stint_lengths": [
+              24.0,
+              15.6,
+              29.6,
+              8.8
+            ],
+            "first_pit_window_start": 25,
+            "first_pit_window_end": 25,
+            "explanation": [
+              "qualifying still matters here because track position shapes the early lap sequence",
+              "the race often tilts toward an earlier first stop, so undercut timing matters",
+              "the lap-by-lap model expects this driver to gain track position over the race distance"
+            ],
+            "position_distribution": [
+              {
+                "position": 1,
+                "probability": 0.0
+              },
+              {
+                "position": 2,
+                "probability": 0.05
+              },
+              {
+                "position": 3,
+                "probability": 0.1167
+              },
+              {
+                "position": 4,
+                "probability": 0.2333
+              },
+              {
+                "position": 5,
+                "probability": 0.2
+              },
+              {
+                "position": 6,
+                "probability": 0.2333
+              },
+              {
+                "position": 7,
+                "probability": 0.0167
+              },
+              {
+                "position": 8,
+                "probability": 0.0333
+              },
+              {
+                "position": 9,
+                "probability": 0.0333
+              },
+              {
+                "position": 10,
+                "probability": 0.0833
+              }
+            ],
+            "diagnostics": {
+              "pace_component": 0.1794,
+              "track_fit_bonus": 0.0823,
+              "strategy_component": 0.3552,
+              "qualifying_bonus": 0.1895,
+              "overtaking_bonus": 0.0,
+              "energy_bonus": 0.0615,
+              "track_position_bonus": 0.0793,
+              "flexibility_bonus": 0.0282,
+              "chaos_bonus": 0.0445,
+              "weather_event_bonus": 0.0158,
+              "track_evolution_bonus": 0.0096,
+              "tire_penalty": 0.4079,
+              "fuel_penalty": 0.0933,
+              "energy_penalty": 0.1157,
+              "temperature_penalty": 0.0199,
+              "pit_penalty": 0.3997,
+              "traffic_penalty": 0.0375,
+              "post_pit_traffic_penalty": 0.0018,
+              "pit_timing_regret": 0.0097,
+              "undercut_delta": 0.0,
+              "overcut_delta": -0.0189,
+              "post_pit_position_delta": -0.0191,
+              "reliability_penalty": 0.0529,
+              "risk_penalty": 0.0223,
+              "compression_penalty": 0.0531,
+              "incident_penalty": 0.0186,
+              "stochastic_contribution": 0.0046,
+              "projected_score": -0.1338,
+              "raw_pace_score": 66.356,
+              "team_baseline": 6.57,
+              "pace_edge": 0.4459,
+              "track_fit_score": 2.3032,
+              "chaos_resilience": 0.9148,
+              "event_exposure": 0.5446,
+              "average_first_pit_lap": 23.62,
+              "average_overtakes": 0.0,
+              "average_position_changes": 9.4167,
+              "net_position_delta": 1.7,
+              "undercut_success_rate": 0.0,
+              "overcut_success_rate": 0.1071
+            }
+          },
+          {
+            "driver_id": "carlos-sainz",
+            "driver_name": "Carlos Sainz",
+            "team_id": "ferrari",
+            "team_name": "Ferrari",
+            "assigned_strategy_id": "one-stop-control",
+            "assigned_strategy_name": "One-stop control",
+            "expected_finish_position": 5.47,
+            "win_probability": 0.0167,
+            "podium_probability": 0.1667,
+            "top_10_probability": 1.0,
+            "points_probability": 1.0,
+            "dnf_probability": 0.2,
+            "expected_points": 9.47,
+            "strategy_success_rate": 0.65,
+            "uncertainty_index": 0.232,
+            "confidence_label": "Exposed",
+            "scenario_sensitivity": 0.3433,
+            "event_exposure": 0.5534,
+            "strategy_fit_score": 70.99,
+            "expected_pace_score": 68.0,
+            "expected_grid_position": 3.0,
+            "expected_stop_count": 1.33,
+            "average_first_pit_lap": 23.65,
+            "average_overtakes": 0.0,
+            "average_stint_length": 32.23,
+            "average_position_changes": 9.22,
+            "net_position_delta": -2.47,
+            "primary_stint_path": [
+              "Medium",
+              "Hard"
+            ],
+            "primary_stint_lengths": [
+              24.0,
+              49.8
+            ],
+            "alternate_stint_path": [
+              "Medium",
+              "Hard",
+              "Intermediate",
+              "Hard"
+            ],
+            "alternate_stint_lengths": [
+              24.0,
+              18.0,
+              28.1,
+              7.9
+            ],
+            "first_pit_window_start": 25,
+            "first_pit_window_end": 25,
+            "explanation": [
+              "qualifying still matters here because track position shapes the early lap sequence",
+              "the race often tilts toward an earlier first stop, so undercut timing matters",
+              "incident and race-control exposure remain high enough to weaken confidence in the median finish"
+            ],
+            "position_distribution": [
+              {
+                "position": 1,
+                "probability": 0.0167
+              },
+              {
+                "position": 2,
+                "probability": 0.0167
+              },
+              {
+                "position": 3,
+                "probability": 0.1333
+              },
+              {
+                "position": 4,
+                "probability": 0.25
+              },
+              {
+                "position": 5,
+                "probability": 0.2167
+              },
+              {
+                "position": 6,
+                "probability": 0.1333
+              },
+              {
+                "position": 7,
+                "probability": 0.0333
+              },
+              {
+                "position": 8,
+                "probability": 0.0167
+              },
+              {
+                "position": 9,
+                "probability": 0.0667
+              },
+              {
+                "position": 10,
+                "probability": 0.1167
+              }
+            ],
+            "diagnostics": {
+              "pace_component": 0.1608,
+              "track_fit_bonus": 0.0589,
+              "strategy_component": 0.3552,
+              "qualifying_bonus": 0.1915,
+              "overtaking_bonus": 0.0,
+              "energy_bonus": 0.06,
+              "track_position_bonus": 0.148,
+              "flexibility_bonus": 0.0282,
+              "chaos_bonus": 0.0432,
+              "weather_event_bonus": 0.0149,
+              "track_evolution_bonus": 0.0094,
+              "tire_penalty": 0.4053,
+              "fuel_penalty": 0.095,
+              "energy_penalty": 0.1145,
+              "temperature_penalty": 0.0199,
+              "pit_penalty": 0.4317,
+              "traffic_penalty": 0.0343,
+              "post_pit_traffic_penalty": 0.0019,
+              "pit_timing_regret": 0.0081,
+              "undercut_delta": 0.0,
+              "overcut_delta": -0.0163,
+              "post_pit_position_delta": -0.0158,
+              "reliability_penalty": 0.0659,
+              "risk_penalty": 0.0233,
+              "compression_penalty": 0.049,
+              "incident_penalty": 0.0313,
+              "stochastic_contribution": 0.0009,
+              "projected_score": -0.165,
+              "raw_pace_score": 66.0063,
+              "team_baseline": 7.3,
+              "pace_edge": 0.3995,
+              "track_fit_score": 1.6493,
+              "chaos_resilience": 0.8892,
+              "event_exposure": 0.5534,
+              "average_first_pit_lap": 23.65,
+              "average_overtakes": 0.0,
+              "average_position_changes": 9.2167,
+              "net_position_delta": -2.4667,
+              "undercut_success_rate": 0.0,
+              "overcut_success_rate": 0.1786
+            }
+          },
+          {
+            "driver_id": "george-russell",
+            "driver_name": "George Russell",
+            "team_id": "mercedes",
+            "team_name": "Mercedes",
+            "assigned_strategy_id": "one-stop-control",
+            "assigned_strategy_name": "One-stop control",
+            "expected_finish_position": 6.18,
+            "win_probability": 0.0,
+            "podium_probability": 0.0,
+            "top_10_probability": 1.0,
+            "points_probability": 1.0,
+            "dnf_probability": 0.0833,
+            "expected_points": 7.67,
+            "strategy_success_rate": 0.7833,
+            "uncertainty_index": 0.131,
+            "confidence_label": "Measured",
+            "scenario_sensitivity": 0.3448,
+            "event_exposure": 0.5594,
+            "strategy_fit_score": 70.99,
+            "expected_pace_score": 67.27,
+            "expected_grid_position": 5.0,
+            "expected_stop_count": 1.42,
+            "average_first_pit_lap": 23.78,
+            "average_overtakes": 0.0,
+            "average_stint_length": 34.11,
+            "average_position_changes": 9.78,
+            "net_position_delta": -1.18,
+            "primary_stint_path": [
+              "Medium",
+              "Hard"
+            ],
+            "primary_stint_lengths": [
+              24.0,
+              53.0
+            ],
+            "alternate_stint_path": [
+              "Medium",
+              "Hard",
+              "Intermediate",
+              "Hard"
+            ],
+            "alternate_stint_lengths": [
+              24.0,
+              16.6,
+              29.0,
+              8.4
+            ],
+            "first_pit_window_start": 25,
+            "first_pit_window_end": 25,
+            "explanation": [
+              "qualifying still matters here because track position shapes the early lap sequence",
+              "the race often tilts toward an earlier first stop, so undercut timing matters",
+              "incident and race-control exposure remain high enough to weaken confidence in the median finish"
+            ],
+            "position_distribution": [
+              {
+                "position": 1,
+                "probability": 0.0
+              },
+              {
+                "position": 2,
+                "probability": 0.0
+              },
+              {
+                "position": 3,
+                "probability": 0.0
+              },
+              {
+                "position": 4,
+                "probability": 0.0667
+              },
+              {
+                "position": 5,
+                "probability": 0.3
+              },
+              {
+                "position": 6,
+                "probability": 0.1833
+              },
+              {
+                "position": 7,
+                "probability": 0.3667
+              },
+              {
+                "position": 8,
+                "probability": 0.0333
+              },
+              {
+                "position": 9,
+                "probability": 0.0167
+              },
+              {
+                "position": 10,
+                "probability": 0.0333
+              }
+            ],
+            "diagnostics": {
+              "pace_component": 0.0925,
+              "track_fit_bonus": 0.0615,
+              "strategy_component": 0.3552,
+              "qualifying_bonus": 0.1828,
+              "overtaking_bonus": 0.0,
+              "energy_bonus": 0.0587,
+              "track_position_bonus": 0.0926,
+              "flexibility_bonus": 0.0281,
+              "chaos_bonus": 0.0425,
+              "weather_event_bonus": 0.0142,
+              "track_evolution_bonus": 0.0101,
+              "tire_penalty": 0.427,
+              "fuel_penalty": 0.0892,
+              "energy_penalty": 0.1191,
+              "temperature_penalty": 0.0199,
+              "pit_penalty": 0.3973,
+              "traffic_penalty": 0.0276,
+              "post_pit_traffic_penalty": 0.0013,
+              "pit_timing_regret": 0.0107,
+              "undercut_delta": 0.0,
+              "overcut_delta": -0.022,
+              "post_pit_position_delta": -0.022,
+              "reliability_penalty": 0.0222,
+              "risk_penalty": 0.0235,
+              "compression_penalty": 0.0393,
+              "incident_penalty": 0.0208,
+              "stochastic_contribution": 0.0056,
+              "projected_score": -0.2146,
+              "raw_pace_score": 64.7273,
+              "team_baseline": 6.57,
+              "pace_edge": 0.2299,
+              "track_fit_score": 1.7228,
+              "chaos_resilience": 0.8738,
+              "event_exposure": 0.5594,
+              "average_first_pit_lap": 23.78,
+              "average_overtakes": 0.0,
+              "average_position_changes": 9.7833,
+              "net_position_delta": -1.1833,
+              "undercut_success_rate": 0.0,
+              "overcut_success_rate": 0.0678
+            }
+          },
+          {
+            "driver_id": "alexander-albon",
+            "driver_name": "Alexander Albon",
+            "team_id": "williams",
+            "team_name": "Williams",
+            "assigned_strategy_id": "long-first-stint",
+            "assigned_strategy_name": "Long first stint",
+            "expected_finish_position": 7.78,
+            "win_probability": 0.0,
+            "podium_probability": 0.0,
+            "top_10_probability": 1.0,
+            "points_probability": 1.0,
+            "dnf_probability": 0.15,
+            "expected_points": 4.52,
+            "strategy_success_rate": 0.75,
+            "uncertainty_index": 0.117,
+            "confidence_label": "Measured",
+            "scenario_sensitivity": 0.3429,
+            "event_exposure": 0.5518,
+            "strategy_fit_score": 64.78,
+            "expected_pace_score": 58.59,
+            "expected_grid_position": 9.0,
+            "expected_stop_count": 1.38,
+            "average_first_pit_lap": 28.5,
+            "average_overtakes": 0.0,
+            "average_stint_length": 33.24,
+            "average_position_changes": 12.98,
+            "net_position_delta": 1.22,
+            "primary_stint_path": [
+              "Hard",
+              "Medium"
+            ],
+            "primary_stint_lengths": [
+              29.3,
+              45.5
+            ],
+            "alternate_stint_path": [
+              "Hard",
+              "Medium",
+              "Intermediate",
+              "Medium"
+            ],
+            "alternate_stint_lengths": [
+              28.2,
+              18.2,
+              25.2,
+              6.5
+            ],
+            "first_pit_window_start": 25,
+            "first_pit_window_end": 33,
+            "explanation": [
+              "qualifying still matters here because track position shapes the early lap sequence",
+              "the lap-by-lap model expects this driver to gain track position over the race distance",
+              "incident and race-control exposure remain high enough to weaken confidence in the median finish"
+            ],
+            "position_distribution": [
+              {
+                "position": 1,
+                "probability": 0.0
+              },
+              {
+                "position": 2,
+                "probability": 0.0
+              },
+              {
+                "position": 3,
+                "probability": 0.0
+              },
+              {
+                "position": 4,
+                "probability": 0.0
+              },
+              {
+                "position": 5,
+                "probability": 0.0
+              },
+              {
+                "position": 6,
+                "probability": 0.15
+              },
+              {
+                "position": 7,
+                "probability": 0.2833
+              },
+              {
+                "position": 8,
+                "probability": 0.2833
+              },
+              {
+                "position": 9,
+                "probability": 0.2
+              },
+              {
+                "position": 10,
+                "probability": 0.0833
+              }
+            ],
+            "diagnostics": {
+              "pace_component": -0.3611,
+              "track_fit_bonus": -0.0173,
+              "strategy_component": 0.2495,
+              "qualifying_bonus": 0.1638,
+              "overtaking_bonus": 0.0,
+              "energy_bonus": 0.0541,
+              "track_position_bonus": 0.0411,
+              "flexibility_bonus": 0.051,
+              "chaos_bonus": 0.0406,
+              "weather_event_bonus": 0.0144,
+              "track_evolution_bonus": 0.0096,
+              "tire_penalty": 0.4499,
+              "fuel_penalty": 0.0926,
+              "energy_penalty": 0.1189,
+              "temperature_penalty": 0.0199,
+              "pit_penalty": 0.4038,
+              "traffic_penalty": 0.022,
+              "post_pit_traffic_penalty": 0.001,
+              "pit_timing_regret": 0.0069,
+              "undercut_delta": -0.0038,
+              "overcut_delta": -0.0097,
+              "post_pit_position_delta": -0.0135,
+              "reliability_penalty": 0.0351,
+              "risk_penalty": 0.0226,
+              "compression_penalty": 0.0323,
+              "incident_penalty": 0.0132,
+              "stochastic_contribution": 0.0042,
+              "projected_score": -0.9385,
+              "raw_pace_score": 56.2273,
+              "team_baseline": 1.28,
+              "pace_edge": -0.8974,
+              "track_fit_score": -0.4844,
+              "chaos_resilience": 0.836,
+              "event_exposure": 0.5518,
+              "average_first_pit_lap": 28.5,
+              "average_overtakes": 0.0,
+              "average_position_changes": 12.9833,
+              "net_position_delta": 1.2167,
+              "undercut_success_rate": 0.0,
+              "overcut_success_rate": 0.381
+            }
+          },
+          {
+            "driver_id": "yuki-tsunoda",
+            "driver_name": "Yuki Tsunoda",
+            "team_id": "racing-bulls",
+            "team_name": "Racing Bulls",
+            "assigned_strategy_id": "long-first-stint",
+            "assigned_strategy_name": "Long first stint",
+            "expected_finish_position": 8.05,
+            "win_probability": 0.0,
+            "podium_probability": 0.0,
+            "top_10_probability": 1.0,
+            "points_probability": 1.0,
+            "dnf_probability": 0.1,
+            "expected_points": 3.97,
+            "strategy_success_rate": 0.7333,
+            "uncertainty_index": 0.1102,
+            "confidence_label": "Measured",
+            "scenario_sensitivity": 0.345,
+            "event_exposure": 0.5602,
+            "strategy_fit_score": 64.78,
+            "expected_pace_score": 57.77,
+            "expected_grid_position": 8.0,
+            "expected_stop_count": 1.45,
+            "average_first_pit_lap": 28.33,
+            "average_overtakes": 0.0,
+            "average_stint_length": 32.96,
+            "average_position_changes": 12.7,
+            "net_position_delta": -0.05,
+            "primary_stint_path": [
+              "Hard",
+              "Medium"
+            ],
+            "primary_stint_lengths": [
+              29.3,
+              46.9
+            ],
+            "alternate_stint_path": [
+              "Hard",
+              "Intermediate",
+              "Medium",
+              "Intermediate",
+              "Medium"
+            ],
+            "alternate_stint_lengths": [
+              13.3,
+              15.8,
+              1.0,
+              37.5,
+              10.8
+            ],
+            "first_pit_window_start": 25,
+            "first_pit_window_end": 33,
+            "explanation": [
+              "qualifying still matters here because track position shapes the early lap sequence",
+              "incident and race-control exposure remain high enough to weaken confidence in the median finish"
+            ],
+            "position_distribution": [
+              {
+                "position": 1,
+                "probability": 0.0
+              },
+              {
+                "position": 2,
+                "probability": 0.0
+              },
+              {
+                "position": 3,
+                "probability": 0.0
+              },
+              {
+                "position": 4,
+                "probability": 0.0
+              },
+              {
+                "position": 5,
+                "probability": 0.0333
+              },
+              {
+                "position": 6,
+                "probability": 0.05
+              },
+              {
+                "position": 7,
+                "probability": 0.1667
+              },
+              {
+                "position": 8,
+                "probability": 0.4
+              },
+              {
+                "position": 9,
+                "probability": 0.2833
+              },
+              {
+                "position": 10,
+                "probability": 0.0667
+              }
+            ],
+            "diagnostics": {
+              "pace_component": -0.4331,
+              "track_fit_bonus": -0.0162,
+              "strategy_component": 0.2495,
+              "qualifying_bonus": 0.1653,
+              "overtaking_bonus": 0.0,
+              "energy_bonus": 0.0538,
+              "track_position_bonus": 0.0497,
+              "flexibility_bonus": 0.0505,
+              "chaos_bonus": 0.0401,
+              "weather_event_bonus": 0.0139,
+              "track_evolution_bonus": 0.0098,
+              "tire_penalty": 0.4575,
+              "fuel_penalty": 0.0916,
+              "energy_penalty": 0.1183,
+              "temperature_penalty": 0.0199,
+              "pit_penalty": 0.399,
+              "traffic_penalty": 0.0159,
+              "post_pit_traffic_penalty": 0.0007,
+              "pit_timing_regret": 0.0062,
+              "undercut_delta": -0.0049,
+              "overcut_delta": -0.0076,
+              "post_pit_position_delta": -0.013,
+              "reliability_penalty": 0.0355,
+              "risk_penalty": 0.0231,
+              "compression_penalty": 0.0233,
+              "incident_penalty": 0.0249,
+              "stochastic_contribution": -0.0018,
+              "projected_score": -1.0117,
+              "raw_pace_score": 54.8794,
+              "team_baseline": 0.0,
+              "pace_edge": -1.0762,
+              "track_fit_score": -0.454,
+              "chaos_resilience": 0.824,
+              "event_exposure": 0.5602,
+              "average_first_pit_lap": 28.33,
+              "average_overtakes": 0.0,
+              "average_position_changes": 12.7,
+              "net_position_delta": -0.05,
+              "undercut_success_rate": 0.0,
+              "overcut_success_rate": 0.3659
+            }
+          },
+          {
+            "driver_id": "pierre-gasly",
+            "driver_name": "Pierre Gasly",
+            "team_id": "alpine",
+            "team_name": "Alpine",
+            "assigned_strategy_id": "long-first-stint",
+            "assigned_strategy_name": "Long first stint",
+            "expected_finish_position": 9.0,
+            "win_probability": 0.0,
+            "podium_probability": 0.0,
+            "top_10_probability": 1.0,
+            "points_probability": 1.0,
+            "dnf_probability": 0.1,
+            "expected_points": 2.42,
+            "strategy_success_rate": 0.7333,
+            "uncertainty_index": 0.1033,
+            "confidence_label": "Measured",
+            "scenario_sensitivity": 0.3445,
+            "event_exposure": 0.5578,
+            "strategy_fit_score": 64.78,
+            "expected_pace_score": 55.14,
+            "expected_grid_position": 10.0,
+            "expected_stop_count": 1.45,
+            "average_first_pit_lap": 28.61,
+            "average_overtakes": 0.0,
+            "average_stint_length": 33.28,
+            "average_position_changes": 5.87,
+            "net_position_delta": 1.0,
+            "primary_stint_path": [
+              "Hard",
+              "Medium"
+            ],
+            "primary_stint_lengths": [
+              29.3,
+              48.2
+            ],
+            "alternate_stint_path": [
+              "Hard",
+              "Intermediate",
+              "Medium",
+              "Intermediate",
+              "Medium"
+            ],
+            "alternate_stint_lengths": [
+              13.3,
+              15.8,
+              1.0,
+              37.5,
+              10.8
+            ],
+            "first_pit_window_start": 25,
+            "first_pit_window_end": 33,
+            "explanation": [
+              "qualifying still matters here because track position shapes the early lap sequence",
+              "the lap-by-lap model expects this driver to gain track position over the race distance",
+              "incident and race-control exposure remain high enough to weaken confidence in the median finish"
+            ],
+            "position_distribution": [
+              {
+                "position": 1,
+                "probability": 0.0
+              },
+              {
+                "position": 2,
+                "probability": 0.0
+              },
+              {
+                "position": 3,
+                "probability": 0.0
+              },
+              {
+                "position": 4,
+                "probability": 0.0
+              },
+              {
+                "position": 5,
+                "probability": 0.0
+              },
+              {
+                "position": 6,
+                "probability": 0.0167
+              },
+              {
+                "position": 7,
+                "probability": 0.0667
+              },
+              {
+                "position": 8,
+                "probability": 0.2333
+              },
+              {
+                "position": 9,
+                "probability": 0.2667
+              },
+              {
+                "position": 10,
+                "probability": 0.4167
+              }
+            ],
+            "diagnostics": {
+              "pace_component": -0.5972,
+              "track_fit_bonus": -0.0362,
+              "strategy_component": 0.2495,
+              "qualifying_bonus": 0.1559,
+              "overtaking_bonus": 0.0,
+              "energy_bonus": 0.0535,
+              "track_position_bonus": 0.0081,
+              "flexibility_bonus": 0.0505,
+              "chaos_bonus": 0.0397,
+              "weather_event_bonus": 0.014,
+              "track_evolution_bonus": 0.0099,
+              "tire_penalty": 0.46,
+              "fuel_penalty": 0.0907,
+              "energy_penalty": 0.117,
+              "temperature_penalty": 0.0199,
+              "pit_penalty": 0.3919,
+              "traffic_penalty": 0.0087,
+              "post_pit_traffic_penalty": 0.0006,
+              "pit_timing_regret": 0.0012,
+              "undercut_delta": -0.0006,
+              "overcut_delta": -0.0006,
+              "post_pit_position_delta": -0.0013,
+              "reliability_penalty": 0.0546,
+              "risk_penalty": 0.0247,
+              "compression_penalty": 0.0123,
+              "incident_penalty": 0.0371,
+              "stochastic_contribution": 0.0056,
+              "projected_score": -1.2549,
+              "raw_pace_score": 51.8043,
+              "team_baseline": -2.19,
+              "pace_edge": -1.484,
+              "track_fit_score": -1.0125,
+              "chaos_resilience": 0.8176,
+              "event_exposure": 0.5578,
+              "average_first_pit_lap": 28.61,
+              "average_overtakes": 0.0,
+              "average_position_changes": 5.8667,
+              "net_position_delta": 1.0,
+              "undercut_success_rate": 0.0,
+              "overcut_success_rate": 0.8571
+            }
+          }
+        ],
+        "team_summary": [
+          {
+            "team_id": "ferrari",
+            "team_name": "Ferrari",
+            "avg_expected_finish": 4.14,
+            "expected_points": 26.64,
+            "combined_win_probability": 0.2834,
+            "combined_podium_probability": 0.9834
+          },
+          {
+            "team_id": "mclaren",
+            "team_name": "McLaren",
+            "avg_expected_finish": 4.1,
+            "expected_points": 25.7,
+            "combined_win_probability": 0.0833,
+            "combined_podium_probability": 1.0166
+          },
+          {
+            "team_id": "red-bull-racing",
+            "team_name": "Red Bull Racing",
+            "avg_expected_finish": 2.2,
+            "expected_points": 20.4,
+            "combined_win_probability": 0.6333,
+            "combined_podium_probability": 0.8333
+          },
+          {
+            "team_id": "mercedes",
+            "team_name": "Mercedes",
+            "avg_expected_finish": 5.74,
+            "expected_points": 17.37,
+            "combined_win_probability": 0.0,
+            "combined_podium_probability": 0.1667
+          },
+          {
+            "team_id": "williams",
+            "team_name": "Williams",
+            "avg_expected_finish": 7.78,
+            "expected_points": 4.52,
+            "combined_win_probability": 0.0,
+            "combined_podium_probability": 0.0
+          },
+          {
+            "team_id": "racing-bulls",
+            "team_name": "Racing Bulls",
+            "avg_expected_finish": 8.05,
+            "expected_points": 3.97,
+            "combined_win_probability": 0.0,
+            "combined_podium_probability": 0.0
+          },
+          {
+            "team_id": "alpine",
+            "team_name": "Alpine",
+            "avg_expected_finish": 9.0,
+            "expected_points": 2.42,
+            "combined_win_probability": 0.0,
+            "combined_podium_probability": 0.0
+          }
+        ],
+        "event_summary": {
+          "weather_shift_rate": 0.1667,
+          "yellow_flag_rate": 0.3167,
+          "vsc_rate": 0.0667,
+          "safety_car_rate": 0.5,
+          "red_flag_rate": 0.0833,
+          "dnf_rate": 0.05,
+          "late_incident_rate": 0.1833,
+          "volatility_index": 0.3251,
+          "dominant_factor": "Safety car",
+          "impact_summary": [
+            "neutralized windows are materially changing pit-loss math and restart leverage",
+            "track position remains sticky, so qualifying and early track order shape the race"
+          ],
+          "avg_pit_stops_per_driver": 0.65,
+          "avg_green_flag_overtakes": 0.0,
+          "avg_safety_car_lap": 42.97,
+          "turning_points": [
+            "a safety car compresses the field and changes pit-loss math",
+            "the race stays green enough for baseline pace and pit windows to decide the order",
+            "late disruption keeps the final phase unstable",
+            "a mid-race weather shift opens a real crossover window"
+          ],
+          "circuit_diagnostics": {
+            "circuit_type": "street",
+            "degradation_profile": "low",
+            "track_position_importance": 0.99,
+            "overtaking_difficulty": 0.98,
+            "qualifying_importance": 0.98,
+            "tire_stress": 0.32,
+            "safety_car_risk": 0.61,
+            "weather_volatility": 0.22,
+            "energy_sensitivity": 0.36,
+            "strategy_flexibility": 0.19,
+            "track_position_multiplier": 2.9785,
+            "qualifying_carryover_factor": 2.7425,
+            "dirty_air_factor": 2.8015,
+            "overtake_suppression_factor": 2.7197,
+            "degradation_factor": 1.084,
+            "pit_window_pressure_factor": 2.0055,
+            "disruption_leverage_factor": 1.692,
+            "restart_factor": 1.3221,
+            "weather_sensitivity_factor": 1.121,
+            "deployment_sensitivity_factor": 1.2464,
+            "strategy_flex_factor": 0.5105,
+            "recovery_factor": 0.32,
+            "clean_air_factor": 2.085,
+            "order_lock_factor": 2.9213,
+            "undercut_factor": 1.7796,
+            "alternate_strategy_factor": 0.4,
+            "disruption_reshuffle_factor": 1.3894
+          },
+          "strategy_diagnostics": {
+            "avg_position_changes_per_driver": 4.18,
+            "avg_first_stop_lap": 25.11,
+            "avg_stop_count": 0.65,
+            "first_stop_window_start": 25,
+            "first_stop_window_end": 25,
+            "undercut_success_tendency": 0.0,
+            "overcut_success_tendency": 0.3835,
+            "traffic_penalty_impact": 0.0123,
+            "post_pit_traffic_penalty": 0.0508,
+            "avg_post_pit_position_delta": -0.4424,
+            "pit_timing_regret": 0.2294,
+            "strategy_success_rate": 0.3356,
+            "strategy_sensitivity_index": 0.4165,
+            "stop_count_distribution": [
+              {
+                "stops": 0,
+                "share": 0.0152
+              },
+              {
+                "stops": 1,
+                "share": 0.3485
+              },
+              {
+                "stops": 2,
+                "share": 0.0008
+              },
+              {
+                "stops": 3,
+                "share": 0.0591
+              },
+              {
+                "stops": 4,
+                "share": 0.0311
+              }
+            ]
+          },
+          "movement_summary": {
+            "avg_overtakes_per_simulation": 0.0,
+            "avg_position_changes_per_driver": 4.18,
+            "race_fluidity_score": 0.0178,
+            "overtaking_intensity": "Sticky"
+          },
+          "event_timing": {
+            "disruption_window_start": 22,
+            "disruption_window_end": 61,
+            "average_disruption_lap": 41.68,
+            "weather_crossover_window_start": 28,
+            "weather_crossover_window_end": 56,
+            "average_weather_shift_lap": 36.1,
+            "average_neutralized_pit_gain": 3.09,
+            "safety_car_leverage_score": 0.477,
+            "leverage_phase": "L22-61",
+            "late_race_interruption_risk": 0.1833
+          },
+          "race_phases": [
+            {
+              "phase_id": "opening",
+              "label": "Launch",
+              "start_lap": 1,
+              "end_lap": 24,
+              "volatility": 0.275,
+              "pit_pressure": 0.0492,
+              "overtake_load": 0.0,
+              "summary": "track order settles early and launch losses are hard to recover"
+            },
+            {
+              "phase_id": "first-stop",
+              "label": "Stop cycle",
+              "start_lap": 25,
+              "end_lap": 27,
+              "volatility": 0.5453,
+              "pit_pressure": 0.3394,
+              "overtake_load": 0.0,
+              "summary": "pit timing bites hardest here as stops cluster around L25-25"
+            },
+            {
+              "phase_id": "transition",
+              "label": "Middle phase",
+              "start_lap": 28,
+              "end_lap": 60,
+              "volatility": 0.3032,
+              "pit_pressure": 0.1742,
+              "overtake_load": 0.0,
+              "summary": "crossover and offset strategies carry the biggest clean-air payoff"
+            },
+            {
+              "phase_id": "closing",
+              "label": "Final push",
+              "start_lap": 61,
+              "end_lap": 78,
+              "volatility": 0.2866,
+              "pit_pressure": 0.0886,
+              "overtake_load": 0.0,
+              "summary": "late interruptions can reopen the order and restart pressure remains live"
+            }
+          ],
+          "evolution_summary": [
+            "track position stays critical off the line",
+            "first-stop pressure opens around laps 25-25",
+            "SC leverage peaks around L22-61",
+            "weather crossover pressure builds around laps 28-56"
+          ]
+        },
+        "strategy_suggestions": [
+          {
+            "driver_id": "max-verstappen",
+            "strategy_id": "one-stop-control",
+            "strategy_name": "One-stop control",
+            "score": 70.99,
+            "risk_profile": "Balanced",
+            "rationale": [
+              "strong tire conservation supports a longer opening stint",
+              "qualifying and track position carry unusual weight at this circuit",
+              "higher safety-car pressure increases the value of flexible stop timing"
+            ],
+            "tradeoff": "protects track position and pit-loss exposure, but late-stint wear can become the limiting factor"
+          },
+          {
+            "driver_id": "charles-leclerc",
+            "strategy_id": "one-stop-control",
+            "strategy_name": "One-stop control",
+            "score": 70.99,
+            "risk_profile": "Balanced",
+            "rationale": [
+              "strong tire conservation supports a longer opening stint",
+              "qualifying and track position carry unusual weight at this circuit",
+              "higher safety-car pressure increases the value of flexible stop timing"
+            ],
+            "tradeoff": "protects track position and pit-loss exposure, but late-stint wear can become the limiting factor"
+          },
+          {
+            "driver_id": "carlos-sainz",
+            "strategy_id": "one-stop-control",
+            "strategy_name": "One-stop control",
+            "score": 70.99,
+            "risk_profile": "Balanced",
+            "rationale": [
+              "strong tire conservation supports a longer opening stint",
+              "qualifying and track position carry unusual weight at this circuit",
+              "higher safety-car pressure increases the value of flexible stop timing"
+            ],
+            "tradeoff": "protects track position and pit-loss exposure, but late-stint wear can become the limiting factor"
+          },
+          {
+            "driver_id": "lewis-hamilton",
+            "strategy_id": "one-stop-control",
+            "strategy_name": "One-stop control",
+            "score": 70.99,
+            "risk_profile": "Balanced",
+            "rationale": [
+              "strong tire conservation supports a longer opening stint",
+              "qualifying and track position carry unusual weight at this circuit",
+              "higher safety-car pressure increases the value of flexible stop timing"
+            ],
+            "tradeoff": "protects track position and pit-loss exposure, but late-stint wear can become the limiting factor"
+          },
+          {
+            "driver_id": "george-russell",
+            "strategy_id": "one-stop-control",
+            "strategy_name": "One-stop control",
+            "score": 70.99,
+            "risk_profile": "Balanced",
+            "rationale": [
+              "strong tire conservation supports a longer opening stint",
+              "qualifying and track position carry unusual weight at this circuit",
+              "higher safety-car pressure increases the value of flexible stop timing"
+            ],
+            "tradeoff": "protects track position and pit-loss exposure, but late-stint wear can become the limiting factor"
+          },
+          {
+            "driver_id": "lando-norris",
+            "strategy_id": "one-stop-control",
+            "strategy_name": "One-stop control",
+            "score": 70.99,
+            "risk_profile": "Balanced",
+            "rationale": [
+              "strong tire conservation supports a longer opening stint",
+              "qualifying and track position carry unusual weight at this circuit",
+              "higher safety-car pressure increases the value of flexible stop timing"
+            ],
+            "tradeoff": "protects track position and pit-loss exposure, but late-stint wear can become the limiting factor"
+          },
+          {
+            "driver_id": "oscar-piastri",
+            "strategy_id": "one-stop-control",
+            "strategy_name": "One-stop control",
+            "score": 70.99,
+            "risk_profile": "Balanced",
+            "rationale": [
+              "strong tire conservation supports a longer opening stint",
+              "qualifying and track position carry unusual weight at this circuit",
+              "higher safety-car pressure increases the value of flexible stop timing"
+            ],
+            "tradeoff": "protects track position and pit-loss exposure, but late-stint wear can become the limiting factor"
+          },
+          {
+            "driver_id": "pierre-gasly",
+            "strategy_id": "long-first-stint",
+            "strategy_name": "Long first stint",
+            "score": 64.78,
+            "risk_profile": "Balanced",
+            "rationale": [
+              "strong tire conservation supports a longer opening stint",
+              "higher safety-car pressure increases the value of flexible stop timing"
+            ],
+            "tradeoff": "protects track position and pit-loss exposure, but late-stint wear can become the limiting factor"
+          },
+          {
+            "driver_id": "alexander-albon",
+            "strategy_id": "long-first-stint",
+            "strategy_name": "Long first stint",
+            "score": 64.78,
+            "risk_profile": "Balanced",
+            "rationale": [
+              "strong tire conservation supports a longer opening stint",
+              "higher safety-car pressure increases the value of flexible stop timing"
+            ],
+            "tradeoff": "protects track position and pit-loss exposure, but late-stint wear can become the limiting factor"
+          },
+          {
+            "driver_id": "yuki-tsunoda",
+            "strategy_id": "long-first-stint",
+            "strategy_name": "Long first stint",
+            "score": 64.78,
+            "risk_profile": "Balanced",
+            "rationale": [
+              "strong tire conservation supports a longer opening stint",
+              "higher safety-car pressure increases the value of flexible stop timing"
+            ],
+            "tradeoff": "protects track position and pit-loss exposure, but late-stint wear can become the limiting factor"
+          }
+        ]
+      },
+      "actual_weekend": {
+        "season": 2024,
+        "round": 8,
+        "grand_prix_id": "monaco-grand-prix",
+        "grand_prix_name": "Monaco Grand Prix",
+        "circuit_id": "monaco-grand-prix",
+        "circuit_name": "Circuit de Monaco",
+        "country": "Monaco",
+        "source_refs": [
+          {
+            "authority": "Formula 1",
+            "source_type": "race_result",
+            "title": "2024 Monaco Grand Prix race result",
+            "url": "https://www.formula1.com/en/results/2024/races/1236/monaco/race-result",
+            "notes": null
+          },
+          {
+            "authority": "Formula 1",
+            "source_type": "starting_grid",
+            "title": "2024 Monaco Grand Prix qualifying classification",
+            "url": "https://www.formula1.com/en/results/2024/races/1236/monaco/qualifying",
+            "notes": null
+          },
+          {
+            "authority": "Formula 1",
+            "source_type": "pit_stop_summary",
+            "title": "2024 Monaco Grand Prix pit stop summary",
+            "url": "https://www.formula1.com/en/results/2024/races/1236/monaco/pit-stop-summary",
+            "notes": null
+          }
+        ],
+        "coverage": {
+          "classification_depth": 10,
+          "grid_depth": 10,
+          "pit_stop_coverage": true,
+          "neutralization_coverage": true,
+          "weather_coverage": true,
+          "lap_trace_coverage": false
+        },
+        "entrants": [
+          {
+            "driver_id": "charles-leclerc",
+            "driver_name": "Charles Leclerc",
+            "team_id": "ferrari",
+            "team_name": "Ferrari",
+            "driver_code": "LEC",
+            "car_number": 16,
+            "qualifying_position": 1,
+            "grid_position": 1,
+            "finish_position": 1,
+            "points": 26.0,
+            "laps_completed": 78,
+            "status": "Finished",
+            "classified": true,
+            "dnf": false,
+            "pit_stops": 1,
+            "average_first_stop_lap": 1.0,
+            "average_position_change": 0.0
+          },
+          {
+            "driver_id": "oscar-piastri",
+            "driver_name": "Oscar Piastri",
+            "team_id": "mclaren",
+            "team_name": "McLaren",
+            "driver_code": "PIA",
+            "car_number": 81,
+            "qualifying_position": 2,
+            "grid_position": 2,
+            "finish_position": 2,
+            "points": 18.0,
+            "laps_completed": 78,
+            "status": "Finished",
+            "classified": true,
+            "dnf": false,
+            "pit_stops": 1,
+            "average_first_stop_lap": 1.0,
+            "average_position_change": 0.0
+          },
+          {
+            "driver_id": "carlos-sainz",
+            "driver_name": "Carlos Sainz",
+            "team_id": "ferrari",
+            "team_name": "Ferrari",
+            "driver_code": "SAI",
+            "car_number": 55,
+            "qualifying_position": 3,
+            "grid_position": 3,
+            "finish_position": 3,
+            "points": 15.0,
+            "laps_completed": 78,
+            "status": "Finished",
+            "classified": true,
+            "dnf": false,
+            "pit_stops": 1,
+            "average_first_stop_lap": 1.0,
+            "average_position_change": 0.0
+          },
+          {
+            "driver_id": "lando-norris",
+            "driver_name": "Lando Norris",
+            "team_id": "mclaren",
+            "team_name": "McLaren",
+            "driver_code": "NOR",
+            "car_number": 4,
+            "qualifying_position": 4,
+            "grid_position": 4,
+            "finish_position": 4,
+            "points": 12.0,
+            "laps_completed": 78,
+            "status": "Finished",
+            "classified": true,
+            "dnf": false,
+            "pit_stops": 1,
+            "average_first_stop_lap": 1.0,
+            "average_position_change": 0.0
+          },
+          {
+            "driver_id": "george-russell",
+            "driver_name": "George Russell",
+            "team_id": "mercedes",
+            "team_name": "Mercedes",
+            "driver_code": "RUS",
+            "car_number": 63,
+            "qualifying_position": 5,
+            "grid_position": 5,
+            "finish_position": 5,
+            "points": 10.0,
+            "laps_completed": 78,
+            "status": "Finished",
+            "classified": true,
+            "dnf": false,
+            "pit_stops": 1,
+            "average_first_stop_lap": 1.0,
+            "average_position_change": 0.0
+          },
+          {
+            "driver_id": "max-verstappen",
+            "driver_name": "Max Verstappen",
+            "team_id": "red-bull-racing",
+            "team_name": "Red Bull Racing",
+            "driver_code": "VER",
+            "car_number": 1,
+            "qualifying_position": 6,
+            "grid_position": 6,
+            "finish_position": 6,
+            "points": 8.0,
+            "laps_completed": 78,
+            "status": "Finished",
+            "classified": true,
+            "dnf": false,
+            "pit_stops": 1,
+            "average_first_stop_lap": 1.0,
+            "average_position_change": 0.0
+          },
+          {
+            "driver_id": "lewis-hamilton",
+            "driver_name": "Lewis Hamilton",
+            "team_id": "mercedes",
+            "team_name": "Mercedes",
+            "driver_code": "HAM",
+            "car_number": 44,
+            "qualifying_position": 7,
+            "grid_position": 7,
+            "finish_position": 7,
+            "points": 7.0,
+            "laps_completed": 78,
+            "status": "Finished",
+            "classified": true,
+            "dnf": false,
+            "pit_stops": null,
+            "average_first_stop_lap": null,
+            "average_position_change": 0.0
+          },
+          {
+            "driver_id": "yuki-tsunoda",
+            "driver_name": "Yuki Tsunoda",
+            "team_id": "racing-bulls",
+            "team_name": "Racing Bulls",
+            "driver_code": "TSU",
+            "car_number": 22,
+            "qualifying_position": 8,
+            "grid_position": 8,
+            "finish_position": 8,
+            "points": 4.0,
+            "laps_completed": 78,
+            "status": "Finished",
+            "classified": true,
+            "dnf": false,
+            "pit_stops": null,
+            "average_first_stop_lap": null,
+            "average_position_change": 0.0
+          },
+          {
+            "driver_id": "alexander-albon",
+            "driver_name": "Alexander Albon",
+            "team_id": "williams",
+            "team_name": "Williams",
+            "driver_code": "ALB",
+            "car_number": 23,
+            "qualifying_position": 9,
+            "grid_position": 9,
+            "finish_position": 9,
+            "points": 2.0,
+            "laps_completed": 78,
+            "status": "Finished",
+            "classified": true,
+            "dnf": false,
+            "pit_stops": null,
+            "average_first_stop_lap": null,
+            "average_position_change": 0.0
+          },
+          {
+            "driver_id": "pierre-gasly",
+            "driver_name": "Pierre Gasly",
+            "team_id": "alpine",
+            "team_name": "Alpine",
+            "driver_code": "GAS",
+            "car_number": 10,
+            "qualifying_position": 10,
+            "grid_position": 10,
+            "finish_position": 10,
+            "points": 1.0,
+            "laps_completed": 78,
+            "status": "Finished",
+            "classified": true,
+            "dnf": false,
+            "pit_stops": null,
+            "average_first_stop_lap": null,
+            "average_position_change": 0.0
+          }
+        ],
+        "pit_stop_events": [
+          {
+            "driver_id": "charles-leclerc",
+            "driver_name": "Charles Leclerc",
+            "team_id": "ferrari",
+            "lap": 1,
+            "stop_number": 1,
+            "duration_seconds": null,
+            "compound_out": "Medium",
+            "compound_in": "Hard"
+          },
+          {
+            "driver_id": "oscar-piastri",
+            "driver_name": "Oscar Piastri",
+            "team_id": "mclaren",
+            "lap": 1,
+            "stop_number": 1,
+            "duration_seconds": null,
+            "compound_out": "Soft",
+            "compound_in": "Hard"
+          },
+          {
+            "driver_id": "carlos-sainz",
+            "driver_name": "Carlos Sainz",
+            "team_id": "ferrari",
+            "lap": 1,
+            "stop_number": 1,
+            "duration_seconds": null,
+            "compound_out": "Medium",
+            "compound_in": "Hard"
+          },
+          {
+            "driver_id": "lando-norris",
+            "driver_name": "Lando Norris",
+            "team_id": "mclaren",
+            "lap": 1,
+            "stop_number": 1,
+            "duration_seconds": null,
+            "compound_out": "Hard",
+            "compound_in": "Medium"
+          },
+          {
+            "driver_id": "george-russell",
+            "driver_name": "George Russell",
+            "team_id": "mercedes",
+            "lap": 1,
+            "stop_number": 1,
+            "duration_seconds": null,
+            "compound_out": "Medium",
+            "compound_in": "Hard"
+          },
+          {
+            "driver_id": "max-verstappen",
+            "driver_name": "Max Verstappen",
+            "team_id": "red-bull-racing",
+            "lap": 1,
+            "stop_number": 1,
+            "duration_seconds": null,
+            "compound_out": "Medium",
+            "compound_in": "Hard"
+          }
+        ],
+        "neutralizations": [
+          {
+            "kind": "RED_FLAG",
+            "start_lap": 1,
+            "end_lap": 2,
+            "provenance": "derived",
+            "notes": "Lap-one stoppage consolidated strategy around the mandatory tire change."
+          }
+        ],
+        "weather_markers": [
+          {
+            "lap": 1,
+            "condition": "dry",
+            "provenance": "official",
+            "notes": "Dry start throughout the race."
+          }
+        ],
+        "notes": [
+          "Initial coverage is top-10 classification and top-10 grid only.",
+          "Pit summary coverage is partial and focused on the leading group."
+        ]
+      }
+    }
+  ],
+  "calibration_hints": [
+    {
+      "area": "race volatility",
+      "message": "Race movement is miscalibrated relative to history. Revisit overtaking sensitivity, restart leverage, and traffic penalties."
+    }
+  ]
+}

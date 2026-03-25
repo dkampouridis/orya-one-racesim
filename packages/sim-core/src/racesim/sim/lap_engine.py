@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 from racesim.api.contracts import EnvironmentControls, SimulationRequest, SimulationWeights
 from racesim.data.loaders import get_team
-from racesim.data.models import TrackProfile, WeatherPreset
+from racesim.data.models import TeamProfile, TrackProfile, WeatherPreset
 from racesim.sim.events import EventEngine, RaceEvents
 from racesim.sim.state import (
     DriverRaceState,
@@ -42,11 +42,13 @@ class LapRaceEngine:
         weather: WeatherPreset,
         request: SimulationRequest,
         profiles: dict[str, DriverStaticProfile],
+        teams_by_id: dict[str, TeamProfile] | None = None,
     ) -> None:
         self.track = track
         self.weather = weather
         self.request = request
         self.profiles = profiles
+        self.teams_by_id = teams_by_id or {}
         self.leverage = build_circuit_leverage(track)
         self.base_lap_time = track.base_race_time_sec / track.laps
 
@@ -245,6 +247,11 @@ class LapRaceEngine:
         )
 
     def _initialize_grid(self, rng: random.Random) -> dict[str, DriverRaceState]:
+        forced_grid_positions = {
+            driver_id: position
+            for driver_id, position in self.request.forced_grid_positions.items()
+            if driver_id in self.profiles
+        }
         qualifiers: list[tuple[str, float]] = []
         for driver_id, profile in self.profiles.items():
             variability = 1.8 * (1.08 - profile.driver.consistency / 220.0)
@@ -258,7 +265,15 @@ class LapRaceEngine:
             )
             qualifiers.append((driver_id, qualifying_score))
 
-        qualifiers.sort(key=lambda item: item[1], reverse=True)
+        if forced_grid_positions:
+            qualifiers.sort(
+                key=lambda item: (
+                    forced_grid_positions.get(item[0], len(self.profiles) + 100),
+                    -item[1],
+                )
+            )
+        else:
+            qualifiers.sort(key=lambda item: item[1], reverse=True)
         states: dict[str, DriverRaceState] = {}
         for grid_position, (driver_id, qualifying_score) in enumerate(qualifiers, start=1):
             profile = self.profiles[driver_id]
@@ -293,7 +308,7 @@ class LapRaceEngine:
         status: str,
         events: RaceEvents,
     ) -> dict[str, float]:
-        team = get_team(state.profile.driver.team_id)
+        team = self.teams_by_id.get(state.profile.driver.team_id) or get_team(state.profile.driver.team_id)
         projected_loss = self.track.pit_loss_seconds
         if status in {"vsc", "safety_car", "red_flag"}:
             projected_loss *= events.pit_discount

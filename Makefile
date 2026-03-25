@@ -1,7 +1,7 @@
 PYTHON ?= python3
 PIP ?= $(PYTHON) -m pip
 
-.PHONY: setup install-api install-web train-model dev-api dev-web test lint-web build-web check
+.PHONY: setup install-api install-web train-model dev-api dev-web test lint-web build-web check historical-normalize historical-backtest historical-report
 
 setup: install-api install-web
 
@@ -31,3 +31,12 @@ build-web:
 	cd apps/web && npm run build
 
 check: test lint-web build-web
+
+historical-normalize:
+	$(PYTHON) -m racesim.historical.cli normalize --season 2024
+
+historical-backtest:
+	$(PYTHON) -m racesim.historical.cli backtest --season 2024 --runs 250
+
+historical-report:
+	$(PYTHON) -m racesim.historical.cli report --season 2024 --runs 250

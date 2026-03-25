@@ -1,0 +1,56 @@
+{
+  "season": 2024,
+  "round": 8,
+  "grand_prix_id": "monaco-grand-prix",
+  "grand_prix_name": "Monaco Grand Prix",
+  "circuit_id": "monaco-grand-prix",
+  "circuit_name": "Circuit de Monaco",
+  "country": "Monaco",
+  "source_refs": [
+    {"authority": "Formula 1", "source_type": "race_result", "title": "2024 Monaco Grand Prix race result", "url": "https://www.formula1.com/en/results/2024/races/1236/monaco/race-result"},
+    {"authority": "Formula 1", "source_type": "starting_grid", "title": "2024 Monaco Grand Prix qualifying classification", "url": "https://www.formula1.com/en/results/2024/races/1236/monaco/qualifying"},
+    {"authority": "Formula 1", "source_type": "pit_stop_summary", "title": "2024 Monaco Grand Prix pit stop summary", "url": "https://www.formula1.com/en/results/2024/races/1236/monaco/pit-stop-summary"}
+  ],
+  "classification_rows": [
+    {"position": 1, "driver_code": "LEC", "driver_name": "Charles Leclerc", "team_name": "Ferrari", "car_number": 16, "laps_completed": 78, "points": 26, "status": "Finished", "dnf": false},
+    {"position": 2, "driver_code": "PIA", "driver_name": "Oscar Piastri", "team_name": "McLaren Mercedes", "car_number": 81, "laps_completed": 78, "points": 18, "status": "Finished", "dnf": false},
+    {"position": 3, "driver_code": "SAI", "driver_name": "Carlos Sainz", "team_name": "Ferrari", "car_number": 55, "laps_completed": 78, "points": 15, "status": "Finished", "dnf": false},
+    {"position": 4, "driver_code": "NOR", "driver_name": "Lando Norris", "team_name": "McLaren Mercedes", "car_number": 4, "laps_completed": 78, "points": 12, "status": "Finished", "dnf": false},
+    {"position": 5, "driver_code": "RUS", "driver_name": "George Russell", "team_name": "Mercedes", "car_number": 63, "laps_completed": 78, "points": 10, "status": "Finished", "dnf": false},
+    {"position": 6, "driver_code": "VER", "driver_name": "Max Verstappen", "team_name": "Red Bull Racing Honda RBPT", "car_number": 1, "laps_completed": 78, "points": 8, "status": "Finished", "dnf": false},
+    {"position": 7, "driver_code": "HAM", "driver_name": "Lewis Hamilton", "team_name": "Mercedes", "car_number": 44, "laps_completed": 78, "points": 7, "status": "Finished", "dnf": false},
+    {"position": 8, "driver_code": "TSU", "driver_name": "Yuki Tsunoda", "team_name": "Visa Cash App RB Honda RBPT", "car_number": 22, "laps_completed": 78, "points": 4, "status": "Finished", "dnf": false},
+    {"position": 9, "driver_code": "ALB", "driver_name": "Alexander Albon", "team_name": "Williams Mercedes", "car_number": 23, "laps_completed": 78, "points": 2, "status": "Finished", "dnf": false},
+    {"position": 10, "driver_code": "GAS", "driver_name": "Pierre Gasly", "team_name": "Alpine Renault", "car_number": 10, "laps_completed": 78, "points": 1, "status": "Finished", "dnf": false}
+  ],
+  "grid_rows": [
+    {"position": 1, "driver_code": "LEC", "driver_name": "Charles Leclerc", "team_name": "Ferrari", "car_number": 16},
+    {"position": 2, "driver_code": "PIA", "driver_name": "Oscar Piastri", "team_name": "McLaren Mercedes", "car_number": 81},
+    {"position": 3, "driver_code": "SAI", "driver_name": "Carlos Sainz", "team_name": "Ferrari", "car_number": 55},
+    {"position": 4, "driver_code": "NOR", "driver_name": "Lando Norris", "team_name": "McLaren Mercedes", "car_number": 4},
+    {"position": 5, "driver_code": "RUS", "driver_name": "George Russell", "team_name": "Mercedes", "car_number": 63},
+    {"position": 6, "driver_code": "VER", "driver_name": "Max Verstappen", "team_name": "Red Bull Racing Honda RBPT", "car_number": 1},
+    {"position": 7, "driver_code": "HAM", "driver_name": "Lewis Hamilton", "team_name": "Mercedes", "car_number": 44},
+    {"position": 8, "driver_code": "TSU", "driver_name": "Yuki Tsunoda", "team_name": "Visa Cash App RB Honda RBPT", "car_number": 22},
+    {"position": 9, "driver_code": "ALB", "driver_name": "Alexander Albon", "team_name": "Williams Mercedes", "car_number": 23},
+    {"position": 10, "driver_code": "GAS", "driver_name": "Pierre Gasly", "team_name": "Alpine Renault", "car_number": 10}
+  ],
+  "pit_stop_rows": [
+    {"driver_code": "LEC", "driver_name": "Charles Leclerc", "team_name": "Ferrari", "lap": 1, "stop_number": 1, "compound_out": "Medium", "compound_in": "Hard"},
+    {"driver_code": "PIA", "driver_name": "Oscar Piastri", "team_name": "McLaren Mercedes", "lap": 1, "stop_number": 1, "compound_out": "Soft", "compound_in": "Hard"},
+    {"driver_code": "SAI", "driver_name": "Carlos Sainz", "team_name": "Ferrari", "lap": 1, "stop_number": 1, "compound_out": "Medium", "compound_in": "Hard"},
+    {"driver_code": "NOR", "driver_name": "Lando Norris", "team_name": "McLaren Mercedes", "lap": 1, "stop_number": 1, "compound_out": "Hard", "compound_in": "Medium"},
+    {"driver_code": "RUS", "driver_name": "George Russell", "team_name": "Mercedes", "lap": 1, "stop_number": 1, "compound_out": "Medium", "compound_in": "Hard"},
+    {"driver_code": "VER", "driver_name": "Max Verstappen", "team_name": "Red Bull Racing Honda RBPT", "lap": 1, "stop_number": 1, "compound_out": "Medium", "compound_in": "Hard"}
+  ],
+  "neutralizations": [
+    {"kind": "RED_FLAG", "start_lap": 1, "end_lap": 2, "provenance": "derived", "notes": "Lap-one stoppage consolidated strategy around the mandatory tire change."}
+  ],
+  "weather_markers": [
+    {"lap": 1, "condition": "dry", "provenance": "official", "notes": "Dry start throughout the race."}
+  ],
+  "notes": [
+    "Initial coverage is top-10 classification and top-10 grid only.",
+    "Pit summary coverage is partial and focused on the leading group."
+  ]
+}

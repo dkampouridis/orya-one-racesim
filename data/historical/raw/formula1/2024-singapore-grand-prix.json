@@ -1,0 +1,50 @@
+{
+  "season": 2024,
+  "round": 18,
+  "grand_prix_id": "singapore-grand-prix",
+  "grand_prix_name": "Singapore Grand Prix",
+  "circuit_id": "singapore-grand-prix",
+  "circuit_name": "Marina Bay Street Circuit",
+  "country": "Singapore",
+  "source_refs": [
+    {"authority": "Formula 1", "source_type": "race_result", "title": "2024 Singapore Grand Prix race result", "url": "https://www.formula1.com/en/results/2024/races/1246/singapore/race-result"},
+    {"authority": "Formula 1", "source_type": "starting_grid", "title": "2024 Singapore Grand Prix starting grid", "url": "https://www.formula1.com/en/results/2024/races/1246/singapore/starting-grid"}
+  ],
+  "classification_rows": [
+    {"position": 1, "driver_code": "NOR", "driver_name": "Lando Norris", "team_name": "McLaren Mercedes", "car_number": 4, "laps_completed": 62, "points": 25, "status": "Finished", "dnf": false},
+    {"position": 2, "driver_code": "VER", "driver_name": "Max Verstappen", "team_name": "Red Bull Racing Honda RBPT", "car_number": 1, "laps_completed": 62, "points": 18, "status": "Finished", "dnf": false},
+    {"position": 3, "driver_code": "PIA", "driver_name": "Oscar Piastri", "team_name": "McLaren Mercedes", "car_number": 81, "laps_completed": 62, "points": 15, "status": "Finished", "dnf": false},
+    {"position": 4, "driver_code": "RUS", "driver_name": "George Russell", "team_name": "Mercedes", "car_number": 63, "laps_completed": 62, "points": 12, "status": "Finished", "dnf": false},
+    {"position": 5, "driver_code": "LEC", "driver_name": "Charles Leclerc", "team_name": "Ferrari", "car_number": 16, "laps_completed": 62, "points": 10, "status": "Finished", "dnf": false},
+    {"position": 6, "driver_code": "HAM", "driver_name": "Lewis Hamilton", "team_name": "Mercedes", "car_number": 44, "laps_completed": 62, "points": 8, "status": "Finished", "dnf": false},
+    {"position": 7, "driver_code": "SAI", "driver_name": "Carlos Sainz", "team_name": "Ferrari", "car_number": 55, "laps_completed": 62, "points": 6, "status": "Finished", "dnf": false},
+    {"position": 8, "driver_code": "ALO", "driver_name": "Fernando Alonso", "team_name": "Aston Martin Aramco Mercedes", "car_number": 14, "laps_completed": 62, "points": 4, "status": "Finished", "dnf": false},
+    {"position": 9, "driver_code": "HUL", "driver_name": "Nico Hulkenberg", "team_name": "Haas Ferrari", "car_number": 27, "laps_completed": 62, "points": 2, "status": "Finished", "dnf": false},
+    {"position": 10, "driver_code": "PER", "driver_name": "Sergio Perez", "team_name": "Red Bull Racing Honda RBPT", "car_number": 11, "laps_completed": 62, "points": 1, "status": "Finished", "dnf": false}
+  ],
+  "grid_rows": [
+    {"position": 1, "driver_code": "NOR", "driver_name": "Lando Norris", "team_name": "McLaren Mercedes", "car_number": 4},
+    {"position": 2, "driver_code": "VER", "driver_name": "Max Verstappen", "team_name": "Red Bull Racing Honda RBPT", "car_number": 1},
+    {"position": 3, "driver_code": "HAM", "driver_name": "Lewis Hamilton", "team_name": "Mercedes", "car_number": 44},
+    {"position": 4, "driver_code": "RUS", "driver_name": "George Russell", "team_name": "Mercedes", "car_number": 63},
+    {"position": 5, "driver_code": "PIA", "driver_name": "Oscar Piastri", "team_name": "McLaren Mercedes", "car_number": 81},
+    {"position": 6, "driver_code": "HUL", "driver_name": "Nico Hulkenberg", "team_name": "Haas Ferrari", "car_number": 27},
+    {"position": 7, "driver_code": "ALO", "driver_name": "Fernando Alonso", "team_name": "Aston Martin Aramco Mercedes", "car_number": 14},
+    {"position": 8, "driver_code": "TSU", "driver_name": "Yuki Tsunoda", "team_name": "Visa Cash App RB Honda RBPT", "car_number": 22},
+    {"position": 9, "driver_code": "LEC", "driver_name": "Charles Leclerc", "team_name": "Ferrari", "car_number": 16},
+    {"position": 10, "driver_code": "SAI", "driver_name": "Carlos Sainz", "team_name": "Ferrari", "car_number": 55}
+  ],
+  "pit_stop_rows": [
+    {"driver_code": "NOR", "driver_name": "Lando Norris", "team_name": "McLaren Mercedes", "lap": 28, "stop_number": 1, "compound_out": "Medium", "compound_in": "Hard"},
+    {"driver_code": "VER", "driver_name": "Max Verstappen", "team_name": "Red Bull Racing Honda RBPT", "lap": 27, "stop_number": 1, "compound_out": "Medium", "compound_in": "Hard"},
+    {"driver_code": "PIA", "driver_name": "Oscar Piastri", "team_name": "McLaren Mercedes", "lap": 28, "stop_number": 1, "compound_out": "Medium", "compound_in": "Hard"},
+    {"driver_code": "RUS", "driver_name": "George Russell", "team_name": "Mercedes", "lap": 29, "stop_number": 1, "compound_out": "Medium", "compound_in": "Hard"}
+  ],
+  "neutralizations": [],
+  "weather_markers": [
+    {"lap": 1, "condition": "dry", "provenance": "official", "notes": "Dry and stable night race."}
+  ],
+  "notes": [
+    "Top-10 coverage is used for the first pass. The race was dry and mostly stable."
+  ]
+}

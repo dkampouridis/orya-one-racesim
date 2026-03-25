@@ -57,6 +57,7 @@ class SimulationRequest(StrategySuggestionRequest):
     simulation_runs: int = Field(default=400, ge=50, le=5000)
     field_strategy_preset: str | None = None
     strategies: dict[str, str] = Field(default_factory=dict)
+    forced_grid_positions: dict[str, int] = Field(default_factory=dict)
 
 
 class StrategySuggestion(BaseModel):

@@ -12,15 +12,16 @@ from racesim.api.contracts import (
     ScenarioSummary,
     SimulationRequest,
     SimulationResponse,
+    StrategySuggestion,
     StrategySuggestionRequest,
     TeamSummary,
 )
-from racesim.data.loaders import build_defaults_payload, get_team, get_track, get_weather, load_drivers
-from racesim.data.models import DriverProfile, StrategyTemplate, TrackProfile, WeatherPreset
+from racesim.data.loaders import build_defaults_payload, get_team, get_track, get_weather, load_drivers, load_strategy_templates, load_teams
+from racesim.data.models import DriverProfile, StrategyTemplate, TeamProfile, TrackProfile, WeatherPreset
 from racesim.model.predictor import PacePredictor
 from racesim.sim.lap_engine import LapRaceEngine
 from racesim.sim.state import DriverStaticProfile, build_circuit_leverage
-from racesim.sim.strategies import StrategyFit, apply_overrides, evaluate_strategy, strategy_lookup, suggest_strategies
+from racesim.sim.strategies import StrategyFit, apply_overrides, evaluate_strategy, strategy_lookup, suggest_strategies, risk_profile_for
 
 RACE_POINTS = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1]
 SPRINT_POINTS = [8, 7, 6, 5, 4, 3, 2, 1]
@@ -58,18 +59,52 @@ class SimulationService:
     def simulate(self, request: SimulationRequest) -> SimulationResponse:
         track = get_track(request.grand_prix_id)
         weather = get_weather(request.weather_preset_id)
-        suggestions = suggest_strategies(request)
-        suggestion_map = {item.driver_id: item for item in suggestions}
         drivers = [apply_overrides(driver, request.driver_overrides) for driver in load_drivers()]
+        teams_by_id = {team.id: team for team in load_teams()}
+        return self.simulate_custom_context(
+            request=request,
+            drivers=drivers,
+            teams_by_id=teams_by_id,
+            track=track,
+            weather=weather,
+        )
 
+    def simulate_custom_context(
+        self,
+        request: SimulationRequest,
+        drivers: list[DriverProfile],
+        teams_by_id: dict[str, TeamProfile],
+        track: TrackProfile,
+        weather: WeatherPreset,
+    ) -> SimulationResponse:
+        suggestions = self._build_strategy_suggestions_for_drivers(
+            drivers=drivers,
+            track=track,
+            weather=weather,
+            request=request,
+        )
+        suggestion_map = {item.driver_id: item for item in suggestions}
         assigned_strategies = {
             driver.id: strategy_lookup(
                 request.strategies.get(driver.id) or request.field_strategy_preset or suggestion_map[driver.id].strategy_id
             )
             for driver in drivers
         }
-        profiles = self._build_static_profiles(drivers, assigned_strategies, track, weather, request)
-        lap_engine = LapRaceEngine(track=track, weather=weather, request=request, profiles=profiles)
+        profiles = self._build_static_profiles(
+            drivers,
+            assigned_strategies,
+            track,
+            weather,
+            request,
+            teams_by_id=teams_by_id,
+        )
+        lap_engine = LapRaceEngine(
+            track=track,
+            weather=weather,
+            request=request,
+            profiles=profiles,
+            teams_by_id=teams_by_id,
+        )
 
         finish_positions: dict[str, list[int]] = defaultdict(list)
         starting_positions: dict[str, list[int]] = defaultdict(list)
@@ -257,6 +292,34 @@ class SimulationService:
             strategy_suggestions=list(suggestions),
         )
 
+    def _build_strategy_suggestions_for_drivers(
+        self,
+        drivers: list[DriverProfile],
+        track: TrackProfile,
+        weather: WeatherPreset,
+        request: StrategySuggestionRequest,
+    ) -> list:
+        templates = load_strategy_templates()
+        suggestions = []
+        for driver in drivers:
+            fits = [
+                evaluate_strategy(driver, track, weather, template, request.weights, request.environment)
+                for template in templates
+            ]
+            best = sorted(fits, key=lambda item: item.score, reverse=True)[0]
+            suggestions.append(
+                StrategySuggestion(
+                    driver_id=driver.id,
+                    strategy_id=best.strategy.id,
+                    strategy_name=best.strategy.name,
+                    score=round(best.score, 2),
+                    risk_profile=risk_profile_for(best.strategy, weather, request.environment),
+                    rationale=best.reasons,
+                    tradeoff=best.tradeoff,
+                )
+            )
+        return suggestions
+
     def _build_static_profiles(
         self,
         drivers: list[DriverProfile],
@@ -264,12 +327,15 @@ class SimulationService:
         track: TrackProfile,
         weather: WeatherPreset,
         request: SimulationRequest,
+        teams_by_id: dict[str, TeamProfile] | None = None,
     ) -> dict[str, DriverStaticProfile]:
         raw_profiles: list[DriverStaticProfile] = []
         for driver in drivers:
             strategy = assigned_strategies[driver.id]
             strategy_fit = evaluate_strategy(driver, track, weather, strategy, request.weights, request.environment)
-            team = get_team(driver.team_id)
+            team = teams_by_id.get(driver.team_id) if teams_by_id else None
+            if team is None:
+                team = get_team(driver.team_id)
             team_baseline = (team.race_pace - 80.0) * 0.55 + (team.qualifying_pace - 80.0) * 0.18
             raw_pace_score = self.predictor.predict(build_feature_vector(driver, track, weather)) + team_baseline
             energy_strength = min(
