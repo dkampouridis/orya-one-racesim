@@ -84,7 +84,15 @@ class SimulationService:
         overtake_totals: Counter[str] = Counter()
         stint_length_totals: Counter[str] = Counter()
         net_position_totals: Counter[str] = Counter()
+        position_change_totals: Counter[str] = Counter()
         strategy_adaptation_totals: Counter[str] = Counter()
+        undercut_attempt_totals: Counter[str] = Counter()
+        undercut_success_totals: Counter[str] = Counter()
+        overcut_attempt_totals: Counter[str] = Counter()
+        overcut_success_totals: Counter[str] = Counter()
+        post_pit_position_delta_totals: Counter[str] = Counter()
+        post_pit_traffic_penalty_totals: Counter[str] = Counter()
+        pit_timing_regret_totals: Counter[str] = Counter()
         turning_point_counts: Counter[str] = Counter()
         safety_car_lap_total = 0
         safety_car_lap_count = 0
@@ -114,10 +122,18 @@ class SimulationService:
                 overtake_totals[driver_id] += summary.overtakes
                 stint_length_totals[driver_id] += summary.average_stint_length
                 net_position_totals[driver_id] += summary.positions_gained
+                position_change_totals[driver_id] += summary.position_changes
                 if summary.average_first_pit_lap is not None:
                     first_pit_lap_totals[driver_id] += summary.average_first_pit_lap
                     first_pit_lap_counts[driver_id] += 1
                 strategy_adaptation_totals[driver_id] += summary.strategy_adaptations
+                undercut_attempt_totals[driver_id] += summary.undercut_attempts
+                undercut_success_totals[driver_id] += summary.undercut_successes
+                overcut_attempt_totals[driver_id] += summary.overcut_attempts
+                overcut_success_totals[driver_id] += summary.overcut_successes
+                post_pit_position_delta_totals[driver_id] += summary.post_pit_position_delta
+                post_pit_traffic_penalty_totals[driver_id] += summary.post_pit_traffic_penalty
+                pit_timing_regret_totals[driver_id] += summary.pit_timing_regret
                 for key, value in summary.diagnostics.items():
                     diagnostic_totals[driver_id][key] += value
 
@@ -136,6 +152,10 @@ class SimulationService:
             overtake_totals=overtake_totals,
             stint_length_totals=stint_length_totals,
             net_position_totals=net_position_totals,
+            undercut_attempt_totals=undercut_attempt_totals,
+            undercut_success_totals=undercut_success_totals,
+            overcut_attempt_totals=overcut_attempt_totals,
+            overcut_success_totals=overcut_success_totals,
             incident_time_totals=incident_time_totals,
             event_pressure_totals=event_pressure_totals,
             strategy_adaptation_totals=strategy_adaptation_totals,
@@ -154,6 +174,19 @@ class SimulationService:
             request=request,
             turning_point_counts=turning_point_counts,
             avg_safety_car_lap=round(safety_car_lap_total / safety_car_lap_count, 2) if safety_car_lap_count else None,
+            driver_results=driver_results,
+            strategy_success=strategy_success,
+            first_pit_lap_totals=first_pit_lap_totals,
+            first_pit_lap_counts=first_pit_lap_counts,
+            pit_stop_totals=pit_stop_totals,
+            undercut_attempt_totals=undercut_attempt_totals,
+            undercut_success_totals=undercut_success_totals,
+            overcut_attempt_totals=overcut_attempt_totals,
+            overcut_success_totals=overcut_success_totals,
+            post_pit_position_delta_totals=post_pit_position_delta_totals,
+            post_pit_traffic_penalty_totals=post_pit_traffic_penalty_totals,
+            pit_timing_regret_totals=pit_timing_regret_totals,
+            position_change_totals=position_change_totals,
         )
         scenario = ScenarioSummary(
             grand_prix_id=track.id,
@@ -289,6 +322,10 @@ class SimulationService:
         overtake_totals: Counter[str],
         stint_length_totals: Counter[str],
         net_position_totals: Counter[str],
+        undercut_attempt_totals: Counter[str],
+        undercut_success_totals: Counter[str],
+        overcut_attempt_totals: Counter[str],
+        overcut_success_totals: Counter[str],
         incident_time_totals: Counter[str],
         event_pressure_totals: Counter[str],
         strategy_adaptation_totals: Counter[str],
@@ -342,6 +379,14 @@ class SimulationService:
                 else 0.0,
                 "average_overtakes": round(overtake_totals[driver_id] / request.simulation_runs, 4),
                 "net_position_delta": round(net_position_totals[driver_id] / request.simulation_runs, 4),
+                "undercut_success_rate": round(
+                    undercut_success_totals.get(driver_id, 0) / max(1, undercut_attempt_totals.get(driver_id, 0)),
+                    4,
+                ),
+                "overcut_success_rate": round(
+                    overcut_success_totals.get(driver_id, 0) / max(1, overcut_attempt_totals.get(driver_id, 0)),
+                    4,
+                ),
             }
 
             expected_stop_count = round(pit_stop_totals[driver_id] / request.simulation_runs, 2)
@@ -471,6 +516,19 @@ class SimulationService:
         request: SimulationRequest,
         turning_point_counts: Counter[str],
         avg_safety_car_lap: float | None,
+        driver_results: list[DriverResult],
+        strategy_success: Counter[str],
+        first_pit_lap_totals: Counter[str],
+        first_pit_lap_counts: Counter[str],
+        pit_stop_totals: Counter[str],
+        undercut_attempt_totals: Counter[str],
+        undercut_success_totals: Counter[str],
+        overcut_attempt_totals: Counter[str],
+        overcut_success_totals: Counter[str],
+        post_pit_position_delta_totals: Counter[str],
+        post_pit_traffic_penalty_totals: Counter[str],
+        pit_timing_regret_totals: Counter[str],
+        position_change_totals: Counter[str],
     ) -> EventSummary:
         leverage = build_circuit_leverage(track)
         runs = request.simulation_runs
@@ -496,6 +554,50 @@ class SimulationService:
         avg_pit_stops_per_driver = round(tallies["pit_stops_total"] / (runs * len(load_drivers())), 2)
         avg_green_flag_overtakes = round(tallies["green_overtakes_total"] / runs, 2)
         turning_points = [item for item, _ in turning_point_counts.most_common(4)]
+        driver_count = max(1, len(load_drivers()))
+        avg_first_stop_lap = (
+            round(sum(first_pit_lap_totals.values()) / max(1, sum(first_pit_lap_counts.values())), 2)
+            if sum(first_pit_lap_counts.values())
+            else None
+        )
+        undercut_success_tendency = round(
+            sum(undercut_success_totals.values()) / max(1, sum(undercut_attempt_totals.values())),
+            4,
+        )
+        overcut_success_tendency = round(
+            sum(overcut_success_totals.values()) / max(1, sum(overcut_attempt_totals.values())),
+            4,
+        )
+        avg_position_changes_per_driver = round(
+            sum(position_change_totals.values()) / (runs * driver_count),
+            2,
+        )
+        traffic_penalty_impact = round(
+            sum(driver.diagnostics.get("traffic_penalty", 0.0) for driver in driver_results) / driver_count,
+            4,
+        )
+        post_pit_traffic_penalty = round(
+            sum(post_pit_traffic_penalty_totals.values()) / (runs * driver_count),
+            4,
+        )
+        avg_post_pit_position_delta = round(
+            sum(post_pit_position_delta_totals.values()) / (runs * driver_count),
+            4,
+        )
+        pit_timing_regret = round(sum(pit_timing_regret_totals.values()) / (runs * driver_count), 4)
+        strategy_success_rate = round(sum(strategy_success.values()) / (runs * driver_count), 4)
+        strategy_sensitivity_index = round(
+            (
+                abs(avg_post_pit_position_delta) * 0.22
+                + avg_green_flag_overtakes * 0.08
+                + traffic_penalty_impact * 0.35
+                + pit_timing_regret * 0.45
+                + (1.0 - undercut_success_tendency) * 0.15
+                + (1.0 - overcut_success_tendency) * 0.1
+            ),
+            4,
+        )
+        strategy_sensitivity_index = abs(strategy_sensitivity_index)
 
         impact_summary = []
         if rates["Weather shift"] > 0.24 or tallies["wet_start"] / runs > 0.12:
@@ -536,6 +638,19 @@ class SimulationService:
                 "energy_sensitivity": round(track.energy_sensitivity, 4),
                 "strategy_flexibility": round(track.strategy_flexibility, 4),
                 **leverage.as_dict(),
+            },
+            strategy_diagnostics={
+                "avg_position_changes_per_driver": avg_position_changes_per_driver,
+                "avg_first_stop_lap": avg_first_stop_lap,
+                "avg_stop_count": avg_pit_stops_per_driver,
+                "undercut_success_tendency": undercut_success_tendency,
+                "overcut_success_tendency": overcut_success_tendency,
+                "traffic_penalty_impact": traffic_penalty_impact,
+                "post_pit_traffic_penalty": post_pit_traffic_penalty,
+                "avg_post_pit_position_delta": avg_post_pit_position_delta,
+                "pit_timing_regret": pit_timing_regret,
+                "strategy_success_rate": strategy_success_rate,
+                "strategy_sensitivity_index": strategy_sensitivity_index,
             },
         )
 

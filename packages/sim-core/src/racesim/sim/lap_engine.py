@@ -62,15 +62,14 @@ class LapRaceEngine:
             wetness = self._wetness_for_lap(lap, events)
             track_grip = self._track_grip_for_lap(lap, wetness)
             sorted_states = self._ordered_active_states(states)
-            for position, ordered_state in enumerate(sorted_states, start=1):
-                ordered_state.current_position = position
+            self._update_live_positions(sorted_states)
             attack_plan = self._build_attack_plan(sorted_states, lap, wetness, status, events, rng)
 
             for state in sorted_states:
                 if not state.in_race:
                     continue
 
-                pit_reason = self._pit_reason(state, lap, wetness, status)
+                pit_reason = self._pit_reason(state, lap, wetness, status, events, sorted_states)
                 lap_time = self._lap_time_for_driver(
                     state=state,
                     lap=lap,
@@ -80,6 +79,7 @@ class LapRaceEngine:
                     events=events,
                     attack=attack_plan.get(state.profile.driver.id, AttackPlan()),
                     pit_reason=pit_reason,
+                    ordered_states=sorted_states,
                     rng=rng,
                 )
                 state.total_time += lap_time
@@ -109,6 +109,8 @@ class LapRaceEngine:
                     state.total_time += 12000.0 - lap * 10.0
 
             self._apply_neutralization_bunching(states, status, rng)
+            self._update_live_positions(self._ordered_active_states(states))
+            self._resolve_post_pit_effects(states)
 
             if lap in events.restart_laps:
                 turning_points.append(f"lap {lap} restart compresses the field and reopens attack windows")
@@ -164,6 +166,7 @@ class LapRaceEngine:
                 average_stint_length=round(average_stint_length, 2),
                 average_first_pit_lap=float(first_pit_lap) if first_pit_lap is not None else None,
                 overtakes=state.overtake_count,
+                position_changes=state.position_change_events,
                 positions_gained=state.starting_position - finish_position,
                 incident_time_loss=round(state.incident_time_loss, 3),
                 strategy_success=(
@@ -171,10 +174,20 @@ class LapRaceEngine:
                     and (
                         finish_position <= state.starting_position + 1
                         or abs(state.pit_stops - len(state.profile.strategy.pit_windows)) <= 1
+                        or state.undercut_successes > 0
+                        or state.overcut_successes > 0
                     )
                     and state.incident_time_loss < 6.0
+                    and state.pit_timing_regret_total < 2.8
                 ),
                 strategy_adaptations=state.strategy_adaptations,
+                undercut_attempts=state.undercut_attempts,
+                undercut_successes=state.undercut_successes,
+                overcut_attempts=state.overcut_attempts,
+                overcut_successes=state.overcut_successes,
+                post_pit_position_delta=round(state.post_pit_position_delta_total, 3),
+                post_pit_traffic_penalty=round(state.post_pit_traffic_penalty_total, 3),
+                pit_timing_regret=round(state.pit_timing_regret_total, 3),
                 diagnostics=state.diagnostics.as_average_dict(),
             )
 
@@ -234,6 +247,84 @@ class LapRaceEngine:
         ordered = sorted(states.values(), key=lambda item: item.total_time)
         return [state for state in ordered if state.in_race]
 
+    def _update_live_positions(self, ordered_states: list[DriverRaceState]) -> None:
+        for position, ordered_state in enumerate(ordered_states, start=1):
+            if ordered_state.completed_laps > 0 and ordered_state.current_position != position:
+                ordered_state.position_change_events += abs(ordered_state.current_position - position)
+            ordered_state.current_position = position
+
+    def _pit_rejoin_context(
+        self,
+        state: DriverRaceState,
+        ordered_states: list[DriverRaceState],
+        status: str,
+        events: RaceEvents,
+    ) -> dict[str, float]:
+        team = get_team(state.profile.driver.team_id)
+        projected_loss = self.track.pit_loss_seconds
+        if status in {"vsc", "safety_car", "red_flag"}:
+            projected_loss *= events.pit_discount
+        projected_loss += max(1.9, 2.5 - team.pit_crew_efficiency * 0.5 + state.damage * 0.08)
+
+        projected_time = state.total_time + projected_loss
+        others = [other for other in ordered_states if other.profile.driver.id != state.profile.driver.id]
+        ahead = [other for other in others if other.total_time <= projected_time]
+        behind = [other for other in others if other.total_time > projected_time]
+        rejoin_position = len(ahead) + 1
+        ahead_gap = projected_time - ahead[-1].total_time if ahead else 3.5
+        behind_gap = behind[0].total_time - projected_time if behind else 3.5
+        density = sum(1 for other in others if abs(other.total_time - projected_time) <= 1.45)
+        projected_position_loss = max(0, rejoin_position - state.current_position)
+        clean_air_probability = max(0.0, min(1.0, (ahead_gap + behind_gap - density * 0.3) / 3.2))
+        return {
+            "rejoin_position": float(rejoin_position),
+            "ahead_gap": float(ahead_gap),
+            "behind_gap": float(behind_gap),
+            "density": float(density),
+            "projected_position_loss": float(projected_position_loss),
+            "clean_air_probability": float(clean_air_probability),
+        }
+
+    def _resolve_post_pit_effects(self, states: dict[str, DriverRaceState]) -> None:
+        for state in states.values():
+            if not state.in_race or state.pending_pit_eval_laps <= 0 or state.pending_pit_reference_position is None:
+                continue
+
+            state.pending_pit_eval_laps -= 1
+            state.pending_pit_traffic_accum += state.traffic_load
+            state.post_pit_traffic_penalty_total += state.traffic_load
+            state.diagnostics.post_pit_traffic_penalty += state.traffic_load
+
+            if state.pending_pit_eval_laps > 0:
+                continue
+
+            position_delta = state.pending_pit_reference_position - state.current_position
+            traffic_burden = state.pending_pit_traffic_accum
+            state.post_pit_position_delta_total += position_delta
+            state.diagnostics.post_pit_position_delta += position_delta
+
+            reason = state.pending_pit_reason or ""
+            if reason in {"undercut_window", "neutralized_window"}:
+                if position_delta > 0:
+                    state.undercut_successes += 1
+                state.diagnostics.undercut_delta += position_delta
+            elif reason in {"offset_window", "late_window"}:
+                if position_delta >= 0:
+                    state.overcut_successes += 1
+                state.diagnostics.overcut_delta += position_delta
+
+            regret = 0.0
+            if position_delta < 0:
+                regret += abs(position_delta) * 0.45
+            if traffic_burden > 0.36:
+                regret += traffic_burden * 0.3
+            state.pit_timing_regret_total += regret
+            state.diagnostics.pit_timing_regret += regret
+
+            state.pending_pit_reference_position = None
+            state.pending_pit_reason = None
+            state.pending_pit_traffic_accum = 0.0
+
     def _build_attack_plan(
         self,
         ordered_states: list[DriverRaceState],
@@ -257,6 +348,9 @@ class LapRaceEngine:
             follower = ordered_states[index]
             leader = ordered_states[index - 1]
             gap = max(0.0, follower.total_time - leader.total_time)
+            leader_train_gap = (
+                max(0.0, leader.total_time - ordered_states[index - 2].total_time) if index >= 2 else 3.0
+            )
             attack_gap_limit = (
                 0.82
                 + self.leverage.alternate_strategy_factor * 0.52
@@ -272,9 +366,23 @@ class LapRaceEngine:
                 + self.leverage.dirty_air_factor * 0.05
                 + follower.profile.strategy.track_position_bias * 0.04
             )
+            if leader_train_gap < 1.1:
+                dirty_air_penalty += 0.03 + self.leverage.order_lock_factor * 0.01
             plan[follower.profile.driver.id].traffic_penalty += max(0.04, dirty_air_penalty)
             plan[follower.profile.driver.id].compression_penalty += (
                 self.leverage.clean_air_factor * max(0.0, 1.1 - gap) * 0.07
+            )
+
+            tire_phase_ratio = follower.tire_wear / max(
+                0.55,
+                COMPOUND_SPECS.get(follower.current_compound, COMPOUND_SPECS["Medium"])["cliff"],
+            )
+            stint_attack_phase = max(0.0, tire_phase_ratio - 0.45)
+            defense_factor = (
+                (leader.profile.driver.consistency / 100.0) * 0.1
+                + leader.profile.energy_strength * 0.08
+                + leader.profile.strategy.track_position_bias * 0.1
+                + leader.profile.qualifying_leverage * 0.04
             )
 
             relative_attack = (
@@ -289,8 +397,10 @@ class LapRaceEngine:
                 + (follower.profile.strategy.aggression - leader.profile.strategy.aggression)
                 * (0.14 + self.leverage.strategy_flex_factor * 0.1)
                 + restart_bonus
+                + stint_attack_phase * (0.08 + self.leverage.degradation_factor * 0.05)
                 + (0.06 + self.leverage.track_position_multiplier * 0.03 if follower.pit_stops < leader.pit_stops else 0.0)
                 - self.leverage.overtake_suppression_factor * 1.02
+                - defense_factor
                 - wetness * (0.16 + self.leverage.weather_sensitivity_factor * 0.07)
             )
             if follower.current_compound == "Intermediate" and wetness > 0.45:
@@ -328,6 +438,7 @@ class LapRaceEngine:
                     + (1.35 - gap) * (0.08 + self.leverage.recovery_factor * 0.05)
                     + self.request.weights.overtaking_sensitivity * 0.06
                     + (events.overtaking_window - 1.0) * 0.18
+                    - max(0.0, 1.05 - leader_train_gap) * (0.04 + self.leverage.order_lock_factor * 0.015)
                     - self.leverage.dirty_air_factor * 0.035,
                 ),
             )
@@ -350,6 +461,7 @@ class LapRaceEngine:
         events: RaceEvents,
         attack: AttackPlan,
         pit_reason: str | None,
+        ordered_states: list[DriverRaceState],
         rng: random.Random,
     ) -> float:
         compound = COMPOUND_SPECS.get(state.current_compound, COMPOUND_SPECS["Medium"])
@@ -367,16 +479,19 @@ class LapRaceEngine:
         pace_component = state.profile.pace_edge * (0.28 + self.request.weights.driver_form_weight * 0.18)
         track_fit_bonus = state.profile.track_fit_score / 28.0
         strategy_component = ((state.profile.strategy_fit.score - 50.0) / 20.0) * (
-            0.1 + self.leverage.strategy_flex_factor * 0.08 + self.leverage.pit_window_pressure_factor * 0.04
+            0.14
+            + self.leverage.strategy_flex_factor * 0.12
+            + self.leverage.pit_window_pressure_factor * 0.06
+            + state.profile.strategy.aggression * 0.04
         )
         chaos_bonus = state.profile.chaos_resilience * events.event_pressure * self.request.weights.reliability_sensitivity * 0.22
         flexibility_bonus = (
             state.profile.strategy.flexibility
             * (
-                0.04
-                + max(0.0, self.leverage.strategy_flex_factor - 1.0) * 0.16
+                0.05
+                + max(0.0, self.leverage.strategy_flex_factor - 1.0) * 0.2
                 + self.leverage.disruption_leverage_factor
-                * 0.06
+                * 0.08
                 * int(status in {"vsc", "safety_car", "red_flag"} or wetness > 0.35)
             )
         )
@@ -397,8 +512,14 @@ class LapRaceEngine:
         reliability_penalty = (1.0 - state.profile.driver.reliability / 100.0) * self.request.weights.reliability_sensitivity * 0.18
         risk_penalty = state.damage * 0.22 + state.profile.event_exposure * events.event_pressure * 0.08
         compression_penalty = attack.compression_penalty
-        traffic_penalty = attack.traffic_penalty
-        overtaking_bonus = attack.attack_bonus * (0.65 + self.request.weights.overtaking_sensitivity * 0.5)
+        traffic_penalty = attack.traffic_penalty * (
+            1.0 + self.leverage.order_lock_factor * 0.06 + state.profile.strategy.track_position_bias * 0.05
+        )
+        overtaking_bonus = attack.attack_bonus * (
+            0.62
+            + self.request.weights.overtaking_sensitivity * 0.54
+            + state.profile.strategy.aggression * 0.08
+        )
 
         noise_sigma = (
             0.12
@@ -444,7 +565,7 @@ class LapRaceEngine:
         )
 
         if pit_reason:
-            lap_time += self._execute_pit_stop(state, lap, pit_reason, status, events)
+            lap_time += self._execute_pit_stop(state, lap, pit_reason, status, events, ordered_states)
 
         state.tire_age += 1
         wear_gain = compound["deg_rate"] * self.track.tire_stress * events.degradation_multiplier
@@ -492,6 +613,7 @@ class LapRaceEngine:
         diagnostics.temperature_penalty += temperature_penalty
         diagnostics.reliability_penalty += reliability_penalty
         diagnostics.risk_penalty += risk_penalty
+        diagnostics.traffic_penalty += traffic_penalty
         diagnostics.compression_penalty += compression_penalty + traffic_penalty
         diagnostics.stochastic_contribution += stochastic
         diagnostics.lap_count += 1
@@ -574,7 +696,15 @@ class LapRaceEngine:
         fade = max(0.05, 1.0 - (lap - events.drying_lap) / fade_span)
         return events.peak_wetness * fade
 
-    def _pit_reason(self, state: DriverRaceState, lap: int, wetness: float, status: str) -> str | None:
+    def _pit_reason(
+        self,
+        state: DriverRaceState,
+        lap: int,
+        wetness: float,
+        status: str,
+        events: RaceEvents,
+        ordered_states: list[DriverRaceState],
+    ) -> str | None:
         profile = state.profile
         strategy = profile.strategy
         next_compound_index = min(state.compound_index + 1, len(strategy.compound_sequence) - 1)
@@ -587,6 +717,7 @@ class LapRaceEngine:
         if not has_next_compound:
             return None
 
+        pit_context = self._pit_rejoin_context(state, ordered_states, status, events)
         target_lap = strategy.pit_windows[min(state.next_planned_stop_index, len(strategy.pit_windows) - 1)]
         window = max(
             1,
@@ -616,6 +747,23 @@ class LapRaceEngine:
         position_loss = max(0, state.current_position - state.starting_position)
         stuck_in_train = self.leverage.order_lock_factor > 1.7 and not state.clean_air and state.traffic_load > 0.14
         recovery_track = self.leverage.alternate_strategy_factor > 1.3
+        projected_traffic_trap = (
+            pit_context["density"] >= 3.0
+            or pit_context["ahead_gap"] < 0.7
+            or pit_context["projected_position_loss"] >= 4.0
+        )
+        clean_air_after_pit = pit_context["clean_air_probability"] > 0.56
+        extend_window = (
+            strategy.flexibility > 0.7
+            or strategy.track_position_bias > 0.72
+            or strategy.id in {"one-stop-control", "long-first-stint", "tire-preservation-offset"}
+        )
+        aggressive_window = (
+            strategy.aggression > 0.72
+            or strategy.energy_bias > 0.82
+            or strategy.id in {"two-stop-attack", "undercut-attack", "high-deployment-attack"}
+        )
+        safety_car_reactive = strategy.safety_car_bias > 0.8 or strategy.id == "safety-car-reactive"
         cliff_threshold = max(
             0.48,
             COMPOUND_SPECS.get(state.current_compound, COMPOUND_SPECS["Medium"])["cliff"]
@@ -632,6 +780,15 @@ class LapRaceEngine:
         if state.tire_wear > cliff_threshold:
             return "tire_cliff"
         if (
+            safety_car_reactive
+            and status == "green"
+            and projected_traffic_trap
+            and events.safety_car
+            and lap < target_lap + window
+            and state.tire_wear < cliff_threshold - 0.08
+        ):
+            return None
+        if (
             recovery_track
             and position_loss >= 2
             and lap >= max(7, target_lap - 4)
@@ -640,19 +797,52 @@ class LapRaceEngine:
         ):
             return "offset_window"
         if (
+            extend_window
+            and projected_traffic_trap
+            and lap < target_lap + window
+            and state.tire_wear < cliff_threshold - 0.06
+        ):
+            return None
+        if (
             stuck_in_train
             and lap >= max(6, target_lap - 2 - int(round(undercut_pull)))
             and state.tire_wear > 0.27
+            and clean_air_after_pit
+        ):
+            return "undercut_window"
+        if (
+            aggressive_window
+            and clean_air_after_pit
+            and lap >= max(5, target_lap - 3 - int(round(undercut_pull)))
+            and lap < target_lap
+            and state.tire_wear > 0.24
         ):
             return "undercut_window"
         if lap >= target_lap + window:
+            return "late_window"
+        if (
+            extend_window
+            and lap >= target_lap
+            and lap < target_lap + window
+            and projected_traffic_trap
+            and state.tire_wear < cliff_threshold - 0.04
+        ):
             return "late_window"
         if target_lap - undercut_pull <= lap <= target_lap + window and state.tire_wear > 0.46 + self.track.tire_stress * 0.08:
             return "planned_window"
         return None
 
-    def _execute_pit_stop(self, state: DriverRaceState, lap: int, reason: str, status: str, events: RaceEvents) -> float:
+    def _execute_pit_stop(
+        self,
+        state: DriverRaceState,
+        lap: int,
+        reason: str,
+        status: str,
+        events: RaceEvents,
+        ordered_states: list[DriverRaceState],
+    ) -> float:
         team = get_team(state.profile.driver.team_id)
+        pit_context = self._pit_rejoin_context(state, ordered_states, status, events)
         compound_out = state.current_compound
         next_index = state.compound_index
         if reason == "weather_crossover":
@@ -681,6 +871,8 @@ class LapRaceEngine:
                 reason=reason,
                 stationary_time=round(stationary, 3),
                 total_loss=round(total_loss, 3),
+                projected_rejoin_position=int(pit_context["rejoin_position"]),
+                projected_traffic_density=round(pit_context["density"], 3),
             )
         )
         state.current_compound = compound_in
@@ -690,6 +882,14 @@ class LapRaceEngine:
         state.tire_age = 0
         state.tire_wear = 0.0
         state.energy_store = min(0.95, state.energy_store + 0.08)
+        state.pending_pit_eval_laps = 3
+        state.pending_pit_reference_position = state.current_position
+        state.pending_pit_reason = reason
+        state.pending_pit_traffic_accum = 0.0
+        if reason in {"undercut_window", "neutralized_window"}:
+            state.undercut_attempts += 1
+        if reason in {"offset_window", "late_window"}:
+            state.overcut_attempts += 1
         return total_loss
 
     def _resolve_incident(

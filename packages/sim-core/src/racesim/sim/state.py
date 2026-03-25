@@ -259,6 +259,8 @@ class PitStopRecord:
     reason: str
     stationary_time: float
     total_loss: float
+    projected_rejoin_position: int | None = None
+    projected_traffic_density: float = 0.0
 
 
 @dataclass
@@ -279,6 +281,12 @@ class DriverDiagnosticsAccumulator:
     energy_penalty: float = 0.0
     temperature_penalty: float = 0.0
     pit_penalty: float = 0.0
+    traffic_penalty: float = 0.0
+    post_pit_traffic_penalty: float = 0.0
+    pit_timing_regret: float = 0.0
+    undercut_delta: float = 0.0
+    overcut_delta: float = 0.0
+    post_pit_position_delta: float = 0.0
     reliability_penalty: float = 0.0
     risk_penalty: float = 0.0
     compression_penalty: float = 0.0
@@ -306,6 +314,12 @@ class DriverDiagnosticsAccumulator:
             "energy_penalty": self.energy_penalty / divisor,
             "temperature_penalty": self.temperature_penalty / divisor,
             "pit_penalty": self.pit_penalty / divisor,
+            "traffic_penalty": self.traffic_penalty / divisor,
+            "post_pit_traffic_penalty": self.post_pit_traffic_penalty / divisor,
+            "pit_timing_regret": self.pit_timing_regret / divisor,
+            "undercut_delta": self.undercut_delta / divisor,
+            "overcut_delta": self.overcut_delta / divisor,
+            "post_pit_position_delta": self.post_pit_position_delta / divisor,
             "reliability_penalty": self.reliability_penalty / divisor,
             "risk_penalty": self.risk_penalty / divisor,
             "compression_penalty": self.compression_penalty / divisor,
@@ -335,12 +349,24 @@ class DriverRaceState:
     dnf_lap: int | None = None
     damage: float = 0.0
     overtake_count: int = 0
+    position_change_events: int = 0
     positions_gained: int = 0
     last_lap_time: float = 0.0
     clean_air: bool = True
     traffic_load: float = 0.0
     incident_time_loss: float = 0.0
     strategy_adaptations: int = 0
+    undercut_attempts: int = 0
+    undercut_successes: int = 0
+    overcut_attempts: int = 0
+    overcut_successes: int = 0
+    post_pit_position_delta_total: float = 0.0
+    post_pit_traffic_penalty_total: float = 0.0
+    pit_timing_regret_total: float = 0.0
+    pending_pit_eval_laps: int = 0
+    pending_pit_reference_position: int | None = None
+    pending_pit_reason: str | None = None
+    pending_pit_traffic_accum: float = 0.0
     pit_records: list[PitStopRecord] = field(default_factory=list)
     stint_laps: list[int] = field(default_factory=list)
     diagnostics: DriverDiagnosticsAccumulator = field(default_factory=DriverDiagnosticsAccumulator)
@@ -358,10 +384,18 @@ class DriverRunSummary:
     average_stint_length: float
     average_first_pit_lap: float | None
     overtakes: int
+    position_changes: int
     positions_gained: int
     incident_time_loss: float
     strategy_success: bool
     strategy_adaptations: int
+    undercut_attempts: int
+    undercut_successes: int
+    overcut_attempts: int
+    overcut_successes: int
+    post_pit_position_delta: float
+    post_pit_traffic_penalty: float
+    pit_timing_regret: float
     diagnostics: dict[str, float]
 
 

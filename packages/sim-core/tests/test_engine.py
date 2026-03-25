@@ -57,6 +57,8 @@ def test_simulation_returns_ranked_driver_results():
     assert response.drivers[0].expected_stop_count >= 0
     assert response.event_summary.circuit_diagnostics.track_position_multiplier > 0
     assert response.event_summary.circuit_diagnostics.overtake_suppression_factor > 0
+    assert response.event_summary.strategy_diagnostics.avg_stop_count >= 0
+    assert response.event_summary.strategy_diagnostics.strategy_sensitivity_index > 0
 
 
 def test_named_circuits_hold_extreme_leverage_profiles():
@@ -86,6 +88,17 @@ def _avg_position_delta(drivers, limit: int = 8) -> float:
 def _avg_first_pit_lap(drivers, limit: int = 8) -> float:
     subset = [driver.average_first_pit_lap for driver in drivers[:limit] if driver.average_first_pit_lap is not None]
     return sum(subset) / len(subset)
+
+
+def _driver_by_id(drivers, driver_id: str):
+    return next(driver for driver in drivers if driver.driver_id == driver_id)
+
+
+def _distribution_distance(a, b) -> float:
+    a_map = {item.position: item.probability for item in a}
+    b_map = {item.position: item.probability for item in b}
+    positions = set(a_map) | set(b_map)
+    return sum(abs(a_map.get(position, 0.0) - b_map.get(position, 0.0)) for position in positions)
 
 
 def test_monaco_and_monza_diverge_materially_on_overtakes_and_qualifying_retention():
@@ -203,6 +216,209 @@ def test_strategy_choice_changes_driver_projection():
         abs(baseline_max.expected_finish_position - aggressive_max.expected_finish_position) >= 0.3
         or abs(baseline_max.expected_stop_count - aggressive_max.expected_stop_count) >= 0.2
     )
+
+
+def test_aggressive_and_conservative_strategies_diverge_materially_at_monza():
+    service = SimulationService()
+    conservative = service.simulate(
+        SimulationRequest(
+            grand_prix_id="italian-grand-prix",
+            weather_preset_id="dry-baseline",
+            simulation_runs=120,
+            strategies={"max-verstappen": "one-stop-control"},
+        )
+    )
+    aggressive = service.simulate(
+        SimulationRequest(
+            grand_prix_id="italian-grand-prix",
+            weather_preset_id="dry-baseline",
+            simulation_runs=120,
+            strategies={"max-verstappen": "two-stop-attack"},
+        )
+    )
+
+    conservative_max = _driver_by_id(conservative.drivers, "max-verstappen")
+    aggressive_max = _driver_by_id(aggressive.drivers, "max-verstappen")
+
+    assert aggressive_max.expected_stop_count > conservative_max.expected_stop_count + 0.7
+    assert aggressive_max.average_overtakes > conservative_max.average_overtakes + 0.2
+    assert _distribution_distance(conservative_max.position_distribution, aggressive_max.position_distribution) > 0.12
+    assert (
+        abs(conservative_max.win_probability - aggressive_max.win_probability) >= 0.03
+        or abs(conservative_max.expected_finish_position - aggressive_max.expected_finish_position) >= 0.2
+    )
+
+
+def test_undercut_and_long_first_stint_diverge_when_timing_windows_open():
+    service = SimulationService()
+    undercut = service.simulate(
+        SimulationRequest(
+            grand_prix_id="azerbaijan-grand-prix",
+            weather_preset_id="dry-baseline",
+            simulation_runs=120,
+            strategies={"max-verstappen": "undercut-attack"},
+        )
+    )
+    long_stint = service.simulate(
+        SimulationRequest(
+            grand_prix_id="azerbaijan-grand-prix",
+            weather_preset_id="dry-baseline",
+            simulation_runs=120,
+            strategies={"max-verstappen": "long-first-stint"},
+        )
+    )
+
+    undercut_driver = _driver_by_id(undercut.drivers, "max-verstappen")
+    long_stint_driver = _driver_by_id(long_stint.drivers, "max-verstappen")
+
+    assert undercut_driver.average_first_pit_lap < long_stint_driver.average_first_pit_lap - 6.0
+    assert undercut_driver.diagnostics["undercut_success_rate"] > long_stint_driver.diagnostics["undercut_success_rate"]
+    assert long_stint_driver.diagnostics["overcut_success_rate"] > undercut_driver.diagnostics["overcut_success_rate"]
+    assert (
+        abs(undercut_driver.expected_finish_position - long_stint_driver.expected_finish_position) >= 0.2
+        or _distribution_distance(undercut_driver.position_distribution, long_stint_driver.position_distribution) > 0.1
+    )
+
+
+def test_pitting_into_traffic_can_worsen_finish_on_monaco():
+    service = SimulationService()
+    track_position = service.simulate(
+        SimulationRequest(
+            grand_prix_id="monaco-grand-prix",
+            weather_preset_id="dry-baseline",
+            simulation_runs=120,
+            strategies={"charles-leclerc": "qualifying-track-position"},
+        )
+    )
+    aggressive = service.simulate(
+        SimulationRequest(
+            grand_prix_id="monaco-grand-prix",
+            weather_preset_id="dry-baseline",
+            simulation_runs=120,
+            strategies={"charles-leclerc": "undercut-attack"},
+        )
+    )
+
+    control_charles = _driver_by_id(track_position.drivers, "charles-leclerc")
+    aggressive_charles = _driver_by_id(aggressive.drivers, "charles-leclerc")
+
+    assert aggressive_charles.diagnostics["pit_timing_regret"] > control_charles.diagnostics["pit_timing_regret"]
+    assert aggressive_charles.diagnostics["post_pit_position_delta"] < control_charles.diagnostics["post_pit_position_delta"]
+    assert aggressive_charles.expected_finish_position >= control_charles.expected_finish_position
+
+
+def test_safety_car_opportunities_improve_reactive_strategy_on_baku():
+    service = SimulationService()
+    high_sc_environment = EnvironmentControls(
+        dry_race=0.74,
+        mixed_conditions=0.26,
+        rain_onset=0.15,
+        track_evolution=0.58,
+        temperature_variation=0.44,
+        energy_deployment_intensity=0.7,
+        crashes=0.2,
+        dnfs=0.14,
+        yellow_flags=0.28,
+        virtual_safety_cars=0.24,
+        full_safety_cars=0.32,
+        red_flags=0.05,
+        late_race_incidents=0.2,
+        randomness_intensity=0.68,
+    )
+    low_sc_environment = EnvironmentControls(
+        dry_race=0.88,
+        mixed_conditions=0.12,
+        rain_onset=0.06,
+        track_evolution=0.54,
+        temperature_variation=0.28,
+        energy_deployment_intensity=0.64,
+        crashes=0.05,
+        dnfs=0.04,
+        yellow_flags=0.08,
+        virtual_safety_cars=0.06,
+        full_safety_cars=0.05,
+        red_flags=0.01,
+        late_race_incidents=0.04,
+        randomness_intensity=0.24,
+    )
+
+    high_sc_control = service.simulate(
+        SimulationRequest(
+            grand_prix_id="azerbaijan-grand-prix",
+            weather_preset_id="dry-baseline",
+            simulation_runs=120,
+            environment=high_sc_environment,
+            strategies={"george-russell": "one-stop-control"},
+        )
+    )
+    high_sc_reactive = service.simulate(
+        SimulationRequest(
+            grand_prix_id="azerbaijan-grand-prix",
+            weather_preset_id="dry-baseline",
+            simulation_runs=120,
+            environment=high_sc_environment,
+            strategies={"george-russell": "safety-car-reactive"},
+        )
+    )
+    low_sc_control = service.simulate(
+        SimulationRequest(
+            grand_prix_id="azerbaijan-grand-prix",
+            weather_preset_id="dry-baseline",
+            simulation_runs=120,
+            environment=low_sc_environment,
+            strategies={"george-russell": "one-stop-control"},
+        )
+    )
+    low_sc_reactive = service.simulate(
+        SimulationRequest(
+            grand_prix_id="azerbaijan-grand-prix",
+            weather_preset_id="dry-baseline",
+            simulation_runs=120,
+            environment=low_sc_environment,
+            strategies={"george-russell": "safety-car-reactive"},
+        )
+    )
+
+    high_sc_delta = _driver_by_id(high_sc_control.drivers, "george-russell").expected_finish_position - _driver_by_id(
+        high_sc_reactive.drivers, "george-russell"
+    ).expected_finish_position
+    low_sc_delta = _driver_by_id(low_sc_control.drivers, "george-russell").expected_finish_position - _driver_by_id(
+        low_sc_reactive.drivers, "george-russell"
+    ).expected_finish_position
+
+    assert high_sc_delta > low_sc_delta + 0.15
+    assert (
+        _driver_by_id(high_sc_reactive.drivers, "george-russell").average_first_pit_lap
+        < _driver_by_id(low_sc_reactive.drivers, "george-russell").average_first_pit_lap
+    )
+
+
+def test_strategy_presets_change_podium_and_winner_distributions():
+    service = SimulationService()
+    baseline = service.simulate(
+        SimulationRequest(
+            grand_prix_id="italian-grand-prix",
+            weather_preset_id="dry-baseline",
+            simulation_runs=120,
+            strategies={"oscar-piastri": "one-stop-control"},
+        )
+    )
+    alternate = service.simulate(
+        SimulationRequest(
+            grand_prix_id="italian-grand-prix",
+            weather_preset_id="dry-baseline",
+            simulation_runs=120,
+            strategies={"oscar-piastri": "high-deployment-attack"},
+        )
+    )
+
+    baseline_podium = [driver.driver_id for driver in baseline.drivers[:3]]
+    alternate_podium = [driver.driver_id for driver in alternate.drivers[:3]]
+    baseline_oscar = _driver_by_id(baseline.drivers, "oscar-piastri")
+    alternate_oscar = _driver_by_id(alternate.drivers, "oscar-piastri")
+
+    assert baseline_podium != alternate_podium or baseline.drivers[0].driver_id != alternate.drivers[0].driver_id
+    assert _distribution_distance(baseline_oscar.position_distribution, alternate_oscar.position_distribution) > 0.1
 
 
 def test_qualifying_weight_changes_the_top_three_distribution():

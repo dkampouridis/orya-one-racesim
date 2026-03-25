@@ -136,6 +136,20 @@ class CircuitDiagnostics(BaseModel):
     disruption_reshuffle_factor: float
 
 
+class StrategyDiagnostics(BaseModel):
+    avg_position_changes_per_driver: float
+    avg_first_stop_lap: float | None = None
+    avg_stop_count: float
+    undercut_success_tendency: float
+    overcut_success_tendency: float
+    traffic_penalty_impact: float
+    post_pit_traffic_penalty: float
+    avg_post_pit_position_delta: float
+    pit_timing_regret: float
+    strategy_success_rate: float
+    strategy_sensitivity_index: float
+
+
 class EventSummary(BaseModel):
     weather_shift_rate: float
     yellow_flag_rate: float
@@ -152,6 +166,7 @@ class EventSummary(BaseModel):
     avg_safety_car_lap: float | None = None
     turning_points: list[str] = Field(default_factory=list)
     circuit_diagnostics: CircuitDiagnostics
+    strategy_diagnostics: StrategyDiagnostics
 
 
 class TeamSummary(BaseModel):
