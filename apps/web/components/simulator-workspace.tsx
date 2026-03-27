@@ -999,6 +999,8 @@ export function SimulatorWorkspace() {
   const [showPresetDetail, setShowPresetDetail] = useState(false);
   const [showProjectedFrontDetail, setShowProjectedFrontDetail] = useState(false);
   const [showMovementDetail, setShowMovementDetail] = useState(false);
+  const [showDeepRaceDetail, setShowDeepRaceDetail] = useState(false);
+  const [showTelemetryRail, setShowTelemetryRail] = useState(false);
   const [loadingDefaults, setLoadingDefaults] = useState(true);
   const [loadingSimulation, setLoadingSimulation] = useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
@@ -1782,43 +1784,17 @@ export function SimulatorWorkspace() {
                       </div>
                     </div>
 
-                    <div className="grid gap-2.5 md:grid-cols-2">
-                      <MetricPanel
-                        label="Lead car"
-                        value={leadDriver ? leadDriver.driver_name : "Pending"}
-                        detail={leadDriver ? `${formatPct(leadDriver.win_probability)} win odds · P${leadDriver.expected_finish_position.toFixed(1)} expected finish` : "Pending"}
-                        tone="default"
-                        badgeLabel="Lead"
-                      />
-                      <MetricPanel
-                        label="Podium lane"
-                        value={leadDriver ? formatPct(leadDriver.podium_probability) : "Pending"}
-                        detail={leadDriver ? `${leadDriver.team_name} leads the projected front` : "Pending"}
-                        tone="success"
-                        badgeLabel="Podium"
-                      />
-                      <MetricPanel
-                        label="Biggest mover"
-                        value={biggestMovers[0] ? biggestMovers[0].driver_name : "Pending"}
-                        detail={
-                          biggestMovers[0]
-                            ? `${biggestMovers[0].net_position_delta > 0 ? "+" : ""}${biggestMovers[0].net_position_delta.toFixed(1)} net delta · ${formatAveragePerDriver(biggestMovers[0].average_position_changes)}`
-                            : "Awaiting movement signal"
-                        }
-                        tone="info"
-                        badgeLabel="Mover"
-                      />
-                      <MetricPanel
-                        label="Hardest pass"
-                        value={hardestToPass[0] ? hardestToPass[0].driver_name : "Pending"}
-                        detail={
-                          hardestToPass[0]
-                            ? `${formatAveragePerRun(hardestToPass[0].average_overtakes)} faced in traffic`
-                            : "Awaiting traffic signal"
-                        }
-                        tone="warning"
-                        badgeLabel="Traffic"
-                      />
+                    <div className="rounded-[14px] border border-white/8 bg-black/20 p-3.5">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">Race snapshot</div>
+                        <Badge variant={signalVariant(currentVolatility)}>{volatilityLabel(currentVolatility)}</Badge>
+                      </div>
+                      <div className="mt-3 grid gap-y-3 border-t border-white/8 pt-3 sm:grid-cols-2 xl:grid-cols-4 xl:gap-x-5">
+                        <InlineDataPoint label="Lead car" value={leadDriver ? leadDriver.driver_name : "Pending"} />
+                        <InlineDataPoint label="Podium lane" value={leadDriver ? formatPct(leadDriver.podium_probability) : "Pending"} />
+                        <InlineDataPoint label="Likely mover" value={biggestMovers[0] ? biggestMovers[0].driver_name : "Pending"} />
+                        <InlineDataPoint label="Hardest pass" value={hardestToPass[0] ? hardestToPass[0].driver_name : "Pending"} />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1832,8 +1808,20 @@ export function SimulatorWorkspace() {
                 eyebrow="Lap-by-lap execution"
                 title="Phase detail deck"
                 subtitle="Expanded phase-by-phase detail after the main board: stop mix, event timing, stint ladders, and volatility windows."
-                action={<Badge variant={signalVariant(movementSummary?.race_fluidity_score ?? currentVolatility)}>{movementSummary?.overtaking_intensity ?? "Preview"}</Badge>}
+                action={
+                  <div className="flex items-center gap-2">
+                    <Badge variant={signalVariant(movementSummary?.race_fluidity_score ?? currentVolatility)}>
+                      {movementSummary?.overtaking_intensity ?? "Preview"}
+                    </Badge>
+                    <DisclosureButton
+                      expanded={showDeepRaceDetail}
+                      onToggle={() => setShowDeepRaceDetail((value) => !value)}
+                      label="phase deck"
+                    />
+                  </div>
+                }
               >
+                {showDeepRaceDetail ? (
                 <div className="grid gap-3 xl:grid-cols-[1.15fr_0.85fr]">
                   <div className="space-y-3">
                     <RaceTimelineStrip phases={racePhases} />
@@ -1911,6 +1899,11 @@ export function SimulatorWorkspace() {
                     </div>
                   </div>
                 </div>
+                ) : (
+                  <div className="rounded-[12px] border border-dashed border-white/10 bg-black/20 px-4 py-3 text-[11px] leading-5 text-muted-foreground">
+                    Open the phase deck for the full lap-by-lap breakdown: phase cards, stop mix, detailed event timing, and projected stint ladders.
+                  </div>
+                )}
               </SectionFrame>
             </motion.section>
           ) : null}
@@ -2241,101 +2234,121 @@ export function SimulatorWorkspace() {
               <SignalMeter label="SC risk" value={activeTrack.safety_car_risk} tone="warning" />
             </div>
           </InsightCard>
-
-          <InsightCard
-            title="Scenario pressure"
-            subtitle="Current control state."
-            icon={ShieldAlert}
-            tone="warning"
+          <SectionFrame
+            eyebrow="Engineer telemetry"
+            title="Deep reads"
+            subtitle="Secondary diagnostics, scenario pressure, and front-group notes."
+            action={
+              <DisclosureButton
+                expanded={showTelemetryRail}
+                onToggle={() => setShowTelemetryRail((value) => !value)}
+                label="telemetry"
+              />
+            }
           >
-            <div className="grid gap-2">
-              <SignalMeter label="Weather" value={form.environment.rain_onset} secondary={sliderLabel(form.environment.rain_onset)} tone="warning" />
-              <SignalMeter label="Race control" value={(form.environment.full_safety_cars + form.environment.virtual_safety_cars) / 2} secondary="SC / VSC" tone="warning" />
-              <SignalMeter label="Attrition" value={(form.environment.dnfs + form.environment.crashes) / 2} secondary="DNF + incident" tone="default" />
-              <SignalMeter label="Randomness" value={form.environment.randomness_intensity} secondary={volatilityLabel(form.environment.randomness_intensity)} tone={signalVariant(form.environment.randomness_intensity)} />
-            </div>
-          </InsightCard>
-
-          <InsightCard
-            title="Lead diagnostics"
-            subtitle="Why the lead car is on top."
-            icon={Zap}
-            tone="default"
-          >
-            {leaderDiagnostics ? (
-              <div className="grid gap-2">
-                <SignalMeter label="Pace edge" value={Math.min(1, Math.max(0, (leaderDiagnostics.pace_edge + 1.6) / 3.2))} secondary={`${compactNumber(leaderDiagnostics.pace_edge)} delta`} tone="default" />
-                <SignalMeter label="Track fit" value={Math.min(1, Math.max(0, leaderDiagnostics.track_fit_score / 20))} secondary={`${compactNumber(leaderDiagnostics.track_fit_score)} score`} tone="info" />
-                <SignalMeter label="Strategy edge" value={Math.min(1, Math.max(0, (leaderDiagnostics.strategy_component + 6) / 12))} secondary={`${compactNumber(leaderDiagnostics.strategy_component)} score`} tone="success" />
-                <SignalMeter label="Chaos resilience" value={Math.min(1, Math.max(0, leaderDiagnostics.chaos_resilience))} secondary={`${compactNumber(leaderDiagnostics.chaos_resilience)} score`} tone="success" />
-              </div>
-            ) : (
-              <div className="rounded-[12px] border border-white/8 bg-white/[0.03] p-4 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
-                Run to inspect pace edge, track fit, strategy edge, and chaos resilience.
-              </div>
-            )}
-          </InsightCard>
-
-          <InsightCard
-            title="Track profile"
-            subtitle="Weekend metadata."
-            icon={Flag}
-            tone="info"
-          >
-            <div className="rounded-[10px] border border-white/8 bg-white/[0.03] p-3">
-              <div className="flex items-center justify-between gap-3">
-                <div className="text-sm text-white">{activeTrack.name}</div>
-                {activeTrack.sprint_weekend ? <Badge variant="warning">Sprint</Badge> : <Badge variant="info">Standard</Badge>}
-              </div>
-              <div className="mt-1.5 line-clamp-2 text-[11px] leading-5 text-muted-foreground">{activeTrack.summary}</div>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="rounded-[10px] border border-white/8 bg-black/20 p-2.5">
-                <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Circuit</div>
-                <div className="mt-1 text-sm text-white">{activeTrack.circuit_type}</div>
-              </div>
-              <div className="rounded-[10px] border border-white/8 bg-black/20 p-2.5">
-                <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Laps</div>
-                <div className="mt-1 text-sm text-white">{activeTrack.laps}</div>
-              </div>
-              <div className="rounded-[10px] border border-white/8 bg-black/20 p-2.5">
-                <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Pit loss</div>
-                <div className="mt-1 text-sm text-white">{activeTrack.pit_loss_seconds.toFixed(1)}s</div>
-              </div>
-              <div className="rounded-[10px] border border-white/8 bg-black/20 p-2.5">
-                <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Deg</div>
-                <div className="mt-1 text-sm capitalize text-white">{activeTrack.degradation_profile}</div>
-              </div>
-            </div>
-          </InsightCard>
-
-          <InsightCard
-            title="Top notes"
-            subtitle="Front group scan."
-            icon={Trophy}
-            tone="success"
-          >
-            {topDrivers.length ? (
-              <div className="space-y-1.5">
-                {topDrivers.map((driver) => (
-                  <div key={driver.driver_id} className="rounded-[10px] border border-white/8 bg-white/[0.03] p-2.5">
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <div className="text-[13px] text-white">{driver.driver_name}</div>
-                        <div className="mt-0.5 text-[9px] uppercase tracking-[0.16em] text-muted-foreground">{driver.team_name}</div>
-                      </div>
-                      <div className="text-[13px] text-white">{formatPct(driver.win_probability)}</div>
-                    </div>
-                    <div className="mt-1.5 line-clamp-2 text-[11px] leading-5 text-muted-foreground">{driver.explanation[0]}</div>
+            {showTelemetryRail ? (
+              <div className="grid gap-3">
+                <InsightCard
+                  title="Scenario pressure"
+                  subtitle="Current control state."
+                  icon={ShieldAlert}
+                  tone="warning"
+                >
+                  <div className="grid gap-2">
+                    <SignalMeter label="Weather" value={form.environment.rain_onset} secondary={sliderLabel(form.environment.rain_onset)} tone="warning" />
+                    <SignalMeter label="Race control" value={(form.environment.full_safety_cars + form.environment.virtual_safety_cars) / 2} secondary="SC / VSC" tone="warning" />
+                    <SignalMeter label="Attrition" value={(form.environment.dnfs + form.environment.crashes) / 2} secondary="DNF + incident" tone="default" />
+                    <SignalMeter label="Randomness" value={form.environment.randomness_intensity} secondary={volatilityLabel(form.environment.randomness_intensity)} tone={signalVariant(form.environment.randomness_intensity)} />
                   </div>
-                ))}
+                </InsightCard>
+
+                <InsightCard
+                  title="Lead diagnostics"
+                  subtitle="Why the lead car is on top."
+                  icon={Zap}
+                  tone="default"
+                >
+                  {leaderDiagnostics ? (
+                    <div className="grid gap-2">
+                      <SignalMeter label="Pace edge" value={Math.min(1, Math.max(0, (leaderDiagnostics.pace_edge + 1.6) / 3.2))} secondary={`${compactNumber(leaderDiagnostics.pace_edge)} delta`} tone="default" />
+                      <SignalMeter label="Track fit" value={Math.min(1, Math.max(0, leaderDiagnostics.track_fit_score / 20))} secondary={`${compactNumber(leaderDiagnostics.track_fit_score)} score`} tone="info" />
+                      <SignalMeter label="Strategy edge" value={Math.min(1, Math.max(0, (leaderDiagnostics.strategy_component + 6) / 12))} secondary={`${compactNumber(leaderDiagnostics.strategy_component)} score`} tone="success" />
+                      <SignalMeter label="Chaos resilience" value={Math.min(1, Math.max(0, leaderDiagnostics.chaos_resilience))} secondary={`${compactNumber(leaderDiagnostics.chaos_resilience)} score`} tone="success" />
+                    </div>
+                  ) : (
+                    <div className="rounded-[12px] border border-white/8 bg-white/[0.03] p-4 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                      Run to inspect pace edge, track fit, strategy edge, and chaos resilience.
+                    </div>
+                  )}
+                </InsightCard>
+
+                <InsightCard
+                  title="Track profile"
+                  subtitle="Weekend metadata."
+                  icon={Flag}
+                  tone="info"
+                >
+                  <div className="rounded-[10px] border border-white/8 bg-white/[0.03] p-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="text-sm text-white">{activeTrack.name}</div>
+                      {activeTrack.sprint_weekend ? <Badge variant="warning">Sprint</Badge> : <Badge variant="info">Standard</Badge>}
+                    </div>
+                    <div className="mt-1.5 line-clamp-2 text-[11px] leading-5 text-muted-foreground">{activeTrack.summary}</div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="rounded-[10px] border border-white/8 bg-black/20 p-2.5">
+                      <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Circuit</div>
+                      <div className="mt-1 text-sm text-white">{activeTrack.circuit_type}</div>
+                    </div>
+                    <div className="rounded-[10px] border border-white/8 bg-black/20 p-2.5">
+                      <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Laps</div>
+                      <div className="mt-1 text-sm text-white">{activeTrack.laps}</div>
+                    </div>
+                    <div className="rounded-[10px] border border-white/8 bg-black/20 p-2.5">
+                      <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Pit loss</div>
+                      <div className="mt-1 text-sm text-white">{activeTrack.pit_loss_seconds.toFixed(1)}s</div>
+                    </div>
+                    <div className="rounded-[10px] border border-white/8 bg-black/20 p-2.5">
+                      <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Deg</div>
+                      <div className="mt-1 text-sm capitalize text-white">{activeTrack.degradation_profile}</div>
+                    </div>
+                  </div>
+                </InsightCard>
+
+                <InsightCard
+                  title="Top notes"
+                  subtitle="Front group scan."
+                  icon={Trophy}
+                  tone="success"
+                >
+                  {topDrivers.length ? (
+                    <div className="space-y-1.5">
+                      {topDrivers.map((driver) => (
+                        <div key={driver.driver_id} className="rounded-[10px] border border-white/8 bg-white/[0.03] p-2.5">
+                          <div className="flex items-center justify-between gap-3">
+                            <div>
+                              <div className="text-[13px] text-white">{driver.driver_name}</div>
+                              <div className="mt-0.5 text-[9px] uppercase tracking-[0.16em] text-muted-foreground">{driver.team_name}</div>
+                            </div>
+                            <div className="text-[13px] text-white">{formatPct(driver.win_probability)}</div>
+                          </div>
+                          <div className="mt-1.5 line-clamp-2 text-[11px] leading-5 text-muted-foreground">{driver.explanation[0]}</div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="rounded-[12px] border border-white/8 bg-white/[0.03] p-4 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                      Leader notes and fit signals appear after the first run.
+                    </div>
+                  )}
+                </InsightCard>
               </div>
             ) : (
-              <div className="rounded-[12px] border border-white/8 bg-white/[0.03] p-4 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
-                Leader notes and fit signals appear after the first run.
+              <div className="rounded-[12px] border border-dashed border-white/10 bg-black/20 px-4 py-3 text-[11px] leading-5 text-muted-foreground">
+                Open telemetry to inspect scenario pressure, lead diagnostics, detailed track metadata, and front-group notes.
               </div>
             )}
-          </InsightCard>
+          </SectionFrame>
         </aside>
       </div>
     </div>
