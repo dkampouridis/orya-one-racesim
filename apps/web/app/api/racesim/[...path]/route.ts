@@ -27,6 +27,11 @@ type SimulateRequestShape = {
   payload?: LiveSimulationPayload;
 };
 
+type SimulationAttemptOptions = {
+  body: string | undefined;
+  timeoutMs: number;
+};
+
 function resolveApiBaseUrl() {
   const value =
     process.env.API_URL?.replace(/\/$/, "") ??
@@ -123,54 +128,138 @@ async function fetchWithTimeout(
   });
 }
 
+function isTimeoutLikeError(error: unknown) {
+  const lowered = error instanceof Error ? error.message.toLowerCase() : "";
+  return lowered.includes("aborted") || lowered.includes("timeout");
+}
+
+function shouldRetrySimulationResponse(status: number) {
+  return status === 502 || status === 503 || status === 504;
+}
+
+function buildSimulationAttemptBody(
+  payload: LiveSimulationPayload,
+  mode: "live-safe" | "emergency" | "failsafe",
+) {
+  const runs =
+    mode === "live-safe"
+      ? getLiveSafeSimulationRuns(payload)
+      : mode === "emergency"
+        ? getEmergencySimulationRuns(payload)
+        : 120;
+
+  const complexityLevel =
+    mode === "failsafe"
+      ? "low"
+      : mode === "emergency" && payload.complexity_level === "high"
+        ? "balanced"
+        : payload.complexity_level;
+
+  return JSON.stringify({
+    ...payload,
+    complexity_level: complexityLevel,
+    simulation_runs:
+      typeof payload.simulation_runs === "number"
+        ? Math.min(payload.simulation_runs, runs)
+        : runs,
+  });
+}
+
+async function warmBackendForSimulation(url: string) {
+  const healthUrl = url.replace(/\/simulate$/, "/health");
+
+  try {
+    const response = await fetchWithTimeout(
+      healthUrl,
+      {
+        method: "GET",
+        cache: "no-store",
+      },
+      8000,
+    );
+
+    if (!response.ok) {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+    }
+  } catch {
+    await new Promise((resolve) => setTimeout(resolve, 1800));
+  }
+}
+
+async function sendSimulationAttempt(
+  url: string,
+  headers: Headers,
+  options: SimulationAttemptOptions,
+) {
+  return fetchWithTimeout(
+    url,
+    {
+      method: "POST",
+      headers,
+      cache: "no-store",
+      body: options.body,
+    },
+    options.timeoutMs,
+  );
+}
+
 async function forwardSimulationRequest(
   url: string,
   headers: Headers,
   requestShape: SimulateRequestShape,
 ) {
-  const init = {
-    method: "POST",
-    headers,
-    cache: "no-store" as const,
-  };
+  if (process.env.NODE_ENV === "development" || !requestShape.payload) {
+    return sendSimulationAttempt(url, headers, {
+      body: requestShape.body,
+      timeoutMs: process.env.NODE_ENV === "development" ? 55000 : 32000,
+    });
+  }
+
+  const payload = requestShape.payload;
+  const liveSafeBody = buildSimulationAttemptBody(payload, "live-safe");
+  const emergencyBody = buildSimulationAttemptBody(payload, "emergency");
+  const failsafeBody = buildSimulationAttemptBody(payload, "failsafe");
+
+  await warmBackendForSimulation(url);
 
   try {
-    return await fetchWithTimeout(
-      url,
-      {
-        ...init,
-        body: requestShape.body,
-      },
-      process.env.NODE_ENV === "development" ? 55000 : 32000,
-    );
-  } catch (error) {
-    const lowered = error instanceof Error ? error.message.toLowerCase() : "";
-    if (
-      process.env.NODE_ENV !== "development" &&
-      requestShape.payload &&
-      (lowered.includes("aborted") || lowered.includes("timeout"))
-    ) {
-      const emergencyRuns = getEmergencySimulationRuns(requestShape.payload);
-      const emergencyBody = JSON.stringify({
-        ...requestShape.payload,
-        simulation_runs:
-          typeof requestShape.payload.simulation_runs === "number"
-            ? Math.min(requestShape.payload.simulation_runs, emergencyRuns)
-            : emergencyRuns,
-      });
+    const primaryResponse = await sendSimulationAttempt(url, headers, {
+      body: liveSafeBody,
+      timeoutMs: 26000,
+    });
 
-      return fetchWithTimeout(
-        url,
-        {
-          ...init,
-          body: emergencyBody,
-        },
-        22000,
-      );
+    if (!shouldRetrySimulationResponse(primaryResponse.status)) {
+      return primaryResponse;
     }
-
-    throw error;
+  } catch (error) {
+    if (!isTimeoutLikeError(error)) {
+      throw error;
+    }
   }
+
+  await warmBackendForSimulation(url);
+
+  try {
+    const emergencyResponse = await sendSimulationAttempt(url, headers, {
+      body: emergencyBody,
+      timeoutMs: 18000,
+    });
+
+    if (!shouldRetrySimulationResponse(emergencyResponse.status)) {
+      return emergencyResponse;
+    }
+  } catch (error) {
+    if (!isTimeoutLikeError(error)) {
+      throw error;
+    }
+  }
+
+  await warmBackendForSimulation(url);
+
+  return sendSimulationAttempt(url, headers, {
+    body: failsafeBody,
+    timeoutMs: 14000,
+  });
 }
 
 function isHtmlErrorPayload(text: string, contentType: string | null) {
