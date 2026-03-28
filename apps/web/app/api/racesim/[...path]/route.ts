@@ -10,6 +10,7 @@ export const preferredRegion = "iad1";
 const PRODUCTION_PRIMARY_SIM_TIMEOUT_MS = 14000;
 const PRODUCTION_EMERGENCY_SIM_TIMEOUT_MS = 10000;
 const PRODUCTION_FAILSAFE_SIM_TIMEOUT_MS = 7000;
+const PRODUCTION_VERY_HEAVY_SIM_TIMEOUT_MS = 25000;
 const SIMULATION_WAKE_TIMEOUT_MS = 2500;
 
 type LiveSimulationPayload = {
@@ -269,7 +270,7 @@ async function forwardSimulationRequest(
   if (risk.veryHeavy) {
     return sendSimulationAttempt(url, headers, {
       body: failsafeBody,
-      timeoutMs: PRODUCTION_PRIMARY_SIM_TIMEOUT_MS,
+      timeoutMs: PRODUCTION_VERY_HEAVY_SIM_TIMEOUT_MS,
     });
   }
 
