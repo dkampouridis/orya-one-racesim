@@ -259,11 +259,19 @@ async function forwardSimulationRequest(
   }
 
   const payload = requestShape.payload;
+  const risk = getSimulationRiskProfile(payload);
   const liveSafeBody = buildSimulationAttemptBody(payload, "live-safe");
   const emergencyBody = buildSimulationAttemptBody(payload, "emergency");
   const failsafeBody = buildSimulationAttemptBody(payload, "failsafe");
 
   await warmBackendForSimulation(url);
+
+  if (risk.veryHeavy) {
+    return sendSimulationAttempt(url, headers, {
+      body: failsafeBody,
+      timeoutMs: PRODUCTION_PRIMARY_SIM_TIMEOUT_MS,
+    });
+  }
 
   try {
     const primaryResponse = await sendSimulationAttempt(url, headers, {
