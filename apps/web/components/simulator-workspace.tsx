@@ -1561,7 +1561,7 @@ export function SimulatorWorkspace() {
                           onChange={(event) => setForm({ ...form, simulation_runs: Number(event.target.value) })}
                           className="min-h-10 rounded-[10px] border border-white/10 bg-[#090c11] px-3.5 py-2.5 text-sm text-white outline-none focus:border-primary/60"
                         />
-                        <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">120-220 live-safe. Heavy weather/chaos gets an emergency fallback run cap.</span>
+                        <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">80-220 live-safe. Heavy weather/chaos may auto-cut lower with low-detail fallback.</span>
                       </label>
                       <SelectField
                         label="Simulation detail"

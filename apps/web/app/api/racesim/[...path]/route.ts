@@ -37,6 +37,13 @@ type SimulationAttemptOptions = {
   timeoutMs: number;
 };
 
+type SimulationRiskProfile = {
+  heavyWeather: boolean;
+  heavyChaos: boolean;
+  heavyCircuit: boolean;
+  veryHeavy: boolean;
+};
+
 function resolveApiBaseUrl() {
   const value =
     process.env.API_URL?.replace(/\/$/, "") ??
@@ -50,7 +57,39 @@ function resolveApiBaseUrl() {
   return value;
 }
 
+function getSimulationRiskProfile(payload: LiveSimulationPayload): SimulationRiskProfile {
+  const environment = payload.environment;
+  const incidentPressure =
+    (environment?.full_safety_cars ?? 0) +
+    (environment?.virtual_safety_cars ?? 0) +
+    (environment?.red_flags ?? 0) +
+    (environment?.late_race_incidents ?? 0);
+
+  const heavyWeather =
+    Boolean(payload.weather_preset_id && /(rain|crossover|storm|mixed|wet)/i.test(payload.weather_preset_id)) ||
+    (environment?.rain_onset ?? 0) >= 0.35;
+
+  const heavyChaos =
+    incidentPressure >= 0.48 ||
+    (environment?.randomness_intensity ?? 0) >= 0.58;
+
+  const heavyCircuit = Boolean(
+    payload.grand_prix_id &&
+      ["belgian-grand-prix", "singapore-grand-prix", "azerbaijan-grand-prix", "las-vegas-grand-prix"].includes(
+        payload.grand_prix_id,
+      ),
+  );
+
+  return {
+    heavyWeather,
+    heavyChaos,
+    heavyCircuit,
+    veryHeavy: (heavyWeather && heavyCircuit) || (heavyWeather && heavyChaos) || (heavyCircuit && heavyChaos),
+  };
+}
+
 function getLiveSafeSimulationRuns(payload: LiveSimulationPayload) {
+  const risk = getSimulationRiskProfile(payload);
   let maxRuns = 220;
 
   if (payload.complexity_level === "balanced") {
@@ -59,16 +98,11 @@ function getLiveSafeSimulationRuns(payload: LiveSimulationPayload) {
     maxRuns = 170;
   }
 
-  if (payload.weather_preset_id && /(rain|crossover|storm|mixed|wet)/i.test(payload.weather_preset_id)) {
+  if (risk.heavyWeather) {
     maxRuns -= 30;
   }
 
-  if (
-    payload.grand_prix_id &&
-    ["belgian-grand-prix", "singapore-grand-prix", "azerbaijan-grand-prix", "las-vegas-grand-prix"].includes(
-      payload.grand_prix_id,
-    )
-  ) {
+  if (risk.heavyCircuit) {
     maxRuns -= 25;
   }
 
@@ -80,34 +114,35 @@ function getLiveSafeSimulationRuns(payload: LiveSimulationPayload) {
       (environment.red_flags ?? 0) +
       (environment.late_race_incidents ?? 0);
 
-    if ((environment.rain_onset ?? 0) >= 0.35) {
-      maxRuns -= 25;
-    }
-
-    if (incidentPressure >= 0.48) {
+    if (risk.heavyChaos) {
       maxRuns -= 20;
-    }
-
-    if ((environment.randomness_intensity ?? 0) >= 0.58) {
-      maxRuns -= 15;
     }
   }
 
-  return Math.max(120, Math.min(220, maxRuns));
+  if (risk.veryHeavy) {
+    maxRuns = Math.min(maxRuns, 90);
+  }
+
+  return Math.max(80, Math.min(220, maxRuns));
 }
 
 function getEmergencySimulationRuns(payload: LiveSimulationPayload) {
   const capped = getLiveSafeSimulationRuns(payload);
+  const risk = getSimulationRiskProfile(payload);
 
-  if (payload.complexity_level === "high") {
-    return Math.max(120, Math.min(150, capped - 20));
+  if (risk.veryHeavy) {
+    return Math.max(60, Math.min(70, capped - 10));
   }
 
   if (payload.complexity_level === "balanced") {
-    return Math.max(130, Math.min(165, capped - 15));
+    return Math.max(70, Math.min(130, capped - 15));
   }
 
-  return Math.max(140, Math.min(180, capped - 10));
+  if (payload.complexity_level === "high") {
+    return Math.max(70, Math.min(120, capped - 20));
+  }
+
+  return Math.max(80, Math.min(140, capped - 10));
 }
 
 function tryParseSimulatePayload(body: string | undefined, contentType: string | null) {
@@ -146,18 +181,25 @@ function buildSimulationAttemptBody(
   payload: LiveSimulationPayload,
   mode: "live-safe" | "emergency" | "failsafe",
 ) {
+  const risk = getSimulationRiskProfile(payload);
   const runs =
     mode === "live-safe"
       ? getLiveSafeSimulationRuns(payload)
       : mode === "emergency"
         ? getEmergencySimulationRuns(payload)
-        : 120;
+        : risk.veryHeavy
+          ? 50
+          : 60;
 
   const complexityLevel =
     mode === "failsafe"
       ? "low"
+      : mode === "live-safe" && risk.veryHeavy
+        ? "low"
       : mode === "emergency" && payload.complexity_level === "high"
         ? "balanced"
+        : mode === "emergency" && (risk.heavyWeather || risk.heavyChaos)
+          ? "low"
         : payload.complexity_level;
 
   return JSON.stringify({
