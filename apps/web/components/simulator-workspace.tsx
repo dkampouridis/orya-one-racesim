@@ -1776,6 +1776,62 @@ export function SimulatorWorkspace() {
       phaseB,
     };
   });
+  const compareDecisionCall = (() => {
+    if (!compareSimulationA || !compareSimulationB) {
+      return {
+        title: "Run both scenarios",
+        body: "The board will turn the raw race outputs into a direct A/B decision once both scenarios are simulated.",
+        tone: "muted" as const,
+      };
+    }
+
+    const pointsEdge = comparePointsDelta;
+    const winEdge = compareWinDelta * 100;
+    const volatilityEdge = compareVolatilityDelta;
+    const movementEdge = compareMovementDelta;
+
+    if (pointsEdge >= 0.8 && volatilityEdge <= 0.04) {
+      return {
+        title: "Scenario B is the stronger baseline call",
+        body: `It improves expected points by ${compareDeltaText(pointsEdge, " pts")} with no meaningful volatility penalty.`,
+        tone: "success" as const,
+      };
+    }
+
+    if (pointsEdge <= -0.8 && volatilityEdge >= -0.04) {
+      return {
+        title: "Scenario A is the stronger baseline call",
+        body: `It protects expected points by ${compareDeltaText(Math.abs(pointsEdge), " pts")} without giving away confidence stability.`,
+        tone: "success" as const,
+      };
+    }
+
+    if (Math.abs(movementEdge) >= 0.2 || Math.abs(volatilityEdge) >= 0.06) {
+      const attackSide = movementEdge > 0 || winEdge > 0 ? "B" : "A";
+      return {
+        title: `Scenario ${attackSide} is the higher-variance attack path`,
+        body: "It shifts race movement and volatility enough to change how the race unfolds, not just the finishing order.",
+        tone: "warning" as const,
+      };
+    }
+
+    return {
+      title: "Both scenarios are strategically close",
+      body: "The main differences are in setup emphasis rather than a major shift in race outcome or control.",
+      tone: "muted" as const,
+    };
+  })();
+  const compareWhatChanged = [
+    compareLeadA?.driver_id === compareLeadB?.driver_id
+      ? `${compareLeadA?.driver_name ?? "The same driver"} remains the projected lead car.`
+      : `${compareLeadA?.driver_name ?? "Scenario A"} gives way to ${compareLeadB?.driver_name ?? "Scenario B"} at the front.`,
+    Math.abs(compareStopDelta) >= 1.5
+      ? `The first stop opens earlier in Scenario ${compareStopDelta > 0 ? "A" : "B"}.`
+      : "First-stop timing stays broadly aligned.",
+    Math.abs(compareMovementDelta) >= 0.2
+      ? `Race movement is ${compareMovementDelta > 0 ? "higher" : "lower"} in Scenario ${compareMovementDelta > 0 ? "B" : "A"}.`
+      : "Race movement stays close across both scenarios.",
+  ];
   const motionProps = reduceMotion
     ? { initial: false, animate: undefined, transition: { duration: 0 } }
     : {
@@ -2036,7 +2092,7 @@ export function SimulatorWorkspace() {
                   <div className="rounded-[14px] border border-white/8 bg-black/20 p-3.5">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
-                        <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">Compare summary</div>
+                        <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">What changed</div>
                         <div className="mt-1 text-sm text-white">
                           {compareLeadA?.driver_name ?? "Scenario A"} vs {compareLeadB?.driver_name ?? "Scenario B"}
                         </div>
@@ -2045,13 +2101,33 @@ export function SimulatorWorkspace() {
                         {compareChangedFields.slice(0, 5).map((field) => <Badge key={field} variant="info">{field}</Badge>)}
                       </div>
                     </div>
-                    <div className="mt-3 grid gap-2 border-t border-white/8 pt-3">
-                      {compareInsights.map((item) => (
-                        <div key={item} className="flex items-start gap-2 text-[11px] leading-5 text-muted-foreground">
-                          <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                          <span>{item}</span>
+                    <div className="mt-3 grid gap-3 border-t border-white/8 pt-3 lg:grid-cols-[0.92fr_1.08fr_0.9fr]">
+                      <div className="space-y-2">
+                        <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Observed shift</div>
+                        {compareWhatChanged.map((item) => (
+                          <div key={item} className="flex items-start gap-2 text-[11px] leading-5 text-muted-foreground">
+                            <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-300" />
+                            <span>{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="space-y-2">
+                        <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Why it changed</div>
+                        {compareInsights.map((item) => (
+                          <div key={item} className="flex items-start gap-2 text-[11px] leading-5 text-muted-foreground">
+                            <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                            <span>{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="rounded-[12px] border border-white/8 bg-white/[0.03] p-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Decision support</div>
+                          <Badge variant={compareDecisionCall.tone}>{compareDecisionCall.tone === "success" ? "Clear edge" : compareDecisionCall.tone === "warning" ? "Trade-off" : "Close call"}</Badge>
                         </div>
-                      ))}
+                        <div className="mt-2 text-sm text-white">{compareDecisionCall.title}</div>
+                        <div className="mt-1.5 text-[11px] leading-5 text-muted-foreground">{compareDecisionCall.body}</div>
+                      </div>
                     </div>
                   </div>
 
