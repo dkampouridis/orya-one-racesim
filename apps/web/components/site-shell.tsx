@@ -3,7 +3,6 @@ import Link from "next/link";
 import type { Route } from "next";
 
 import { OryaMark } from "@/components/orya-mark";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -20,42 +19,159 @@ export function SiteShell({
   className?: string;
 }) {
   return (
-    <div className={cn("relative min-h-screen overflow-hidden bg-background text-foreground", className)}>
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(224,40,66,0.2),transparent_24%),radial-gradient(circle_at_top_left,rgba(255,182,72,0.06),transparent_20%),linear-gradient(180deg,rgba(255,255,255,0.02),transparent_18%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-telemetry-grid bg-[size:78px_78px] opacity-[0.09]" />
-      <div className="relative mx-auto flex min-h-screen w-full max-w-none flex-col px-2 pb-8 pt-4 sm:px-3 lg:px-4 xl:px-5 2xl:px-6">
-        <header className="sticky top-4 z-40 mb-8 rounded-[14px] border border-white/8 bg-[rgba(8,10,14,0.9)] px-4 py-3 shadow-[0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur-xl">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-[10px] border border-white/8 bg-white/[0.03] shadow-[0_0_24px_rgba(225,41,68,0.14)]">
-                <OryaMark className="h-7 w-7" />
+    <div
+      className={cn("relative min-h-screen bg-[#080808] text-[#f0f0f0]", className)}
+    >
+      <div className="relative mx-auto flex min-h-screen w-full max-w-none flex-col px-2 pb-8 pt-0 sm:px-3 lg:px-4 xl:px-5 2xl:px-6">
+        {/* ── Header ─────────────────────────────────────── */}
+        <header
+          style={{ height: "48px", borderBottom: "1px solid #1f1f1f", background: "#080808" }}
+          className="sticky top-0 z-40 flex items-center px-4"
+        >
+          <div className="flex w-full items-center justify-between gap-6">
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-3 shrink-0">
+              <div
+                style={{
+                  width: 32,
+                  height: 32,
+                  border: "1px solid #1f1f1f",
+                  borderRadius: "2px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "#0f0f0f",
+                }}
+              >
+                <OryaMark className="h-5 w-5" />
               </div>
-              <div>
-                <div className="font-display text-sm tracking-[0.24em] text-white">ORYA ONE</div>
-                <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">RaceSim | 2026 Formula 1 strategy wall</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span
+                  style={{
+                    fontFamily: "'DM Mono', monospace",
+                    fontSize: 13,
+                    fontWeight: 500,
+                    letterSpacing: "0.18em",
+                    color: "#e8002d",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  ORYA ONE
+                </span>
+                <span
+                  style={{
+                    width: 1,
+                    height: 14,
+                    background: "#2a2a2a",
+                    display: "inline-block",
+                  }}
+                />
+                <span
+                  style={{
+                    fontFamily: "'DM Mono', monospace",
+                    fontSize: 11,
+                    fontWeight: 400,
+                    letterSpacing: "0.16em",
+                    color: "#444444",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  RACESIM
+                </span>
               </div>
             </Link>
-            <nav className="flex items-center gap-2 text-sm">
+
+            {/* Nav */}
+            <nav className="hidden items-center gap-0 md:flex">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="rounded-[8px] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground transition hover:bg-white/[0.04] hover:text-white focus-visible:bg-white/[0.06]"
+                  style={{
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: 11,
+                    fontWeight: 500,
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                    color: "#8a8a8a",
+                    padding: "0 16px",
+                    height: 48,
+                    display: "flex",
+                    alignItems: "center",
+                    borderBottom: "2px solid transparent",
+                    transition: "color 100ms, border-color 100ms",
+                  }}
+                  className="hover:text-[#f0f0f0] hover:border-b-[#e8002d]"
                 >
                   {item.label}
                 </Link>
               ))}
             </nav>
-            <div className="flex items-center gap-2">
-              <div className="hidden items-center gap-2 rounded-[999px] border border-white/8 bg-white/[0.03] px-3 py-1 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground md:flex">
-                <span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_10px_rgba(225,41,68,0.65)]" />
-                Race control online
+
+            {/* Right — status */}
+            <div className="flex items-center gap-2 shrink-0">
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  border: "1px solid #1f1f1f",
+                  borderRadius: "2px",
+                  padding: "3px 8px",
+                  background: "#0f0f0f",
+                }}
+              >
+                <span
+                  className="animate-pulse-dot"
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
+                    background: "#e8002d",
+                    display: "inline-block",
+                    boxShadow: "0 0 6px rgba(232,0,45,0.7)",
+                  }}
+                />
+                <span
+                  style={{
+                    fontFamily: "'DM Mono', monospace",
+                    fontSize: 9,
+                    fontWeight: 500,
+                    letterSpacing: "0.22em",
+                    color: "#8a8a8a",
+                    textTransform: "uppercase",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  RACE CONTROL ONLINE
+                </span>
               </div>
-              <Badge variant="muted">2026 season MVP</Badge>
+              <div
+                style={{
+                  border: "1px solid #2a2a2a",
+                  borderRadius: "2px",
+                  padding: "3px 8px",
+                  background: "transparent",
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "'DM Mono', monospace",
+                    fontSize: 9,
+                    fontWeight: 500,
+                    letterSpacing: "0.18em",
+                    color: "#8a8a8a",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  2026 SEASON MVP
+                </span>
+              </div>
             </div>
           </div>
         </header>
-        <main className="flex-1">{children}</main>
+
+        <main className="flex-1 pt-3">{children}</main>
       </div>
     </div>
   );

@@ -154,13 +154,15 @@ const DEMO_PRESETS = [
 ];
 
 const tooltipStyle = {
-  backgroundColor: "rgba(8, 10, 14, 0.96)",
-  border: "1px solid rgba(255, 255, 255, 0.08)",
-  borderRadius: 12,
-  color: "#f4f6f8",
+  backgroundColor: "#0f0f0f",
+  border: "1px solid #2a2a2a",
+  borderRadius: 2,
+  color: "#f0f0f0",
+  fontFamily: "'DM Mono', monospace",
+  fontSize: 11,
 } as const;
 
-const distributionColors = ["#ff415f", "#f7bb43", "#31c48d", "#67e8f9", "#94a3b8", "#6d7683"];
+const distributionColors = ["#e8002d", "#00d2a0", "#4fc3f7", "#f5a623", "#555555", "#333333"];
 
 function buildInitialOverrides(driverIds: string[]): DriverOverride[] {
   return driverIds.map((driverId) => ({
@@ -293,21 +295,6 @@ function telemetryVariant(value: number): "info" | "warning" | "default" {
   return "default";
 }
 
-function signalColor(value: number, tone: "default" | "muted" | "success" | "warning" | "info" = signalVariant(value)) {
-  if (tone === "success") {
-    return "bg-emerald-400";
-  }
-  if (tone === "warning") {
-    return "bg-amber-300";
-  }
-  if (tone === "info") {
-    return "bg-cyan-300";
-  }
-  if (tone === "default") {
-    return "bg-primary";
-  }
-  return "bg-slate-400";
-}
 
 function compactNumber(value: number) {
   return value.toFixed(2);
@@ -472,10 +459,27 @@ function DisclosureButton({
     <button
       type="button"
       onClick={onToggle}
-      className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1 text-[9px] uppercase tracking-[0.18em] text-muted-foreground transition hover:border-white/18 hover:text-white"
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 4,
+        border: "1px solid #2a2a2a",
+        borderRadius: "2px",
+        padding: "3px 8px",
+        background: "transparent",
+        fontFamily: "'DM Mono', monospace",
+        fontSize: 9,
+        fontWeight: 500,
+        letterSpacing: "0.18em",
+        textTransform: "uppercase",
+        color: "#8a8a8a",
+        cursor: "pointer",
+        transition: "border-color 100ms, color 100ms",
+      }}
+      className="hover:border-[#444] hover:text-[#f0f0f0]"
     >
       <span>{expanded ? "Hide" : "Show"} {label}</span>
-      {expanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+      {expanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
     </button>
   );
 }
@@ -494,20 +498,62 @@ function SectionFrame({
   action?: ReactNode;
 }) {
   return (
-    <Card className="overflow-hidden rounded-[16px] border border-white/8 bg-[linear-gradient(180deg,rgba(15,18,24,0.98),rgba(7,9,13,1))] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
-      <CardHeader className="border-b border-white/6 bg-[linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0))] pb-2.5 pt-4">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            {eyebrow ? (
-              <div className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">{eyebrow}</div>
-            ) : null}
-            <CardTitle className="mt-1.5 font-display text-[0.95rem] uppercase tracking-[0.08em] text-white">{title}</CardTitle>
-            {subtitle ? <CardDescription className="mt-0.5 text-[11px] leading-5 text-muted-foreground/75">{subtitle}</CardDescription> : null}
+    <Card className="overflow-hidden">
+      <div
+        style={{
+          borderBottom: "1px solid #1a1a1a",
+          padding: "12px 16px",
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          gap: 16,
+        }}
+      >
+        <div>
+          {eyebrow ? (
+            <div
+              style={{
+                fontFamily: "'DM Mono', monospace",
+                fontSize: 9,
+                fontWeight: 500,
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                color: "#444444",
+              }}
+            >
+              {eyebrow}
+            </div>
+          ) : null}
+          <div
+            style={{
+              fontFamily: "'DM Mono', monospace",
+              fontSize: 11,
+              fontWeight: 500,
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              color: "#f0f0f0",
+              marginTop: eyebrow ? 4 : 0,
+            }}
+          >
+            {title}
           </div>
-          {action}
+          {subtitle ? (
+            <div
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: 11,
+                color: "#8a8a8a",
+                marginTop: 3,
+                fontStyle: "italic",
+              }}
+            >
+              {subtitle}
+            </div>
+          ) : null}
         </div>
-      </CardHeader>
-      <CardContent className="p-3.5">{children}</CardContent>
+        {action}
+      </div>
+      <div style={{ padding: "14px 16px" }}>{children}</div>
     </Card>
   );
 }
@@ -521,27 +567,74 @@ function StatusChip({
   value: string;
   variant?: "default" | "muted" | "success" | "warning" | "info";
 }) {
+  const borderColor =
+    variant === "default"
+      ? "#e8002d"
+      : variant === "success"
+        ? "#00d2a0"
+        : variant === "warning"
+          ? "#f5a623"
+          : variant === "info"
+            ? "#4fc3f7"
+            : "#222222";
+  const bgColor =
+    variant === "default"
+      ? "#1a0a0a"
+      : "#111111";
+  const valueColor =
+    variant === "default"
+      ? "#f0f0f0"
+      : variant === "success"
+        ? "#00d2a0"
+        : variant === "warning"
+          ? "#f5a623"
+          : variant === "info"
+            ? "#4fc3f7"
+            : "#8a8a8a";
+
   return (
-    <div className="flex min-w-0 max-w-full items-center gap-2 rounded-[999px] border border-white/8 bg-black/30 px-2.5 py-1.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-      <span className="shrink-0">
-        <span
-          className={`h-1.5 w-1.5 rounded-full ${
-            variant === "success"
-              ? "bg-emerald-400"
-              : variant === "warning"
-                ? "bg-amber-300"
-                : variant === "info"
-                  ? "bg-cyan-300"
-                  : variant === "default"
-                    ? "bg-primary"
-                    : "bg-white/30"
-          }`}
-        />
+    <div
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 6,
+        border: `1px solid ${borderColor}`,
+        borderRadius: "2px",
+        padding: "3px 8px",
+        background: bgColor,
+        minWidth: 0,
+        maxWidth: "100%",
+        overflow: "hidden",
+      }}
+    >
+      <span
+        style={{
+          fontFamily: "'DM Mono', monospace",
+          fontSize: 9,
+          fontWeight: 400,
+          letterSpacing: "0.16em",
+          textTransform: "uppercase",
+          color: "#444444",
+          flexShrink: 0,
+        }}
+      >
+        {label}
       </span>
-      <span className="truncate">{label}</span>
-      <Badge variant={variant} className="max-w-full shrink min-w-0 truncate px-2 py-0.5 text-[9px]">
+      <span
+        style={{
+          fontFamily: "'DM Mono', monospace",
+          fontSize: 9,
+          fontWeight: 500,
+          letterSpacing: "0.14em",
+          textTransform: "uppercase",
+          color: valueColor,
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+        }}
+      >
         {value}
-      </Badge>
+      </span>
     </div>
   );
 }
@@ -557,16 +650,93 @@ function HeaderMetric({
   detail: string;
   tone?: "muted" | "default" | "success" | "warning" | "info";
 }) {
+  const badgeLabel =
+    tone === "default" ? "ATTACK" : tone === "success" ? "STABLE" : tone === "warning" ? "CAUTION" : tone === "info" ? "INFO" : "NEUTRAL";
+  const badgeStyle: React.CSSProperties =
+    tone === "default"
+      ? { background: "#e8002d", border: "1px solid #e8002d", color: "#fff" }
+      : tone === "success"
+        ? { background: "transparent", border: "1px solid #00d2a0", color: "#00d2a0" }
+        : tone === "warning"
+          ? { background: "transparent", border: "1px solid #f5a623", color: "#f5a623" }
+          : tone === "info"
+            ? { background: "transparent", border: "1px solid #4fc3f7", color: "#4fc3f7" }
+            : { background: "transparent", border: "1px dashed #444", color: "#8a8a8a" };
+
   return (
-    <div className="rounded-[10px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))] px-3 py-2.5">
-      <div className="flex items-center justify-between gap-2">
-        <div className="min-w-0 truncate text-[9px] uppercase tracking-[0.22em] text-muted-foreground">{label}</div>
-        <Badge variant={tone} className="shrink-0 px-2 py-0.5 text-[8px]">
-          {tone === "default" ? "Attack" : tone === "success" ? "Stable" : tone === "warning" ? "Caution" : tone === "info" ? "Info" : "Neutral"}
-        </Badge>
+    <div
+      style={{
+        border: "1px solid #1f1f1f",
+        borderRadius: "2px",
+        padding: "12px",
+        background: "#0f0f0f",
+        transition: "border-color 100ms",
+      }}
+      className="hover:border-[#333]"
+    >
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 8 }}>
+        <div
+          style={{
+            fontFamily: "'DM Mono', monospace",
+            fontSize: 9,
+            fontWeight: 400,
+            letterSpacing: "0.22em",
+            textTransform: "uppercase",
+            color: "#444444",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {label}
+        </div>
+        <span
+          style={{
+            fontFamily: "'DM Mono', monospace",
+            fontSize: 9,
+            fontWeight: 500,
+            letterSpacing: "0.14em",
+            textTransform: "uppercase",
+            padding: "2px 6px",
+            borderRadius: "2px",
+            flexShrink: 0,
+            ...badgeStyle,
+          }}
+        >
+          {badgeLabel}
+        </span>
       </div>
-      <div className="mt-1.5 truncate font-display text-[1rem] leading-none text-white">{value}</div>
-      <div className="mt-1 truncate font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">{detail}</div>
+      <div
+        style={{
+          fontFamily: "'DM Mono', monospace",
+          fontSize: 22,
+          fontWeight: 700,
+          color: "#f0f0f0",
+          lineHeight: 1,
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+          fontVariantNumeric: "tabular-nums",
+        }}
+      >
+        {value}
+      </div>
+      <div
+        style={{
+          borderTop: "1px solid #1a1a1a",
+          marginTop: 8,
+          paddingTop: 8,
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 11,
+          color: "#555",
+          fontStyle: "italic",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {detail}
+      </div>
     </div>
   );
 }
@@ -583,15 +753,40 @@ function SelectField({
   options: { value: string; label: string }[];
 }) {
   return (
-    <label className="flex flex-col gap-2">
-      <span className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">{label}</span>
+    <label className="flex flex-col gap-1.5">
+      <span
+        style={{
+          fontFamily: "'DM Mono', monospace",
+          fontSize: 9,
+          fontWeight: 500,
+          letterSpacing: "0.22em",
+          textTransform: "uppercase",
+          color: "#444444",
+        }}
+      >
+        {label}
+      </span>
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="min-h-10 rounded-[10px] border border-white/10 bg-[#090c11] px-3.5 py-2.5 text-sm text-white outline-none transition focus:border-primary/60"
+        style={{
+          minHeight: 36,
+          borderRadius: "2px",
+          border: "1px solid #2a2a2a",
+          background: "#0f0f0f",
+          padding: "6px 12px",
+          fontSize: 12,
+          fontFamily: "'Inter', sans-serif",
+          color: "#f0f0f0",
+          outline: "none",
+          transition: "border-color 100ms",
+          appearance: "none",
+          cursor: "pointer",
+        }}
+        className="focus:border-[#e8002d]"
       >
         {options.map((option) => (
-          <option key={option.value} value={option.value}>
+          <option key={option.value} value={option.value} style={{ background: "#0f0f0f" }}>
             {option.label}
           </option>
         ))}
@@ -612,12 +807,42 @@ function SliderField({
   description: string;
 }) {
   return (
-    <label className="rounded-[10px] border border-white/8 bg-black/25 p-3">
-      <div className="mb-1.5 flex items-center justify-between gap-2">
-        <span className="text-[13px] text-white">{label}</span>
-        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+    <label
+      style={{
+        display: "block",
+        border: "1px solid #1f1f1f",
+        borderRadius: "2px",
+        background: "#0f0f0f",
+        padding: "10px 12px",
+        cursor: "default",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+        <span
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 12,
+            color: "#f0f0f0",
+          }}
+        >
+          {label}
+        </span>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            fontFamily: "'DM Mono', monospace",
+            fontSize: 9,
+            fontWeight: 500,
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            color: "#8a8a8a",
+            fontVariantNumeric: "tabular-nums",
+          }}
+        >
           <span>{sliderLabel(value)}</span>
-          <span>{value.toFixed(2)}</span>
+          <span style={{ color: "#f0f0f0" }}>{value.toFixed(2)}</span>
         </div>
       </div>
       <input
@@ -627,9 +852,22 @@ function SliderField({
         step="0.01"
         value={value}
         onChange={(event) => onChange(Number(event.target.value))}
-        className="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[#ff415f]"
+        style={{ width: "100%", cursor: "pointer", accentColor: "#e8002d" }}
+        className="h-1.5 appearance-none bg-[#1f1f1f] rounded-[2px]"
       />
-      <p className="mt-1.5 font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">{description.split(".")[0]}</p>
+      <p
+        style={{
+          marginTop: 6,
+          fontFamily: "'DM Mono', monospace",
+          fontSize: 9,
+          fontWeight: 400,
+          letterSpacing: "0.12em",
+          textTransform: "uppercase",
+          color: "#444444",
+        }}
+      >
+        {description.split(".")[0]}
+      </p>
     </label>
   );
 }
@@ -645,17 +883,63 @@ function SignalMeter({
   secondary?: string;
   tone?: "default" | "muted" | "success" | "warning" | "info";
 }) {
+  const barColor =
+    tone === "success"
+      ? "#00d2a0"
+      : tone === "warning"
+        ? "#f5a623"
+        : tone === "info"
+          ? "#4fc3f7"
+          : tone === "default"
+            ? "#e8002d"
+            : "#444444";
+
+  const pct = Math.max(4, Math.min(100, value * 100));
+  // Segmented dot indicators: 10 dots total
+  const totalDots = 10;
+  const filledDots = Math.round(pct / 10);
+
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between gap-3">
-        <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{label}</div>
-        <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-white">{secondary ?? `${Math.round(value * 100)}/100`}</div>
-      </div>
-      <div className="h-1.5 rounded-full bg-white/8">
+    <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
         <div
-          className={`h-1.5 rounded-full ${signalColor(value, tone)}`}
-          style={{ width: `${Math.max(6, Math.min(100, value * 100))}%` }}
-        />
+          style={{
+            fontFamily: "'DM Mono', monospace",
+            fontSize: 9,
+            fontWeight: 400,
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            color: "#8a8a8a",
+          }}
+        >
+          {label}
+        </div>
+        <div
+          style={{
+            fontFamily: "'DM Mono', monospace",
+            fontSize: 9,
+            fontWeight: 500,
+            letterSpacing: "0.12em",
+            color: "#f0f0f0",
+            fontVariantNumeric: "tabular-nums",
+          }}
+        >
+          {secondary ?? `${Math.round(value * 100)}/100`}
+        </div>
+      </div>
+      <div style={{ display: "flex", gap: 3, alignItems: "center" }}>
+        {Array.from({ length: totalDots }).map((_, i) => (
+          <span
+            key={i}
+            style={{
+              fontSize: 8,
+              color: i < filledDots ? barColor : "#2a2a2a",
+              lineHeight: 1,
+            }}
+          >
+            ●
+          </span>
+        ))}
       </div>
     </div>
   );
@@ -674,30 +958,65 @@ function InsightCard({
   children: ReactNode;
   tone?: "default" | "muted" | "success" | "warning" | "info";
 }) {
-  const toneClasses =
+  const iconColor =
     tone === "default"
-      ? "border-primary/15 bg-primary/10 text-primary"
+      ? "#e8002d"
       : tone === "warning"
-        ? "border-amber-300/20 bg-amber-300/10 text-amber-200"
+        ? "#f5a623"
         : tone === "success"
-          ? "border-emerald-400/20 bg-emerald-400/10 text-emerald-300"
+          ? "#00d2a0"
           : tone === "info"
-            ? "border-cyan-300/20 bg-cyan-300/10 text-cyan-200"
-            : "border-white/10 bg-white/[0.04] text-muted-foreground";
+            ? "#4fc3f7"
+            : "#8a8a8a";
+
   return (
-    <Card className="rounded-[14px] border border-white/8 bg-[linear-gradient(180deg,rgba(15,18,23,0.98),rgba(8,10,14,1))]">
-      <CardHeader className="pb-2.5 pt-4">
-        <div className="flex items-center gap-3">
-          <div className={`flex h-9 w-9 items-center justify-center rounded-[10px] border ${toneClasses}`}>
-            <Icon className="h-4 w-4" />
+    <Card>
+      <div style={{ padding: "12px 16px", borderBottom: "1px solid #1a1a1a" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div
+            style={{
+              width: 32,
+              height: 32,
+              border: `1px solid ${iconColor}22`,
+              borderRadius: "2px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+              color: iconColor,
+            }}
+          >
+            <Icon className="h-3.5 w-3.5" />
           </div>
           <div>
-            <CardTitle className="font-display text-[0.95rem] uppercase tracking-[0.08em]">{title}</CardTitle>
-            {subtitle ? <CardDescription className="mt-0.5 text-[10px] leading-4">{subtitle}</CardDescription> : null}
+            <div
+              style={{
+                fontFamily: "'DM Mono', monospace",
+                fontSize: 10,
+                fontWeight: 500,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "#f0f0f0",
+              }}
+            >
+              {title}
+            </div>
+            {subtitle ? (
+              <div
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: 10,
+                  color: "#8a8a8a",
+                  marginTop: 2,
+                }}
+              >
+                {subtitle}
+              </div>
+            ) : null}
           </div>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-2.5">{children}</CardContent>
+      </div>
+      <div style={{ padding: "12px 16px", display: "flex", flexDirection: "column", gap: 10 }}>{children}</div>
     </Card>
   );
 }
@@ -715,16 +1034,68 @@ function MetricPanel({
   tone?: "default" | "muted" | "success" | "warning" | "info";
   badgeLabel?: string;
 }) {
+  const bLabel = badgeLabel ?? label.split(" ")[0];
   return (
-    <div className="min-w-0 overflow-hidden rounded-[12px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0.01))] px-3 py-2.5">
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0 pr-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
-        <Badge variant={tone} className="shrink-0 whitespace-nowrap px-2 py-0.5 text-[9px]">
-          {badgeLabel ?? label.split(" ")[0]}
+    <div
+      style={{
+        border: "1px solid #1f1f1f",
+        borderRadius: "2px",
+        background: "#0f0f0f",
+        padding: "10px 12px",
+        overflow: "hidden",
+        minWidth: 0,
+        transition: "border-color 100ms",
+      }}
+      className="hover:border-[#333]"
+    >
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
+        <div
+          style={{
+            fontFamily: "'DM Mono', monospace",
+            fontSize: 9,
+            fontWeight: 400,
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            color: "#8a8a8a",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {label}
+        </div>
+        <Badge variant={tone} className="shrink-0">
+          {bLabel}
         </Badge>
       </div>
-      <div className="mt-2 font-display text-[1.28rem] leading-[0.94] text-white">{value}</div>
-      <div className="mt-1.5 text-[11px] leading-5 text-muted-foreground">{detail}</div>
+      <div
+        style={{
+          marginTop: 8,
+          fontFamily: "'DM Mono', monospace",
+          fontSize: 20,
+          fontWeight: 700,
+          color: "#f0f0f0",
+          lineHeight: "1",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+          fontVariantNumeric: "tabular-nums",
+        }}
+      >
+        {value}
+      </div>
+      <div
+        style={{
+          marginTop: 6,
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 11,
+          color: "#666",
+          fontStyle: "italic",
+          lineHeight: 1.4,
+        }}
+      >
+        {detail}
+      </div>
     </div>
   );
 }
@@ -739,9 +1110,32 @@ function InlineDataPoint({
   align?: "left" | "right";
 }) {
   return (
-    <div className={align === "right" ? "text-right" : "text-left"}>
-      <div className="font-mono text-[8px] uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
-      <div className="mt-1 text-[12px] leading-none text-white">{value}</div>
+    <div style={{ textAlign: align }}>
+      <div
+        style={{
+          fontFamily: "'DM Mono', monospace",
+          fontSize: 8,
+          fontWeight: 400,
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          color: "#444444",
+        }}
+      >
+        {label}
+      </div>
+      <div
+        style={{
+          marginTop: 4,
+          fontFamily: "'DM Mono', monospace",
+          fontSize: 12,
+          fontWeight: 500,
+          color: "#f0f0f0",
+          lineHeight: 1,
+          fontVariantNumeric: "tabular-nums",
+        }}
+      >
+        {value}
+      </div>
     </div>
   );
 }
@@ -763,8 +1157,8 @@ function TrustSummaryCard({
         <Badge variant={trustTierVariant(trust.data_grounding_tier)}>{trust.data_grounding_tier}</Badge>
         <Badge variant={trustTierVariant(trust.volatility_tier)}>{trust.volatility_tier}</Badge>
       </div>
-      <div className="text-[12px] leading-5 text-muted-foreground">{trust.confidence_summary}</div>
-      <div className="grid gap-3">
+      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "#8a8a8a", lineHeight: 1.5, fontStyle: "italic" }}>{trust.confidence_summary}</div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         <SignalMeter label="Confidence" value={trust.confidence_score} secondary={trustScoreLabel(trust.confidence_score)} tone={trustTierVariant(trust.confidence_tier)} />
         <SignalMeter label="Historical support" value={trust.historical_support_score} secondary={trustScoreLabel(trust.historical_support_score)} tone={trustTierVariant(trust.historical_support_tier)} />
         <SignalMeter label="Data grounding" value={trust.data_grounding_score} secondary={trustScoreLabel(trust.data_grounding_score)} tone={trustTierVariant(trust.data_grounding_tier)} />
@@ -796,18 +1190,18 @@ function TrustSummaryCard({
         <DisclosureButton expanded={expanded} onToggle={onToggle} label="trust notes" />
       </div>
       {expanded ? (
-        <div className="grid gap-3 border-t border-white/8 pt-3 lg:grid-cols-2">
-          <div className="space-y-2">
-            <div className="text-[10px] uppercase tracking-[0.22em] text-cyan-200">Calibration notes</div>
+        <div style={{ borderTop: "1px solid #1a1a1a", paddingTop: 12, display: "grid", gap: 12 }} className="lg:grid-cols-2">
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, fontWeight: 500, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4fc3f7" }}>Calibration notes</div>
             {trust.calibration_notes.concat(trust.support_notes, trust.coverage_notes).map((item) => (
-              <div key={item} className="flex items-start gap-2 text-[11px] leading-5 text-muted-foreground">
-                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+              <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 8, fontFamily: "'Inter', sans-serif", fontSize: 11, color: "#8a8a8a", lineHeight: 1.5 }}>
+                <span style={{ marginTop: 4, width: 4, height: 4, borderRadius: "50%", background: "#e8002d", flexShrink: 0, display: "inline-block" }} />
                 <span>{item}</span>
               </div>
             ))}
           </div>
-          <div className="space-y-2">
-            <div className="text-[10px] uppercase tracking-[0.22em] text-cyan-200">Provenance</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, fontWeight: 500, letterSpacing: "0.22em", textTransform: "uppercase", color: "#4fc3f7" }}>Provenance</div>
             {[
               { label: "Official", items: trust.provenance.official_sources },
               { label: "Normalized", items: trust.provenance.normalized_datasets },
@@ -815,11 +1209,11 @@ function TrustSummaryCard({
               { label: "Calibrated", items: trust.provenance.calibrated_layers },
               { label: "Live assumptions", items: trust.provenance.live_assumptions },
             ].map((group) => (
-              <div key={group.label} className="rounded-[10px] border border-white/8 bg-black/20 p-2.5">
-                <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground">{group.label}</div>
-                <div className="mt-1.5 grid gap-1">
+              <div key={group.label} style={{ border: "1px solid #1a1a1a", borderRadius: "2px", background: "#0a0a0a", padding: "8px 10px" }}>
+                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 8, letterSpacing: "0.18em", textTransform: "uppercase", color: "#8a8a8a" }}>{group.label}</div>
+                <div style={{ marginTop: 5, display: "flex", flexDirection: "column", gap: 3 }}>
                   {group.items.slice(0, 3).map((item) => (
-                    <div key={item} className="text-[11px] leading-5 text-muted-foreground">{item}</div>
+                    <div key={item} style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: "#8a8a8a", lineHeight: 1.4 }}>{item}</div>
                   ))}
                 </div>
               </div>
@@ -845,7 +1239,15 @@ function AnalyticsTabs({
   ];
 
   return (
-    <div className="inline-flex rounded-[12px] border border-white/8 bg-black/30 p-1">
+    <div
+      style={{
+        display: "inline-flex",
+        border: "1px solid #1f1f1f",
+        borderRadius: "2px",
+        background: "#0f0f0f",
+        overflow: "hidden",
+      }}
+    >
       {items.map((item) => {
         const active = value === item.id;
         return (
@@ -853,9 +1255,21 @@ function AnalyticsTabs({
             key={item.id}
             type="button"
             onClick={() => onChange(item.id)}
-            className={`rounded-[10px] px-3 py-2 text-[10px] uppercase tracking-[0.22em] transition duration-200 ${
-              active ? "bg-primary text-white shadow-[0_0_18px_rgba(225,41,68,0.25)]" : "text-muted-foreground hover:text-white"
-            }`}
+            style={{
+              padding: "6px 14px",
+              fontFamily: "'DM Mono', monospace",
+              fontSize: 9,
+              fontWeight: 500,
+              letterSpacing: "0.18em",
+              textTransform: "uppercase",
+              color: active ? "#f0f0f0" : "#8a8a8a",
+              background: active ? "#e8002d" : "transparent",
+              border: "none",
+              cursor: "pointer",
+              transition: "background 100ms, color 100ms",
+              borderRight: "1px solid #1f1f1f",
+            }}
+            className={active ? "" : "hover:text-[#f0f0f0] hover:bg-[#141414]"}
           >
             {item.label}
           </button>
@@ -1103,7 +1517,7 @@ function ControlRailNav({
   ];
 
   return (
-    <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
+    <div className="grid gap-1 sm:grid-cols-2 lg:grid-cols-1">
       {items.map((item) => {
         const active = value === item.id;
         return (
@@ -1111,24 +1525,59 @@ function ControlRailNav({
             key={item.id}
             type="button"
             onClick={() => onChange(item.id)}
-            className={`group flex min-h-14 items-center justify-between rounded-[12px] border px-3 py-2.5 text-left transition duration-200 ${
-              active
-                ? "border-primary/35 bg-primary/12 shadow-[0_0_22px_rgba(225,41,68,0.18)]"
-                : "border-white/8 bg-white/[0.02] hover:border-white/16 hover:bg-white/[0.045]"
-            }`}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              minHeight: 52,
+              border: `1px solid ${active ? "#e8002d44" : "#1f1f1f"}`,
+              borderRadius: "2px",
+              padding: "8px 12px",
+              background: active ? "#1a0a0a" : "#0f0f0f",
+              cursor: "pointer",
+              textAlign: "left",
+              transition: "border-color 100ms, background 100ms",
+            }}
+            className="group hover:border-[#2a2a2a] hover:bg-[#141414]"
           >
-            <div className="min-w-0">
-              <div className={`font-mono text-[9px] uppercase tracking-[0.2em] ${active ? "text-primary/90" : "text-muted-foreground"}`}>
+            <div style={{ minWidth: 0 }}>
+              <div
+                style={{
+                  fontFamily: "'DM Mono', monospace",
+                  fontSize: 8,
+                  fontWeight: 500,
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  color: active ? "#e8002d" : "#444444",
+                }}
+              >
                 {item.eyebrow}
               </div>
-              <div className={`mt-1 truncate text-[12px] uppercase tracking-[0.14em] ${active ? "text-white" : "text-muted-foreground group-hover:text-white"}`}>
+              <div
+                style={{
+                  marginTop: 3,
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: 11,
+                  fontWeight: 500,
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                  color: active ? "#f0f0f0" : "#8a8a8a",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
                 {item.label}
               </div>
             </div>
             <div
-              className={`h-8 w-1.5 rounded-full transition ${
-                active ? "bg-primary shadow-[0_0_18px_rgba(225,41,68,0.35)]" : "bg-white/10 group-hover:bg-white/20"
-              }`}
+              style={{
+                width: 2,
+                height: 24,
+                background: active ? "#e8002d" : "#1f1f1f",
+                flexShrink: 0,
+                transition: "background 100ms",
+              }}
             />
           </button>
         );
@@ -1194,11 +1643,11 @@ function CompareConfigPanel({
         </div>
 
         <label className="flex flex-col gap-2">
-          <span className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Scenario title</span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#8a8a8a]">Scenario title</span>
           <input
             value={title}
             onChange={(event) => onTitleChange(event.target.value)}
-            className="min-h-10 rounded-[10px] border border-white/10 bg-[#090c11] px-3.5 py-2.5 text-sm text-white outline-none transition focus:border-primary/60"
+            className="min-h-10 rounded-[2px] border border-[#2a2a2a] bg-[#0f0f0f] px-3.5 py-2.5 text-sm text-[#f0f0f0] outline-none transition focus:border-[#e8002d]"
           />
         </label>
 
@@ -1208,7 +1657,7 @@ function CompareConfigPanel({
 
         {expanded ? (
           <>
-            <div className="grid gap-2.5 border-t border-white/8 pt-3 md:grid-cols-2">
+            <div className="grid gap-2.5 border-t border-[#1f1f1f] pt-3 md:grid-cols-2">
               <SelectField
                 label="Preset"
                 value={activePresetId}
@@ -1242,16 +1691,16 @@ function CompareConfigPanel({
                 ]}
               />
               <label className="flex flex-col gap-2">
-                <span className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Simulation runs</span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#8a8a8a]">Simulation runs</span>
                 <input
                   type="number"
                   min={50}
                   max={500}
                   value={form.simulation_runs}
                   onChange={(event) => onFormChange({ ...form, simulation_runs: Number(event.target.value) })}
-                  className="min-h-10 rounded-[10px] border border-white/10 bg-[#090c11] px-3.5 py-2.5 text-sm text-white outline-none transition focus:border-primary/60"
+                  className="min-h-10 rounded-[2px] border border-[#2a2a2a] bg-[#0f0f0f] px-3.5 py-2.5 text-sm text-[#f0f0f0] outline-none transition focus:border-[#e8002d]"
                 />
-                <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">Compare-safe cap {compareCap} runs</span>
+                <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#8a8a8a]">Compare-safe cap {compareCap} runs</span>
               </label>
               <SelectField
                 label="Detail"
@@ -1265,8 +1714,8 @@ function CompareConfigPanel({
               />
             </div>
 
-            <div className="rounded-[12px] border border-white/8 bg-black/20 p-3">
-              <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-cyan-200">Driver assumption</div>
+            <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-3">
+              <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-[#4fc3f7]">Driver assumption</div>
               <div className="grid gap-2.5 md:grid-cols-3">
                 <SelectField
                   label="Driver"
@@ -1275,7 +1724,7 @@ function CompareConfigPanel({
                   options={defaults.drivers.map((driver) => ({ value: driver.id, label: driver.name }))}
                 />
                 <label className="flex flex-col gap-2">
-                  <span className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Form delta</span>
+                  <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#8a8a8a]">Form delta</span>
                   <input
                     type="number"
                     min={-15}
@@ -1283,11 +1732,11 @@ function CompareConfigPanel({
                     step={1}
                     value={focusOverride.recent_form_delta}
                     onChange={(event) => onFormChange(patchDriverOverride(form, focusDriverId, { recent_form_delta: Number(event.target.value) }))}
-                    className="min-h-10 rounded-[10px] border border-white/10 bg-[#090c11] px-3.5 py-2.5 text-sm text-white outline-none transition focus:border-primary/60"
+                    className="min-h-10 rounded-[2px] border border-[#2a2a2a] bg-[#0f0f0f] px-3.5 py-2.5 text-sm text-[#f0f0f0] outline-none transition focus:border-[#e8002d]"
                   />
                 </label>
                 <label className="flex flex-col gap-2">
-                  <span className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Overtake delta</span>
+                  <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#8a8a8a]">Overtake delta</span>
                   <input
                     type="number"
                     min={-15}
@@ -1295,7 +1744,7 @@ function CompareConfigPanel({
                     step={1}
                     value={focusOverride.overtaking_delta}
                     onChange={(event) => onFormChange(patchDriverOverride(form, focusDriverId, { overtaking_delta: Number(event.target.value) }))}
-                    className="min-h-10 rounded-[10px] border border-white/10 bg-[#090c11] px-3.5 py-2.5 text-sm text-white outline-none transition focus:border-primary/60"
+                    className="min-h-10 rounded-[2px] border border-[#2a2a2a] bg-[#0f0f0f] px-3.5 py-2.5 text-sm text-[#f0f0f0] outline-none transition focus:border-[#e8002d]"
                   />
                 </label>
               </div>
@@ -1374,23 +1823,43 @@ function CompareMetricCard({
   detail: string;
 }) {
   return (
-    <div className="rounded-[12px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.012))] p-3">
-      <div className="flex items-center justify-between gap-3">
-        <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{label}</div>
+    <div
+      style={{
+        border: "1px solid #1f1f1f",
+        borderRadius: "2px",
+        background: "#0f0f0f",
+        padding: "12px",
+        transition: "border-color 100ms",
+      }}
+      className="hover:border-[#333]"
+    >
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 10 }}>
+        <div
+          style={{
+            fontFamily: "'DM Mono', monospace",
+            fontSize: 9,
+            fontWeight: 400,
+            letterSpacing: "0.2em",
+            textTransform: "uppercase",
+            color: "#8a8a8a",
+          }}
+        >
+          {label}
+        </div>
         <Badge variant={deltaTone}>{delta}</Badge>
       </div>
-      <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+      <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", gap: 8 }}>
         <div>
-          <div className="text-[9px] uppercase tracking-[0.18em] text-cyan-200">Scenario A</div>
-          <div className="mt-1 text-sm text-white">{scenarioA}</div>
+          <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 8, letterSpacing: "0.18em", textTransform: "uppercase", color: "#4fc3f7" }}>A</div>
+          <div style={{ marginTop: 4, fontFamily: "'DM Mono', monospace", fontSize: 12, fontWeight: 500, color: "#f0f0f0", fontVariantNumeric: "tabular-nums" }}>{scenarioA}</div>
         </div>
-        <div className="text-muted-foreground">→</div>
-        <div className="text-right">
-          <div className="text-[9px] uppercase tracking-[0.18em] text-primary/90">Scenario B</div>
-          <div className="mt-1 text-sm text-white">{scenarioB}</div>
+        <div style={{ color: "#444444", fontFamily: "'DM Mono', monospace", fontSize: 12 }}>→</div>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 8, letterSpacing: "0.18em", textTransform: "uppercase", color: "#e8002d" }}>B</div>
+          <div style={{ marginTop: 4, fontFamily: "'DM Mono', monospace", fontSize: 12, fontWeight: 500, color: "#f0f0f0", fontVariantNumeric: "tabular-nums" }}>{scenarioB}</div>
         </div>
       </div>
-      <div className="mt-2 text-[11px] leading-5 text-muted-foreground">{detail}</div>
+      <div style={{ marginTop: 8, fontFamily: "'Inter', sans-serif", fontSize: 11, color: "#666", fontStyle: "italic", lineHeight: 1.4 }}>{detail}</div>
     </div>
   );
 }
@@ -1403,52 +1872,125 @@ function TimingStrip({
   expanded?: boolean;
 }) {
   return (
-    <div className="grid gap-2">
+    <div className="timing-strip" style={{ display: "flex", flexDirection: "column", gap: 1, background: "#1a1a1a" }}>
       {drivers.map((driver, index) => (
         <div
           key={driver.driver_id}
-          className="rounded-[12px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.035),rgba(255,255,255,0.012))] px-3 py-2.5"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "40px 1fr 60px 60px 60px 60px",
+            alignItems: "center",
+            gap: 8,
+            minHeight: 48,
+            background: "#0f0f0f",
+            padding: "0 12px",
+            borderLeft: "2px solid transparent",
+            transition: "background 100ms, border-color 100ms",
+          }}
+          className="hover:bg-[#161616] hover:border-l-[#e8002d]"
         >
-          <div className="grid grid-cols-[42px_minmax(0,1.35fr)_minmax(120px,0.9fr)_minmax(120px,0.9fr)] items-center gap-3">
-            <div className="font-display text-[1.1rem] leading-none text-white">P{index + 1}</div>
-            <div className="min-w-0">
-              <div className="truncate text-[13px] text-white">{driver.driver_name}</div>
-              <div className="mt-0.5 truncate font-mono text-[8px] uppercase tracking-[0.16em] text-muted-foreground">{driver.team_name}</div>
+          {/* Position block */}
+          <div
+            style={{
+              width: 32,
+              height: 32,
+              background: index === 0 ? "#e8002d" : "#1a1a1a",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontFamily: "'DM Mono', monospace",
+              fontSize: 13,
+              fontWeight: 700,
+              color: "#fff",
+              flexShrink: 0,
+              borderRadius: "2px",
+            }}
+          >
+            {index + 1}
+          </div>
+          {/* Driver */}
+          <div style={{ minWidth: 0 }}>
+            <div
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: 13,
+                fontWeight: 500,
+                color: "#f0f0f0",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {driver.driver_name}
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <InlineDataPoint label="Win odds" value={formatPct(driver.win_probability)} />
-              <InlineDataPoint label="Exp pts" value={driver.expected_points.toFixed(1)} />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <InlineDataPoint label="Strategy fit" value={formatCompactScore(driver.strategy_fit_score)} />
-              <InlineDataPoint label="Stops" value={`${driver.expected_stop_count.toFixed(1)} avg`} />
+            <div
+              style={{
+                fontFamily: "'DM Mono', monospace",
+                fontSize: 8,
+                fontWeight: 400,
+                letterSpacing: "0.16em",
+                textTransform: "uppercase",
+                color: "#555",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {driver.team_name}
             </div>
           </div>
-          {expanded ? (
-            <div className="mt-2.5 border-t border-white/8 pt-2.5">
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <InlineDataPoint label="Net delta" value={formatSigned(Number(driver.net_position_delta.toFixed(1)))} />
-                <InlineDataPoint label="Strategy success" value={formatPct(driver.strategy_success_rate)} />
-                <InlineDataPoint label="Podium odds" value={formatPct(driver.podium_probability)} />
-                <InlineDataPoint label="Expected finish" value={`P${driver.expected_finish_position.toFixed(1)}`} />
-              </div>
-            </div>
-          ) : null}
+          {/* Stats */}
+          <InlineDataPoint label="Win" value={formatPct(driver.win_probability)} align="right" />
+          <InlineDataPoint label="Pts" value={driver.expected_points.toFixed(1)} align="right" />
+          <InlineDataPoint label="Fit" value={formatCompactScore(driver.strategy_fit_score)} align="right" />
+          <InlineDataPoint label="Stops" value={driver.expected_stop_count.toFixed(1)} align="right" />
         </div>
       ))}
+      {expanded && drivers.length > 0 ? (
+        <div style={{ background: "#0f0f0f", padding: "8px 12px 10px", borderTop: "1px solid #1a1a1a" }}>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {drivers.slice(0, 1).map((driver) => (
+              <>
+                <InlineDataPoint key="nd" label="Net delta" value={formatSigned(Number(driver.net_position_delta.toFixed(1)))} />
+                <InlineDataPoint key="ss" label="Strategy success" value={formatPct(driver.strategy_success_rate)} />
+                <InlineDataPoint key="po" label="Podium odds" value={formatPct(driver.podium_probability)} />
+                <InlineDataPoint key="ef" label="Expected finish" value={`P${driver.expected_finish_position.toFixed(1)}`} />
+              </>
+            ))}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
 
 function StopMixBar({ stops, share }: { stops: number; share: number }) {
+  const totalBlocks = 20;
+  const filled = Math.round(share * totalBlocks);
   return (
-    <div className="space-y-1.5">
-      <div className="flex items-center justify-between gap-3 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 8,
+          fontFamily: "'DM Mono', monospace",
+          fontSize: 9,
+          fontWeight: 500,
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          color: "#8a8a8a",
+          fontVariantNumeric: "tabular-nums",
+        }}
+      >
         <span>{stops} stop</span>
-        <span>{formatPct(share)}</span>
+        <span style={{ color: "#4fc3f7" }}>{formatPct(share)}</span>
       </div>
-      <div className="h-1.5 rounded-full bg-white/8">
-        <div className="h-1.5 rounded-full bg-cyan-300" style={{ width: `${Math.max(8, share * 100)}%` }} />
+      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, letterSpacing: 2 }}>
+        {Array.from({ length: totalBlocks }).map((_, i) => (
+          <span key={i} style={{ color: i < filled ? "#4fc3f7" : "#1f1f1f" }}>█</span>
+        ))}
       </div>
     </div>
   );
@@ -1464,37 +2006,60 @@ function StintSummaryCard({
   expanded?: boolean;
 }) {
   return (
-    <div className="rounded-[14px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.012))] p-3.5">
-      <div className="flex items-start justify-between gap-3">
+    <div
+      style={{
+        border: "1px solid #1f1f1f",
+        borderRadius: "2px",
+        background: "#0f0f0f",
+        padding: "14px",
+        transition: "border-color 100ms",
+      }}
+      className="hover:border-[#333]"
+    >
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 12 }}>
         <div>
-          <div className="text-sm text-white">{driver.driver_name}</div>
-          <div className="mt-0.5 text-[9px] uppercase tracking-[0.18em] text-muted-foreground">{driver.team_name}</div>
+          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 500, color: "#f0f0f0" }}>{driver.driver_name}</div>
+          <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 8, letterSpacing: "0.18em", textTransform: "uppercase", color: "#555", marginTop: 3 }}>{driver.team_name}</div>
         </div>
         <Badge variant={accent}>{driver.expected_stop_count.toFixed(1)} stops</Badge>
       </div>
-      <div className="mt-3 space-y-3">
-        <div className="rounded-[12px] border border-white/8 bg-black/20 px-3 py-3">
-          <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Primary race path</div>
-          <div className="mt-1.5 text-[14px] leading-6 text-white">{stintPathLabel(driver.primary_stint_path)}</div>
-          <div className="mt-2 font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
-            Avg stint lengths · {stintLengthsLabel(driver.primary_stint_lengths)}
-          </div>
+      <div
+        style={{
+          border: "1px solid #1a1a1a",
+          borderRadius: "2px",
+          padding: "10px 12px",
+          background: "#0a0a0a",
+          marginBottom: 10,
+        }}
+      >
+        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 8, letterSpacing: "0.22em", textTransform: "uppercase", color: "#444" }}>Primary race path</div>
+        <div style={{ marginTop: 6, fontFamily: "'DM Mono', monospace", fontSize: 13, fontWeight: 500, color: "#f0f0f0", lineHeight: 1.5 }}>{stintPathLabel(driver.primary_stint_path)}</div>
+        <div style={{ marginTop: 6, fontFamily: "'DM Mono', monospace", fontSize: 8, letterSpacing: "0.14em", textTransform: "uppercase", color: "#555" }}>
+          Avg stint lengths · {stintLengthsLabel(driver.primary_stint_lengths)}
         </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <InlineDataPoint label="First stop" value={formatLapValue(driver.average_first_pit_lap)} />
-          <InlineDataPoint label="Pit window" value={formatLapWindow(driver.first_pit_window_start, driver.first_pit_window_end)} />
-          <InlineDataPoint label="Stop count" value={`${driver.expected_stop_count.toFixed(1)} avg`} />
-        </div>
-        {expanded && driver.alternate_stint_path.length ? (
-          <div className="rounded-[12px] border border-white/8 bg-white/[0.03] px-3 py-3">
-            <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Alternate path</div>
-            <div className="mt-1.5 text-[12px] leading-5 text-white/90">{stintPathLabel(driver.alternate_stint_path)}</div>
-            <div className="mt-1.5 font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
-              Avg stint lengths · {stintLengthsLabel(driver.alternate_stint_lengths)}
-            </div>
-          </div>
-        ) : null}
       </div>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <InlineDataPoint label="First stop" value={formatLapValue(driver.average_first_pit_lap)} />
+        <InlineDataPoint label="Pit window" value={formatLapWindow(driver.first_pit_window_start, driver.first_pit_window_end)} />
+        <InlineDataPoint label="Stop count" value={`${driver.expected_stop_count.toFixed(1)} avg`} />
+      </div>
+      {expanded && driver.alternate_stint_path.length ? (
+        <div
+          style={{
+            marginTop: 10,
+            border: "1px solid #1a1a1a",
+            borderRadius: "2px",
+            padding: "10px 12px",
+            background: "#0a0a0a",
+          }}
+        >
+          <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 8, letterSpacing: "0.22em", textTransform: "uppercase", color: "#444" }}>Alternate path</div>
+          <div style={{ marginTop: 6, fontFamily: "'DM Mono', monospace", fontSize: 12, color: "#f0f0f0aa", lineHeight: 1.4 }}>{stintPathLabel(driver.alternate_stint_path)}</div>
+          <div style={{ marginTop: 5, fontFamily: "'DM Mono', monospace", fontSize: 8, letterSpacing: "0.14em", textTransform: "uppercase", color: "#555" }}>
+            Avg stint lengths · {stintLengthsLabel(driver.alternate_stint_lengths)}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -1507,23 +2072,28 @@ function RaceTimelineStrip({
   mode?: "compact" | "detail";
 }) {
   return (
-    <div className="grid gap-2 lg:grid-cols-4">
+    <div className="grid gap-1 lg:grid-cols-4" style={{ background: "#1a1a1a", gap: 1 }}>
       {phases.map((phase) => (
         <div
           key={phase.phase_id}
-          className="rounded-[14px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.012))] p-3"
+          style={{
+            border: "1px solid #1f1f1f",
+            borderRadius: "2px",
+            background: "#0f0f0f",
+            padding: "12px",
+          }}
         >
-          <div className="flex items-center justify-between gap-3">
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8, marginBottom: 10 }}>
             <div>
-              <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{phase.label}</div>
-              <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
+              <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 9, fontWeight: 400, letterSpacing: "0.22em", textTransform: "uppercase", color: "#444" }}>{phase.label}</div>
+              <div style={{ marginTop: 4, fontFamily: "'DM Mono', monospace", fontSize: 9, letterSpacing: "0.14em", textTransform: "uppercase", color: "#8a8a8a" }}>
                 {formatLapWindow(phase.start_lap, phase.end_lap)}
               </div>
             </div>
             <Badge variant={signalVariant(phase.volatility)}>{volatilityLabel(phase.volatility)}</Badge>
           </div>
           {mode === "compact" ? (
-            <div className="mt-3 space-y-3">
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <SignalMeter
                 label="Risk"
                 value={phase.volatility}
@@ -1534,23 +2104,21 @@ function RaceTimelineStrip({
                 <InlineDataPoint label="Pit pressure" value={summarizePhaseLoad(phase.pit_pressure, "pit").replace(" pressure", "")} />
                 <InlineDataPoint label="Move load" value={summarizePhaseLoad(phase.overtake_load, "move").replace(" rate", "")} align="right" />
               </div>
-              <div className="text-[11px] leading-5 text-muted-foreground">{phase.summary}</div>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: "#8a8a8a", fontStyle: "italic", lineHeight: 1.4 }}>{phase.summary}</div>
             </div>
           ) : (
-            <div className="mt-3 space-y-3">
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <SignalMeter
                 label="Phase risk"
                 value={phase.volatility}
                 secondary={`${phase.volatility.toFixed(2)} risk score`}
                 tone={signalVariant(phase.volatility)}
               />
-              <div className="grid gap-2 border-t border-white/8 pt-2.5">
-                <div className="flex items-end justify-between gap-3">
-                  <InlineDataPoint label="Pit pressure" value={formatAveragePerDriver(phase.pit_pressure, 2)} />
-                  <InlineDataPoint label="Move rate" value={formatAveragePerRun(phase.overtake_load, 1)} align="right" />
-                </div>
+              <div style={{ borderTop: "1px solid #1a1a1a", paddingTop: 8, display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 8 }}>
+                <InlineDataPoint label="Pit pressure" value={formatAveragePerDriver(phase.pit_pressure, 2)} />
+                <InlineDataPoint label="Move rate" value={formatAveragePerRun(phase.overtake_load, 1)} align="right" />
               </div>
-              <div className="text-[11px] leading-5 text-muted-foreground">{phase.summary}</div>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: "#8a8a8a", fontStyle: "italic", lineHeight: 1.4 }}>{phase.summary}</div>
             </div>
           )}
         </div>
@@ -1560,45 +2128,85 @@ function RaceTimelineStrip({
 }
 
 function DriverTable({ drivers }: { drivers: DriverResult[] }) {
+  const winColor = (p: number) =>
+    p > 0.3 ? "#00d2a0" : p > 0.1 ? "#f5a623" : "#555555";
+
   return (
-    <div className="overflow-x-auto rounded-[16px] border border-white/8">
-        <div className="min-w-[1040px]">
-          <div className="grid grid-cols-[44px_1.6fr_1fr_repeat(7,minmax(82px,1fr))] gap-3 bg-white/[0.04] px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
-            <span>Pos</span>
-            <span>Driver</span>
-            <span>Strategy</span>
-            <span>Win odds</span>
-            <span>Podium</span>
-            <span>Exp pts</span>
-            <span>DNF</span>
-            <span>Volatility</span>
-            <span>Strat fit</span>
-            <span>Expected</span>
-          </div>
+    <div style={{ overflowX: "auto", border: "1px solid #1f1f1f", borderRadius: "2px" }}>
+      <div style={{ minWidth: 1040 }}>
+        {/* Header */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "44px 1.6fr 1fr repeat(7, minmax(82px, 1fr))",
+            gap: 12,
+            background: "#141414",
+            padding: "10px 16px",
+            fontFamily: "'DM Mono', monospace",
+            fontSize: 9,
+            fontWeight: 500,
+            letterSpacing: "0.24em",
+            textTransform: "uppercase",
+            color: "#444444",
+          }}
+        >
+          <span>Pos</span>
+          <span>Driver</span>
+          <span>Strategy</span>
+          <span>Win odds</span>
+          <span>Podium</span>
+          <span>Exp pts</span>
+          <span>DNF</span>
+          <span>Volatility</span>
+          <span>Strat fit</span>
+          <span>Expected</span>
+        </div>
         {drivers.map((driver, index) => (
           <div
             key={driver.driver_id}
-            className="grid grid-cols-[44px_1.6fr_1fr_repeat(7,minmax(82px,1fr))] gap-3 border-t border-white/6 px-4 py-4 text-sm"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "44px 1.6fr 1fr repeat(7, minmax(82px, 1fr))",
+              gap: 12,
+              padding: "14px 16px",
+              borderTop: "1px solid #1a1a1a",
+              background: index % 2 === 0 ? "#0a0a0a" : "#0f0f0f",
+              borderLeft: "2px solid transparent",
+              transition: "background 100ms, border-color 100ms",
+              alignItems: "start",
+            }}
+            className="hover:bg-[#161616] hover:border-l-[#e8002d]"
           >
-            <div className="font-display text-xl text-white">{index + 1}</div>
-            <div>
-              <div className="font-medium text-white">{driver.driver_name}</div>
-              <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{driver.team_name}</div>
-              <div className="mt-2 line-clamp-2 text-xs leading-5 text-muted-foreground">{driver.explanation[0]}</div>
+            <div
+              style={{
+                fontFamily: "'DM Mono', monospace",
+                fontSize: 18,
+                fontWeight: 700,
+                color: "#f0f0f0",
+                fontVariantNumeric: "tabular-nums",
+                paddingTop: 2,
+              }}
+            >
+              {index + 1}
             </div>
             <div>
-              <div className="text-white">{driver.assigned_strategy_name}</div>
-              <div className="mt-1 text-xs text-muted-foreground">{formatPct(driver.strategy_success_rate)} success rate</div>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 500, color: "#f0f0f0" }}>{driver.driver_name}</div>
+              <div style={{ marginTop: 3, fontFamily: "'DM Mono', monospace", fontSize: 8, letterSpacing: "0.2em", textTransform: "uppercase", color: "#555" }}>{driver.team_name}</div>
+              <div style={{ marginTop: 6, fontFamily: "'Inter', sans-serif", fontSize: 11, color: "#8a8a8a", lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{driver.explanation[0]}</div>
             </div>
-            <div>{formatPct(driver.win_probability)}</div>
-            <div>{formatPct(driver.podium_probability)}</div>
-            <div>{driver.expected_points.toFixed(1)}</div>
-            <div>{formatPct(driver.dnf_probability)}</div>
+            <div>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "#f0f0f0", fontWeight: 500 }}>{driver.assigned_strategy_name}</div>
+              <div style={{ marginTop: 4, fontFamily: "'DM Mono', monospace", fontSize: 9, color: "#555", fontVariantNumeric: "tabular-nums" }}>{formatPct(driver.strategy_success_rate)} success rate</div>
+            </div>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 12, fontWeight: 500, color: winColor(driver.win_probability), fontVariantNumeric: "tabular-nums" }}>{formatPct(driver.win_probability)}</div>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 12, color: "#f0f0f0", fontVariantNumeric: "tabular-nums" }}>{formatPct(driver.podium_probability)}</div>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 12, color: "#f0f0f0", fontVariantNumeric: "tabular-nums" }}>{driver.expected_points.toFixed(1)}</div>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 12, color: "#f0f0f0", fontVariantNumeric: "tabular-nums" }}>{formatPct(driver.dnf_probability)}</div>
             <div>
               <Badge variant={badgeVariantForConfidence(driver.confidence_label)}>{driver.confidence_label}</Badge>
             </div>
-            <div>{driver.strategy_fit_score.toFixed(1)}</div>
-            <div>P{driver.expected_finish_position.toFixed(1)}</div>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 12, color: "#f0f0f0", fontVariantNumeric: "tabular-nums" }}>{driver.strategy_fit_score.toFixed(1)}</div>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 12, color: "#f0f0f0", fontVariantNumeric: "tabular-nums" }}>P{driver.expected_finish_position.toFixed(1)}</div>
           </div>
         ))}
       </div>
@@ -1795,14 +2403,14 @@ export function SimulatorWorkspace() {
 
   if (!defaults || !form) {
     return (
-      <Card className="border-rose-400/20 bg-rose-950/20">
+      <Card className="border-[#e8002d44] bg-[#1a0a0a]">
         <CardHeader>
           <CardTitle>2026 season data unavailable</CardTitle>
           <CardDescription>
             Start the FastAPI service on `http://localhost:8000` for local development, or set `API_URL` / `NEXT_PUBLIC_API_URL` so the frontend proxy can reach the 2026 Formula 1 backend.
           </CardDescription>
         </CardHeader>
-        {error ? <CardContent className="text-sm text-rose-200">{error}</CardContent> : null}
+        {error ? <CardContent className="text-sm text-[#f0f0f0]">{error}</CardContent> : null}
       </Card>
     );
   }
@@ -2005,15 +2613,15 @@ export function SimulatorWorkspace() {
   return (
     <div className="space-y-3">
       <motion.section {...motionProps} className="sticky top-[5.25rem] z-20">
-        <Card className="overflow-hidden rounded-[16px] border-primary/15 bg-[linear-gradient(120deg,rgba(13,15,20,1),rgba(8,10,13,1))] shadow-[0_24px_70px_rgba(0,0,0,0.34)]">
+        <Card className="overflow-hidden border-[#1f1f1f]">
           <CardContent className="p-3.5">
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-3 border-b border-white/8 pb-3">
-              <div className="inline-flex rounded-[12px] border border-white/8 bg-black/25 p-1">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-3 border-b border-[#1f1f1f] pb-3">
+              <div className="inline-flex rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-1">
                 <button
                   type="button"
                   onClick={() => setWorkspaceMode("single")}
-                  className={`rounded-[10px] px-3 py-2 text-[10px] uppercase tracking-[0.22em] transition ${
-                    workspaceMode === "single" ? "bg-primary text-white shadow-[0_0_18px_rgba(225,41,68,0.25)]" : "text-muted-foreground hover:text-white"
+                  className={`rounded-[2px] px-3 py-2 font-mono text-[9px] uppercase tracking-[0.18em] transition-colors duration-100 ${
+                    workspaceMode === "single" ? "bg-[#e8002d] text-[#f0f0f0]" : "text-[#8a8a8a] hover:text-[#f0f0f0]"
                   }`}
                 >
                   Single scenario
@@ -2024,8 +2632,8 @@ export function SimulatorWorkspace() {
                     duplicateCurrentIntoCompare();
                     setWorkspaceMode("compare");
                   }}
-                  className={`rounded-[10px] px-3 py-2 text-[10px] uppercase tracking-[0.22em] transition ${
-                    workspaceMode === "compare" ? "bg-primary text-white shadow-[0_0_18px_rgba(225,41,68,0.25)]" : "text-muted-foreground hover:text-white"
+                  className={`rounded-[2px] px-3 py-2 font-mono text-[9px] uppercase tracking-[0.18em] transition-colors duration-100 ${
+                    workspaceMode === "compare" ? "bg-[#e8002d] text-[#f0f0f0]" : "text-[#8a8a8a] hover:text-[#f0f0f0]"
                   }`}
                 >
                   Compare mode
@@ -2053,10 +2661,10 @@ export function SimulatorWorkspace() {
                         variant={loadingSimulation ? "warning" : deferredSimulation ? "success" : "muted"}
                       />
                     </div>
-                    <h2 className="mt-2.5 font-display text-[clamp(1.7rem,3vw,2.7rem)] leading-[0.98] tracking-[-0.05em] text-white">
+                    <h2 className="mt-2.5 font-mono text-[clamp(1.7rem,3vw,2.7rem)] leading-[0.98] tracking-[-0.05em] text-[#f0f0f0]">
                       {activeTrack.name}
                     </h2>
-                    <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+                    <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] uppercase tracking-[0.16em] text-[#8a8a8a]">
                       <span>{activeTrack.circuit_name}</span>
                       <span>R{activeTrack.calendar_round}</span>
                       <span>{form.simulation_runs} runs</span>
@@ -2086,13 +2694,13 @@ export function SimulatorWorkspace() {
                         Refresh
                       </Button>
                     </div>
-                    <div className="grid gap-2 rounded-[10px] border border-white/8 bg-white/[0.03] px-3 py-2.5 sm:grid-cols-2">
+                    <div className="grid gap-2 rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] px-3 py-2.5 sm:grid-cols-2">
                       <StatusChip label="Weekend" value={activeWeather.label} variant="info" />
                       <StatusChip label="Chaos" value={`${Math.round(form.environment.randomness_intensity * 100)}`} variant={signalVariant(form.environment.randomness_intensity)} />
                       <StatusChip label="Quali" value={`${Math.round(form.weights.qualifying_importance * 100)}`} variant="info" />
                       <StatusChip label="Track pos" value={`${Math.round(activeTrack.track_position_importance * 100)}`} variant="info" />
                     </div>
-                    {error ? <div className="rounded-[10px] border border-rose-300/20 bg-rose-400/10 px-3 py-2 text-[12px] leading-5 text-rose-100">{error}</div> : null}
+                    {error ? <div className="rounded-[2px] border border-[#e8002d44] bg-[#1a0a0a] px-3 py-2 text-[12px] leading-5 text-[#f0f0f0]">{error}</div> : null}
                   </div>
                 </div>
 
@@ -2123,9 +2731,9 @@ export function SimulatorWorkspace() {
                       tone="warning"
                     />
                   </div>
-                  <div className="rounded-[10px] border border-white/8 bg-black/25 p-2">
+                  <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-2">
                     <div className="flex items-center justify-between gap-3">
-                      <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">Timing strip</div>
+                      <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-[#444444] letter-spacing-[0.2em]">Timing strip</div>
                       <Badge variant={leadDriver ? badgeVariantForConfidence(leadDriver.confidence_label) : signalVariant(currentVolatility)}>
                         {leadDriver?.confidence_label ?? "Preview"}
                       </Badge>
@@ -2135,7 +2743,7 @@ export function SimulatorWorkspace() {
                         <TimingStrip drivers={topDrivers} />
                       </div>
                     ) : (
-                      <div className="mt-2 line-clamp-2 font-mono text-[9px] uppercase tracking-[0.1em] text-muted-foreground">
+                      <div className="mt-2 line-clamp-2 font-mono text-[9px] uppercase tracking-[0.1em] text-[#8a8a8a]">
                         Run to load the projected top four, win odds, expected points, and strategy detail.
                       </div>
                     )}
@@ -2152,10 +2760,10 @@ export function SimulatorWorkspace() {
                       <StatusChip label="Scenario B" value={compareTitleB} variant="default" />
                       <StatusChip label="Changed fields" value={`${compareChangedFields.length}`} variant={compareChangedFields.length ? "warning" : "muted"} />
                     </div>
-                    <h2 className="mt-2.5 font-display text-[clamp(1.7rem,3vw,2.5rem)] leading-[0.98] tracking-[-0.05em] text-white">
+                    <h2 className="mt-2.5 font-mono text-[clamp(1.7rem,3vw,2.5rem)] leading-[0.98] tracking-[-0.05em] text-[#f0f0f0]">
                       Compare what changed, how much, and why
                     </h2>
-                    <div className="mt-1 max-w-3xl text-[12px] leading-6 text-muted-foreground">
+                    <div className="mt-1 max-w-3xl text-[12px] leading-6 text-[#8a8a8a]">
                       Build two scenarios from the same baseline, run them with compare-safe caps, and inspect the race-order, strategy, movement, and risk deltas in one board.
                     </div>
                   </div>
@@ -2226,7 +2834,7 @@ export function SimulatorWorkspace() {
                         Exit compare
                       </Button>
                     </div>
-                    {compareError ? <div className="rounded-[10px] border border-rose-300/20 bg-rose-400/10 px-3 py-2 text-[12px] leading-5 text-rose-100">{compareError}</div> : null}
+                    {compareError ? <div className="rounded-[2px] border border-[#e8002d44] bg-[#1a0a0a] px-3 py-2 text-[12px] leading-5 text-[#f0f0f0]">{compareError}</div> : null}
                   </div>
                 </div>
               </div>
@@ -2251,11 +2859,11 @@ export function SimulatorWorkspace() {
             >
               {compareSimulationA && compareSimulationB ? (
                 <div className="space-y-3">
-                  <div className="rounded-[14px] border border-white/8 bg-black/20 p-3.5">
+                  <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-3.5">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
-                        <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">What changed</div>
-                        <div className="mt-1 text-sm text-white">
+                        <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-[#444444] letter-spacing-[0.2em]">What changed</div>
+                        <div className="mt-1 text-sm text-[#f0f0f0]">
                           {compareLeadA?.driver_name ?? "Scenario A"} vs {compareLeadB?.driver_name ?? "Scenario B"}
                         </div>
                       </div>
@@ -2263,32 +2871,32 @@ export function SimulatorWorkspace() {
                         {compareChangedFields.slice(0, 5).map((field) => <Badge key={field} variant="info">{field}</Badge>)}
                       </div>
                     </div>
-                    <div className="mt-3 grid gap-3 border-t border-white/8 pt-3 lg:grid-cols-[0.92fr_1.08fr_0.9fr]">
+                    <div className="mt-3 grid gap-3 border-t border-[#1f1f1f] pt-3 lg:grid-cols-[0.92fr_1.08fr_0.9fr]">
                       <div className="space-y-2">
-                        <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Observed shift</div>
+                        <div className="text-[10px] uppercase tracking-[0.22em] text-[#8a8a8a]">Observed shift</div>
                         {compareWhatChanged.map((item) => (
-                          <div key={item} className="flex items-start gap-2 text-[11px] leading-5 text-muted-foreground">
-                            <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-300" />
+                          <div key={item} className="flex items-start gap-2 text-[11px] leading-5 text-[#8a8a8a]">
+                            <span style={{ width: 4, height: 4, borderRadius: "50%", background: "#4fc3f7", flexShrink: 0, display: "inline-block", marginTop: 4 }} />
                             <span>{item}</span>
                           </div>
                         ))}
                       </div>
                       <div className="space-y-2">
-                        <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Why it changed</div>
+                        <div className="text-[10px] uppercase tracking-[0.22em] text-[#8a8a8a]">Why it changed</div>
                         {compareInsights.map((item) => (
-                          <div key={item} className="flex items-start gap-2 text-[11px] leading-5 text-muted-foreground">
-                            <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                          <div key={item} className="flex items-start gap-2 text-[11px] leading-5 text-[#8a8a8a]">
+                            <span style={{ marginTop: 4, width: 4, height: 4, borderRadius: "50%", background: "#e8002d", flexShrink: 0, display: "inline-block" }} />
                             <span>{item}</span>
                           </div>
                         ))}
                       </div>
-                      <div className="rounded-[12px] border border-white/8 bg-white/[0.03] p-3">
+                      <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] p-3">
                         <div className="flex items-center justify-between gap-2">
-                          <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Decision support</div>
+                          <div className="text-[10px] uppercase tracking-[0.22em] text-[#8a8a8a]">Decision support</div>
                           <Badge variant={compareDecisionCall.tone}>{compareDecisionCall.tone === "success" ? "Clear edge" : compareDecisionCall.tone === "warning" ? "Trade-off" : "Close call"}</Badge>
                         </div>
-                        <div className="mt-2 text-sm text-white">{compareDecisionCall.title}</div>
-                        <div className="mt-1.5 text-[11px] leading-5 text-muted-foreground">{compareDecisionCall.body}</div>
+                        <div className="mt-2 text-sm text-[#f0f0f0]">{compareDecisionCall.title}</div>
+                        <div className="mt-1.5 text-[11px] leading-5 text-[#8a8a8a]">{compareDecisionCall.body}</div>
                       </div>
                     </div>
                   </div>
@@ -2328,18 +2936,18 @@ export function SimulatorWorkspace() {
                     />
                   </div>
 
-                  <div className="rounded-[14px] border border-white/8 bg-black/20 p-3.5">
+                  <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-3.5">
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">Confidence / calibration</div>
-                        <div className="mt-1 text-sm text-white">{compareTrustNarrative}</div>
+                        <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-[#444444] letter-spacing-[0.2em]">Confidence / calibration</div>
+                        <div className="mt-1 text-sm text-[#f0f0f0]">{compareTrustNarrative}</div>
                       </div>
                       <Badge variant="info">Trust delta</Badge>
                     </div>
-                    <div className="mt-3 grid gap-3 border-t border-white/8 pt-3 lg:grid-cols-2">
-                      <div className="rounded-[12px] border border-white/8 bg-white/[0.03] p-3">
+                    <div className="mt-3 grid gap-3 border-t border-[#1f1f1f] pt-3 lg:grid-cols-2">
+                      <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] p-3">
                         <div className="flex items-center justify-between gap-2">
-                          <div className="text-[10px] uppercase tracking-[0.22em] text-cyan-200">{compareTitleA}</div>
+                          <div className="text-[10px] uppercase tracking-[0.22em] text-[#4fc3f7]">{compareTitleA}</div>
                           {compareTrustA ? <Badge variant={trustTierVariant(compareTrustA.confidence_tier)}>{compactTrustLabel(compareTrustA.confidence_tier)}</Badge> : null}
                         </div>
                         <div className="mt-3 grid gap-2">
@@ -2348,9 +2956,9 @@ export function SimulatorWorkspace() {
                           <SignalMeter label="Grounding" value={compareTrustA?.data_grounding_score ?? 0} secondary={compareTrustA ? compactTrustLabel(compareTrustA.data_grounding_tier) : "Pending"} tone={compareTrustA ? trustTierVariant(compareTrustA.data_grounding_tier) : "muted"} />
                         </div>
                       </div>
-                      <div className="rounded-[12px] border border-white/8 bg-white/[0.03] p-3">
+                      <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] p-3">
                         <div className="flex items-center justify-between gap-2">
-                          <div className="text-[10px] uppercase tracking-[0.22em] text-primary/90">{compareTitleB}</div>
+                          <div className="text-[10px] uppercase tracking-[0.22em] text-[#e8002d]">{compareTitleB}</div>
                           {compareTrustB ? <Badge variant={trustTierVariant(compareTrustB.confidence_tier)}>{compactTrustLabel(compareTrustB.confidence_tier)}</Badge> : null}
                         </div>
                         <div className="mt-3 grid gap-2">
@@ -2363,23 +2971,23 @@ export function SimulatorWorkspace() {
                   </div>
 
                   <div className="grid gap-3 xl:grid-cols-[1.1fr_0.9fr]">
-                    <div className="rounded-[14px] border border-white/8 bg-black/20 p-3.5">
-                      <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">Top order difference</div>
+                    <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-3.5">
+                      <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-[#444444] letter-spacing-[0.2em]">Top order difference</div>
                       <div className="mt-3 grid gap-3 md:grid-cols-2">
-                        <div className="rounded-[12px] border border-white/8 bg-white/[0.03] p-3">
-                          <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-cyan-200">{compareTitleA}</div>
+                        <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] p-3">
+                          <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-[#4fc3f7]">{compareTitleA}</div>
                           <TimingStrip drivers={compareTopA} />
                         </div>
-                        <div className="rounded-[12px] border border-white/8 bg-white/[0.03] p-3">
-                          <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-primary/90">{compareTitleB}</div>
+                        <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] p-3">
+                          <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-[#e8002d]">{compareTitleB}</div>
                           <TimingStrip drivers={compareTopB} />
                         </div>
                       </div>
                     </div>
 
                     <div className="space-y-3">
-                      <div className="rounded-[14px] border border-white/8 bg-black/20 p-3.5">
-                        <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">Strategy difference</div>
+                      <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-3.5">
+                        <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-[#444444] letter-spacing-[0.2em]">Strategy difference</div>
                         <div className="mt-3 grid gap-2 sm:grid-cols-2">
                           <MetricPanel
                             label={compareTitleA}
@@ -2396,15 +3004,15 @@ export function SimulatorWorkspace() {
                             badgeLabel="B"
                           />
                         </div>
-                        <div className="mt-2 text-[11px] leading-5 text-muted-foreground">
+                        <div className="mt-2 text-[11px] leading-5 text-[#8a8a8a]">
                           {Math.abs(compareStopDelta) >= 1.5
                             ? `Scenario ${compareStopDelta > 0 ? "A" : "B"} opens the first stop window earlier.`
                             : "First-stop timing stays broadly similar across both scenarios."}
                         </div>
                       </div>
 
-                      <div className="rounded-[14px] border border-white/8 bg-black/20 p-3.5">
-                        <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">Movement / overtake difference</div>
+                      <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-3.5">
+                        <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-[#444444] letter-spacing-[0.2em]">Movement / overtake difference</div>
                         <div className="mt-3 grid gap-2 sm:grid-cols-2">
                           <MetricPanel
                             label="Scenario A"
@@ -2421,7 +3029,7 @@ export function SimulatorWorkspace() {
                             badgeLabel={compareSimulationB.event_summary.movement_summary.overtaking_intensity}
                           />
                         </div>
-                        <div className="mt-2 text-[11px] leading-5 text-muted-foreground">
+                        <div className="mt-2 text-[11px] leading-5 text-[#8a8a8a]">
                           {Math.abs(compareMovementDelta) >= 0.2
                             ? `${compareMovementDelta > 0 ? "Scenario B" : "Scenario A"} produces more race movement and overtaking load.`
                             : "Race movement remains close between the two scenarios."}
@@ -2431,8 +3039,8 @@ export function SimulatorWorkspace() {
                   </div>
 
                   <div className="grid gap-3 xl:grid-cols-[0.95fr_1.05fr]">
-                    <div className="rounded-[14px] border border-white/8 bg-black/20 p-3.5">
-                      <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">Risk / weather / SC difference</div>
+                    <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-3.5">
+                      <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-[#444444] letter-spacing-[0.2em]">Risk / weather / SC difference</div>
                       <div className="mt-3 grid gap-2 sm:grid-cols-2">
                         <MetricPanel
                           label="Scenario A"
@@ -2449,25 +3057,25 @@ export function SimulatorWorkspace() {
                           badgeLabel="SC"
                         />
                       </div>
-                      <div className="mt-2 text-[11px] leading-5 text-muted-foreground">
+                      <div className="mt-2 text-[11px] leading-5 text-[#8a8a8a]">
                         {Math.abs(compareScDelta) >= 0.08
                           ? `Scenario ${compareScDelta > 0 ? "B" : "A"} is more sensitive to neutralization leverage and race-control timing.`
                           : "Neutralization leverage is broadly aligned across the two scenarios."}
                       </div>
                     </div>
 
-                    <div className="rounded-[14px] border border-white/8 bg-black/20 p-3.5">
-                      <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">Race phase delta</div>
+                    <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-3.5">
+                      <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-[#444444] letter-spacing-[0.2em]">Race phase delta</div>
                       <div className="mt-3 grid gap-2">
                         {comparePhaseRows.map((row) => {
                           const volatilityDelta = (row.phaseB?.volatility ?? 0) - (row.phaseA?.volatility ?? 0);
                           return (
-                            <div key={row.phaseId} className="rounded-[10px] border border-white/8 bg-white/[0.03] px-3 py-2.5">
+                            <div key={row.phaseId} className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] px-3 py-2.5">
                               <div className="flex items-center justify-between gap-3">
-                                <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{row.label}</div>
+                                <div className="text-[10px] uppercase tracking-[0.2em] text-[#8a8a8a]">{row.label}</div>
                                 <Badge variant={compareBadgeVariant(volatilityDelta, false)}>{compareDeltaText(volatilityDelta, "", 2)}</Badge>
                               </div>
-                              <div className="mt-1.5 text-[11px] leading-5 text-muted-foreground">
+                              <div className="mt-1.5 text-[11px] leading-5 text-[#8a8a8a]">
                                 A {row.phaseA ? volatilityLabel(row.phaseA.volatility) : "Pending"} · B {row.phaseB ? volatilityLabel(row.phaseB.volatility) : "Pending"}
                               </div>
                             </div>
@@ -2495,12 +3103,12 @@ export function SimulatorWorkspace() {
                   ) : null}
                 </div>
               ) : (
-                <div className="rounded-[12px] border border-dashed border-white/10 bg-black/20 p-5 text-center">
-                  <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-[10px] border border-cyan-300/20 bg-cyan-300/10">
-                    <Radar className="h-5 w-5 text-cyan-200" />
+                <div className="rounded-[2px] border border-dashed border-[#2a2a2a] bg-[#0a0a0a] p-5 text-center">
+                  <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-[2px] border border-[#4fc3f744] bg-[#001a26]">
+                    <Radar className="h-5 w-5 text-[#4fc3f7]" />
                   </div>
-                  <div className="mt-3 text-base uppercase tracking-[0.08em] text-white">Run both scenarios</div>
-                  <div className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+                  <div className="mt-3 text-base uppercase tracking-[0.08em] text-[#f0f0f0]">Run both scenarios</div>
+                  <div className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[#8a8a8a]">
                     Compare Mode runs the current engine twice with compare-safe caps, then computes delta summaries on the frontend.
                   </div>
                 </div>
@@ -2559,7 +3167,7 @@ export function SimulatorWorkspace() {
         <aside className="order-3 space-y-2.5 xl:order-1 xl:pr-1">
           <SectionFrame eyebrow="Control rail" title="Strategy inputs">
             <div className="grid gap-3 lg:grid-cols-[116px_minmax(0,1fr)] xl:grid-cols-[124px_minmax(0,1fr)]">
-              <div className="lg:border-r lg:border-white/6 lg:pr-3">
+              <div className="lg:border-r lg:border-[#1a1a1a] lg:pr-3">
                 <ControlRailNav value={controlTab} onChange={setControlTab} />
               </div>
 
@@ -2568,7 +3176,7 @@ export function SimulatorWorkspace() {
                   <div className="grid gap-2.5">
                     <div className="grid gap-1.5">
                       <div className="flex items-center justify-between gap-3">
-                        <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground">Weekend presets</div>
+                        <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-[#8a8a8a]">Weekend presets</div>
                         <DisclosureButton expanded={showPresetDetail} onToggle={() => setShowPresetDetail((value) => !value)} label="preset notes" />
                       </div>
                       {DEMO_PRESETS.map((preset) => (
@@ -2580,19 +3188,19 @@ export function SimulatorWorkspace() {
                             setForm(next);
                             void requestSuggestions(next, { suppressError: true });
                           }}
-                          className="rounded-[10px] border border-white/8 bg-white/[0.03] px-3 py-2.5 text-left transition duration-200 hover:border-cyan-300/30 hover:bg-white/[0.05] active:scale-[0.99]"
+                          className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] px-3 py-2.5 text-left transition duration-100 hover:border-[#2a2a2a] hover:bg-[#141414] active:scale-[0.99]"
                         >
                           <div className="flex items-center justify-between gap-3">
                             <div className="min-w-0">
-                              <div className="truncate text-sm text-white">{preset.label}</div>
-                              <div className="mt-1 line-clamp-1 font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">
+                              <div className="truncate text-sm text-[#f0f0f0]">{preset.label}</div>
+                              <div className="mt-1 line-clamp-1 font-mono text-[9px] uppercase tracking-[0.12em] text-[#8a8a8a]">
                                 {presetMetaLabel(preset, defaults)}
                               </div>
                             </div>
                             <Badge variant="info">{preset.simulation_runs}</Badge>
                           </div>
                           {showPresetDetail ? (
-                            <div className="mt-1.5 line-clamp-2 text-[11px] leading-5 text-muted-foreground">{preset.description}</div>
+                            <div className="mt-1.5 line-clamp-2 text-[11px] leading-5 text-[#8a8a8a]">{preset.description}</div>
                           ) : null}
                         </button>
                       ))}
@@ -2611,12 +3219,12 @@ export function SimulatorWorkspace() {
                     options={defaults.weather_presets.map((item) => ({ value: item.id, label: item.label }))}
                   />
                 </div>
-                <div className="rounded-[10px] border border-cyan-300/15 bg-cyan-300/8 p-3">
+                <div className="rounded-[2px] border border-[#4fc3f726] bg-[#001a26] p-3">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">Circuit card</div>
-                      <div className="mt-1.5 text-sm text-white">{activeTrack.circuit_name}</div>
-                      <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">{activeTrack.summary}</div>
+                      <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-[#444444] letter-spacing-[0.2em]">Circuit card</div>
+                      <div className="mt-1.5 text-sm text-[#f0f0f0]">{activeTrack.circuit_name}</div>
+                      <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-[#8a8a8a]">{activeTrack.summary}</div>
                     </div>
                     <div className="flex flex-col items-end gap-2">
                       {activeTrack.sprint_weekend ? <Badge variant="warning">Sprint</Badge> : null}
@@ -2624,7 +3232,7 @@ export function SimulatorWorkspace() {
                     </div>
                   </div>
                   {activeTrack.homologation_note ? (
-                    <div className="mt-2 rounded-[10px] border border-amber-300/20 bg-amber-400/10 p-2.5 text-[11px] leading-5 text-amber-100">
+                    <div className="mt-2 rounded-[2px] border border-[#f5a62344] bg-[#1a1000] p-2.5 text-[11px] leading-5 text-[#f5a623]">
                       {activeTrack.homologation_note}
                     </div>
                   ) : null}
@@ -2712,19 +3320,19 @@ export function SimulatorWorkspace() {
                     </div>
                     <div className="space-y-1.5">
                       {suggestions.slice(0, 4).map((suggestion) => (
-                        <div key={suggestion.driver_id} className="rounded-[10px] border border-white/8 bg-white/[0.03] p-2.5">
+                        <div key={suggestion.driver_id} className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] p-2.5">
                           <div className="flex items-start justify-between gap-3">
                             <div>
-                              <div className="text-sm text-white">
+                              <div className="text-sm text-[#f0f0f0]">
                                 {defaults.drivers.find((driver) => driver.id === suggestion.driver_id)?.name}
                               </div>
-                              <div className="mt-1 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                              <div className="mt-1 text-[10px] uppercase tracking-[0.22em] text-[#8a8a8a]">
                                 {suggestion.strategy_name}
                               </div>
                             </div>
                             <Badge variant={badgeVariantForRisk(suggestion.risk_profile)}>{suggestion.risk_profile}</Badge>
                           </div>
-                          <div className="mt-1.5 line-clamp-2 text-[11px] leading-5 text-muted-foreground">{suggestion.rationale[0]}</div>
+                          <div className="mt-1.5 line-clamp-2 text-[11px] leading-5 text-[#8a8a8a]">{suggestion.rationale[0]}</div>
                         </div>
                       ))}
                     </div>
@@ -2737,13 +3345,13 @@ export function SimulatorWorkspace() {
                       const team = defaults.teams.find((item) => item.id === driver.team_id);
                       const override = form.driver_overrides.find((item) => item.driver_id === driver.id);
                       return (
-                        <div key={driver.id} className="rounded-[10px] border border-white/8 bg-white/[0.03] p-2.5">
+                        <div key={driver.id} className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] p-2.5">
                           <div className="flex items-start justify-between gap-3">
                             <div>
-                              <div className="text-sm text-white">{driver.name}</div>
-                              <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{team?.name}</div>
+                              <div className="text-sm text-[#f0f0f0]">{driver.name}</div>
+                              <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-[#8a8a8a]">{team?.name}</div>
                             </div>
-                            <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                            <div className="text-[10px] uppercase tracking-[0.2em] text-[#8a8a8a]">
                               Q {driver.qualifying_strength} · E {driver.energy_management}
                             </div>
                           </div>
@@ -2757,7 +3365,7 @@ export function SimulatorWorkspace() {
                                   strategies: { ...form.strategies, [driver.id]: event.target.value },
                                 })
                               }
-                              className="min-h-10 rounded-[10px] border border-white/10 bg-[#090c11] px-3 py-2 text-sm text-white outline-none focus:border-primary/60"
+                              className="min-h-10 rounded-[2px] border border-[#2a2a2a] bg-[#0f0f0f] px-3 py-2 text-sm text-[#f0f0f0] outline-none focus:border-[#e8002d]"
                             >
                               <option value="">Suggested / auto</option>
                               {defaults.strategy_templates.map((item) => (
@@ -2782,10 +3390,10 @@ export function SimulatorWorkspace() {
                                   ),
                                 })
                               }
-                              className="min-h-10 rounded-[10px] border border-white/10 bg-[#090c11] px-3 py-2 text-sm text-white outline-none focus:border-primary/60"
+                              className="min-h-10 rounded-[2px] border border-[#2a2a2a] bg-[#0f0f0f] px-3 py-2 text-sm text-[#f0f0f0] outline-none focus:border-[#e8002d]"
                             />
                           </div>
-                          <div className="mt-1.5 flex items-center justify-between text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                          <div className="mt-1.5 flex items-center justify-between text-[10px] uppercase tracking-[0.16em] text-[#8a8a8a]">
                             <span>Form delta</span>
                             <span>{formatSigned(override?.recent_form_delta ?? 0)}</span>
                           </div>
@@ -2799,16 +3407,16 @@ export function SimulatorWorkspace() {
                   <div className="grid gap-2.5">
                     <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-1">
                       <label className="flex flex-col gap-2">
-                        <span className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Simulation runs</span>
+                        <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#8a8a8a]">Simulation runs</span>
                         <input
                           type="number"
                           min={50}
                           max={5000}
                           value={form.simulation_runs}
                           onChange={(event) => setForm({ ...form, simulation_runs: Number(event.target.value) })}
-                          className="min-h-10 rounded-[10px] border border-white/10 bg-[#090c11] px-3.5 py-2.5 text-sm text-white outline-none focus:border-primary/60"
+                          className="min-h-10 rounded-[2px] border border-[#2a2a2a] bg-[#0f0f0f] px-3.5 py-2.5 text-sm text-[#f0f0f0] outline-none focus:border-[#e8002d]"
                         />
-                        <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">80-220 live-safe. Heavy weather/chaos may auto-cut lower with low-detail fallback.</span>
+                        <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#8a8a8a]">80-220 live-safe. Heavy weather/chaos may auto-cut lower with low-detail fallback.</span>
                       </label>
                       <SelectField
                         label="Simulation detail"
@@ -2884,13 +3492,13 @@ export function SimulatorWorkspace() {
             >
               {!deferredSimulation ? (
                 <div className="space-y-2.5">
-                  <div className="flex items-center gap-3 rounded-[10px] border border-dashed border-white/10 bg-black/20 px-3 py-2.5">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-[9px] border border-cyan-300/20 bg-cyan-300/10">
-                      <Radar className="h-5 w-5 text-cyan-200" />
+                  <div className="flex items-center gap-3 rounded-[2px] border border-dashed border-[#2a2a2a] bg-[#0a0a0a] px-3 py-2.5">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-[9px] border border-[#4fc3f744] bg-[#001a26]">
+                      <Radar className="h-5 w-5 text-[#4fc3f7]" />
                     </div>
                     <div className="min-w-0">
-                      <div className="font-display text-[1rem] uppercase tracking-[0.06em] text-white">Awaiting first run</div>
-                      <div className="font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">Order, fit, points, and disruption load after the first simulation.</div>
+                      <div className="font-mono text-[1rem] uppercase tracking-[0.06em] text-[#f0f0f0]">Awaiting first run</div>
+                      <div className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#8a8a8a]">Order, fit, points, and disruption load after the first simulation.</div>
                     </div>
                   </div>
                   <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
@@ -2903,11 +3511,11 @@ export function SimulatorWorkspace() {
               ) : (
                 <div className="grid gap-3 2xl:grid-cols-[1.14fr_0.86fr]">
                   <div className="space-y-3">
-                    <div className="rounded-[14px] border border-white/8 bg-black/25 p-3.5">
+                    <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-3.5">
                       <div className="flex items-center justify-between gap-3">
                         <div>
-                          <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">Execution strip</div>
-                          <div className="mt-1 text-sm text-white">Where the race changes, when stops open, and when volatility rises.</div>
+                          <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-[#444444] letter-spacing-[0.2em]">Execution strip</div>
+                          <div className="mt-1 text-sm text-[#f0f0f0]">Where the race changes, when stops open, and when volatility rises.</div>
                         </div>
                         <Badge variant={signalVariant(movementSummary?.race_fluidity_score ?? currentVolatility)}>
                           {movementSummary?.overtaking_intensity ?? "Preview"}
@@ -2962,35 +3570,35 @@ export function SimulatorWorkspace() {
                     </div>
 
                     <div className="grid gap-2.5 xl:grid-cols-[0.92fr_1.08fr]">
-                      <div className="rounded-[14px] border border-white/8 bg-black/20 p-3.5">
+                      <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-3.5">
                         <div className="flex items-center justify-between gap-3">
                           <div>
-                            <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">Race control brief</div>
-                            <div className="mt-1 text-sm text-white">{deferredSimulation.scenario.headline}</div>
+                            <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-[#444444] letter-spacing-[0.2em]">Race control brief</div>
+                            <div className="mt-1 text-sm text-[#f0f0f0]">{deferredSimulation.scenario.headline}</div>
                           </div>
                           <Badge variant="info">{deferredSimulation.event_summary.dominant_factor}</Badge>
                         </div>
-                        <div className="mt-3 grid gap-2 border-t border-white/8 pt-3">
+                        <div className="mt-3 grid gap-2 border-t border-[#1f1f1f] pt-3">
                           {mainTurningPoints.map((item) => (
-                            <div key={item} className="flex items-start gap-2 text-[11px] leading-5 text-muted-foreground">
-                              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                            <div key={item} className="flex items-start gap-2 text-[11px] leading-5 text-[#8a8a8a]">
+                              <span style={{ marginTop: 4, width: 4, height: 4, borderRadius: "50%", background: "#e8002d", flexShrink: 0, display: "inline-block" }} />
                               <span>{item}</span>
                             </div>
                           ))}
                         </div>
                       </div>
 
-                      <div className="rounded-[14px] border border-white/8 bg-black/20 p-3.5">
+                      <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-3.5">
                         <div className="flex items-center justify-between gap-3">
                           <div>
-                            <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">Race path</div>
-                            <div className="mt-1 text-sm text-white">Strategy, leverage, and late-race conditions at a glance.</div>
+                            <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-[#444444] letter-spacing-[0.2em]">Race path</div>
+                            <div className="mt-1 text-sm text-[#f0f0f0]">Strategy, leverage, and late-race conditions at a glance.</div>
                           </div>
                           <Badge variant={leadDriver ? badgeVariantForConfidence(leadDriver.confidence_label) : "warning"}>
                             {leadDriver?.confidence_label ?? "Preview"}
                           </Badge>
                         </div>
-                        <div className="mt-3 grid gap-y-3 border-t border-white/8 pt-3 sm:grid-cols-2 sm:gap-x-6">
+                        <div className="mt-3 grid gap-y-3 border-t border-[#1f1f1f] pt-3 sm:grid-cols-2 sm:gap-x-6">
                           <InlineDataPoint label="Strategy outlook" value={deferredSimulation.scenario.strategy_outlook} />
                           <InlineDataPoint label="Pressure phase" value={eventTiming?.leverage_phase ?? deferredSimulation.scenario.event_outlook} />
                           <InlineDataPoint label="Crossover window" value={formatLapWindow(eventTiming?.weather_crossover_window_start, eventTiming?.weather_crossover_window_end)} />
@@ -3001,11 +3609,11 @@ export function SimulatorWorkspace() {
                   </div>
 
                   <div className="space-y-3">
-                    <div className="rounded-[14px] border border-white/8 bg-black/20 p-3.5">
+                    <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-3.5">
                       <div className="flex items-center justify-between gap-3">
                         <div>
-                          <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">Projected front</div>
-                          <div className="mt-1 text-sm text-white">Who controls the race when the first key windows open.</div>
+                          <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-[#444444] letter-spacing-[0.2em]">Projected front</div>
+                          <div className="mt-1 text-sm text-[#f0f0f0]">Who controls the race when the first key windows open.</div>
                         </div>
                         <div className="flex items-center gap-2">
                           <Badge variant="info">{topDrivers.length} cars</Badge>
@@ -3031,14 +3639,14 @@ export function SimulatorWorkspace() {
                       </div>
                     </div>
 
-                    <div className="rounded-[14px] border border-white/8 bg-black/20 p-3.5">
+                    <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-3.5">
                       <div className="flex items-center justify-between gap-3">
-                        <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">Race snapshot</div>
+                        <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-[#444444] letter-spacing-[0.2em]">Race snapshot</div>
                         <Badge variant={trustSummary ? trustTierVariant(trustSummary.confidence_tier) : signalVariant(currentVolatility)}>
                           {trustSummary ? compactTrustLabel(trustSummary.confidence_tier) : volatilityLabel(currentVolatility)}
                         </Badge>
                       </div>
-                      <div className="mt-3 grid gap-y-3 border-t border-white/8 pt-3 sm:grid-cols-2 xl:grid-cols-3 xl:gap-x-5">
+                      <div className="mt-3 grid gap-y-3 border-t border-[#1f1f1f] pt-3 sm:grid-cols-2 xl:grid-cols-3 xl:gap-x-5">
                         <InlineDataPoint label="Lead car" value={leadDriver ? leadDriver.driver_name : "Pending"} />
                         <InlineDataPoint label="Podium lane" value={leadDriver ? formatPct(leadDriver.podium_probability) : "Pending"} />
                         <InlineDataPoint label="Confidence" value={trustSummary ? compactTrustLabel(trustSummary.confidence_tier) : "Pending"} />
@@ -3077,23 +3685,23 @@ export function SimulatorWorkspace() {
                   <div className="space-y-3">
                     <RaceTimelineStrip phases={racePhases} />
                     <div className="grid gap-2 md:grid-cols-2">
-                      <div className="rounded-[14px] border border-white/8 bg-black/20 p-3.5">
-                        <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">Turning points</div>
-                        <div className="mt-3 grid gap-2 border-t border-white/8 pt-3">
+                      <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-3.5">
+                        <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-[#444444] letter-spacing-[0.2em]">Turning points</div>
+                        <div className="mt-3 grid gap-2 border-t border-[#1f1f1f] pt-3">
                           {deferredSimulation.event_summary.evolution_summary.map((item) => (
-                            <div key={item} className="flex items-start gap-2 text-[11px] leading-5 text-muted-foreground">
-                              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                            <div key={item} className="flex items-start gap-2 text-[11px] leading-5 text-[#8a8a8a]">
+                              <span style={{ marginTop: 4, width: 4, height: 4, borderRadius: "50%", background: "#e8002d", flexShrink: 0, display: "inline-block" }} />
                               <span>{item}</span>
                             </div>
                           ))}
                         </div>
                       </div>
-                      <div className="rounded-[14px] border border-white/8 bg-black/20 p-3.5">
+                      <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-3.5">
                         <div className="flex items-center justify-between gap-3">
-                          <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">Stop mix</div>
+                          <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-[#444444] letter-spacing-[0.2em]">Stop mix</div>
                           <Badge variant="info">{formatLapWindow(strategyDiagnostics?.first_stop_window_start, strategyDiagnostics?.first_stop_window_end)}</Badge>
                         </div>
-                        <div className="mt-3 grid gap-3 border-t border-white/8 pt-3">
+                        <div className="mt-3 grid gap-3 border-t border-[#1f1f1f] pt-3">
                           {stopMix.map((bucket) => (
                             <StopMixBar key={bucket.stops} stops={bucket.stops} share={bucket.share} />
                           ))}
@@ -3112,9 +3720,9 @@ export function SimulatorWorkspace() {
                         />
                       ))}
                     </div>
-                    <div className="rounded-[14px] border border-white/8 bg-black/20 p-3.5">
+                    <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-3.5">
                       <div className="flex items-center justify-between gap-3">
-                        <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-200">Event timing</div>
+                        <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-[#444444] letter-spacing-[0.2em]">Event timing</div>
                         <Badge variant={signalVariant(eventTiming?.safety_car_leverage_score ?? 0)}>{eventTiming?.leverage_phase ?? "Pending"}</Badge>
                       </div>
                       <div className="mt-3 grid gap-2 sm:grid-cols-2">
@@ -3151,7 +3759,7 @@ export function SimulatorWorkspace() {
                   </div>
                 </div>
                 ) : (
-                  <div className="rounded-[12px] border border-dashed border-white/10 bg-black/20 px-4 py-3 text-[11px] leading-5 text-muted-foreground">
+                  <div className="rounded-[2px] border border-dashed border-[#2a2a2a] bg-[#0a0a0a] px-4 py-3 text-[11px] leading-5 text-[#8a8a8a]">
                     Open the phase deck for the full lap-by-lap breakdown: phase cards, stop mix, detailed event timing, and projected stint ladders.
                   </div>
                 )}
@@ -3166,41 +3774,41 @@ export function SimulatorWorkspace() {
                   {analyticsView === "order" ? (
                     <div className="space-y-5">
                       <div className="grid gap-5 2xl:grid-cols-[1.05fr_0.95fr]">
-                        <div className="rounded-[18px] border border-white/8 bg-black/20 p-4">
+                        <div className="border border-[#1f1f1f] rounded-[2px] bg-[#0f0f0f] p-4">
                           <div className="mb-3 flex items-center justify-between gap-3">
-                            <div className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Projected order</div>
+                            <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#8a8a8a]">Projected order</div>
                             <Badge variant="info">Top 8</Badge>
                           </div>
                           <div className="h-[330px]">
                             <ResponsiveContainer width="100%" height="100%">
                               <BarChart data={positionData} layout="vertical" margin={{ left: 8, right: 8 }}>
-                                <CartesianGrid horizontal={false} stroke="rgba(255,255,255,0.08)" />
-                                <XAxis type="number" tick={{ fill: "#8e9cab", fontSize: 12 }} axisLine={false} tickLine={false} />
-                                <YAxis type="category" dataKey="name" tick={{ fill: "#f5f7fa", fontSize: 12 }} axisLine={false} tickLine={false} />
+                                <CartesianGrid horizontal={false} stroke="#1f1f1f" />
+                                <XAxis type="number" tick={{ fill: "#444444", fontSize: 12 }} axisLine={false} tickLine={false} />
+                                <YAxis type="category" dataKey="name" tick={{ fill: "#f0f0f0", fontSize: 12 }} axisLine={false} tickLine={false} />
                                 <Tooltip
                                   formatter={(_, __, payload) => `P${payload?.payload?.rawExpected?.toFixed?.(1) ?? "-"}`}
                                   contentStyle={tooltipStyle}
                                 />
-                                <Bar dataKey="expected" radius={[0, 8, 8, 0]}>
+                                <Bar dataKey="expected" radius={[0, 2, 2, 0]}>
                                   {positionData.map((entry, index) => (
-                                    <Cell key={entry.name} fill={index === 0 ? "#ff415f" : index <= 2 ? "#31c48d" : "#67e8f9"} />
+                                    <Cell key={entry.name} fill={index === 0 ? "#e8002d" : index <= 2 ? "#00d2a0" : index <= 5 ? "#4fc3f7" : "#555555"} />
                                   ))}
                                 </Bar>
                               </BarChart>
                             </ResponsiveContainer>
                           </div>
                         </div>
-                        <div className="rounded-[18px] border border-white/8 bg-black/20 p-4">
+                        <div className="border border-[#1f1f1f] rounded-[2px] bg-[#0f0f0f] p-4">
                           <div className="mb-3 flex items-center justify-between gap-3">
-                            <div className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Top-six distribution</div>
+                            <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#8a8a8a]">Top-six distribution</div>
                             <Badge variant="info">P1-P6</Badge>
                           </div>
                           <div className="h-[330px]">
                             <ResponsiveContainer width="100%" height="100%">
                               <BarChart data={topDistribution}>
-                                <CartesianGrid vertical={false} stroke="rgba(255,255,255,0.08)" />
-                                <XAxis dataKey="driver" tick={{ fill: "#8e9cab", fontSize: 12 }} axisLine={false} tickLine={false} />
-                                <YAxis tick={{ fill: "#8e9cab", fontSize: 12 }} axisLine={false} tickLine={false} />
+                                <CartesianGrid vertical={false} stroke="#1f1f1f" />
+                                <XAxis dataKey="driver" tick={{ fill: "#444444", fontSize: 12 }} axisLine={false} tickLine={false} />
+                                <YAxis tick={{ fill: "#444444", fontSize: 12 }} axisLine={false} tickLine={false} />
                                 <Tooltip contentStyle={tooltipStyle} />
                                 {["P1", "P2", "P3", "P4", "P5", "P6"].map((key, index) => (
                                   <Bar key={key} dataKey={key} stackId="a" fill={distributionColors[index]} />
@@ -3218,62 +3826,62 @@ export function SimulatorWorkspace() {
                     <div className="grid gap-5 2xl:grid-cols-[1.05fr_0.95fr]">
                       <div className="space-y-3">
                         {suggestions.slice(0, 6).map((suggestion) => (
-                          <div key={suggestion.driver_id} className="rounded-[16px] border border-white/8 bg-white/[0.03] p-4">
+                          <div key={suggestion.driver_id} className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] p-4">
                             <div className="flex items-start justify-between gap-4">
                               <div>
-                                <div className="text-sm text-white">
+                                <div className="text-sm text-[#f0f0f0]">
                                   {defaults.drivers.find((driver) => driver.id === suggestion.driver_id)?.name}
                                 </div>
-                                <div className="mt-1 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{suggestion.strategy_name}</div>
+                                <div className="mt-1 text-[10px] uppercase tracking-[0.22em] text-[#8a8a8a]">{suggestion.strategy_name}</div>
                               </div>
                               <Badge variant={badgeVariantForRisk(suggestion.risk_profile)}>{suggestion.risk_profile}</Badge>
                             </div>
-                            <div className="mt-3 grid gap-1 text-sm leading-6 text-muted-foreground">
+                            <div className="mt-3 grid gap-1 text-sm leading-6 text-[#8a8a8a]">
                               {suggestion.rationale.slice(0, 2).map((reason) => (
                                 <div key={reason}>{reason}</div>
                               ))}
                             </div>
-                            <div className="mt-3 border-t border-white/8 pt-3 text-[12px] leading-5 text-muted-foreground">{suggestion.tradeoff}</div>
+                            <div className="mt-3 border-t border-[#1f1f1f] pt-3 text-[12px] leading-5 text-[#8a8a8a]">{suggestion.tradeoff}</div>
                           </div>
                         ))}
                       </div>
                       <div className="space-y-4">
-                        <div className="rounded-[18px] border border-white/8 bg-black/20 p-4">
-                          <div className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Constructors view</div>
+                        <div className="border border-[#1f1f1f] rounded-[2px] bg-[#0f0f0f] p-4">
+                          <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#8a8a8a]">Constructors view</div>
                           <div className="mt-4 grid gap-3">
                             {deferredSimulation.team_summary.map((team) => (
-                              <div key={team.team_id} className="rounded-[14px] border border-white/8 bg-white/[0.03] p-4">
+                              <div key={team.team_id} className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] p-4">
                                 <div className="flex items-center justify-between gap-3">
-                                  <div className="text-sm text-white">{team.team_name}</div>
-                                  <div className="font-display text-[1.45rem] leading-none text-white">P{team.avg_expected_finish.toFixed(1)}</div>
+                                  <div className="text-sm text-[#f0f0f0]">{team.team_name}</div>
+                                  <div className="font-mono text-[1.45rem] leading-none text-[#f0f0f0]">P{team.avg_expected_finish.toFixed(1)}</div>
                                 </div>
                                 <div className="mt-3 grid grid-cols-2 gap-2">
-                                  <div className="rounded-[10px] border border-white/8 bg-black/20 p-2.5">
-                                    <div className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground">Points</div>
-                                    <div className="mt-1 text-white">{team.expected_points.toFixed(1)}</div>
+                                  <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-2.5">
+                                    <div className="text-[9px] uppercase tracking-[0.18em] text-[#8a8a8a]">Points</div>
+                                    <div className="mt-1 text-[#f0f0f0]">{team.expected_points.toFixed(1)}</div>
                                   </div>
-                                  <div className="rounded-[10px] border border-white/8 bg-black/20 p-2.5">
-                                    <div className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground">Podium</div>
-                                    <div className="mt-1 text-white">{formatPct(team.combined_podium_probability)}</div>
+                                  <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-2.5">
+                                    <div className="text-[9px] uppercase tracking-[0.18em] text-[#8a8a8a]">Podium</div>
+                                    <div className="mt-1 text-[#f0f0f0]">{formatPct(team.combined_podium_probability)}</div>
                                   </div>
                                 </div>
                               </div>
                             ))}
                           </div>
                         </div>
-                        <div className="rounded-[18px] border border-white/8 bg-black/20 p-4">
-                          <div className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Engineer notes</div>
+                        <div className="border border-[#1f1f1f] rounded-[2px] bg-[#0f0f0f] p-4">
+                          <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#8a8a8a]">Engineer notes</div>
                           <div className="mt-4 grid gap-3">
                             {topDrivers.map((driver) => (
-                              <div key={driver.driver_id} className="rounded-[14px] border border-white/8 bg-white/[0.03] p-3">
+                              <div key={driver.driver_id} className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] p-3">
                                 <div className="flex items-center justify-between gap-3">
                                   <div>
-                                    <div className="text-sm text-white">{driver.driver_name}</div>
-                                    <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{driver.team_name}</div>
+                                    <div className="text-sm text-[#f0f0f0]">{driver.driver_name}</div>
+                                    <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-[#8a8a8a]">{driver.team_name}</div>
                                   </div>
-                                  <div className="text-sm text-white">{formatPct(driver.win_probability)}</div>
+                                  <div className="text-sm text-[#f0f0f0]">{formatPct(driver.win_probability)}</div>
                                 </div>
-                                <div className="mt-2 text-[12px] leading-5 text-muted-foreground">{driver.explanation[0]}</div>
+                                <div className="mt-2 text-[12px] leading-5 text-[#8a8a8a]">{driver.explanation[0]}</div>
                               </div>
                             ))}
                           </div>
@@ -3284,9 +3892,9 @@ export function SimulatorWorkspace() {
 
                   {analyticsView === "diagnostics" ? (
                     <div className="grid gap-5 2xl:grid-cols-[0.95fr_1.05fr]">
-                      <div className="rounded-[18px] border border-white/8 bg-black/20 p-4">
+                      <div className="border border-[#1f1f1f] rounded-[2px] bg-[#0f0f0f] p-4">
                         <div className="mb-3 flex items-center justify-between gap-3">
-                          <div className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Disruption frequency</div>
+                          <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#8a8a8a]">Disruption frequency</div>
                           <Badge variant={signalVariant(deferredSimulation.event_summary.volatility_index)}>
                             {deferredSimulation.event_summary.volatility_index.toFixed(2)}
                           </Badge>
@@ -3294,24 +3902,24 @@ export function SimulatorWorkspace() {
                         <div className="h-[330px]">
                           <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={eventData}>
-                              <CartesianGrid vertical={false} stroke="rgba(255,255,255,0.08)" />
-                              <XAxis dataKey="label" tick={{ fill: "#8e9cab", fontSize: 12 }} axisLine={false} tickLine={false} />
-                              <YAxis tickFormatter={(value) => `${Math.round(value * 100)}%`} tick={{ fill: "#8e9cab", fontSize: 12 }} axisLine={false} tickLine={false} />
+                              <CartesianGrid vertical={false} stroke="#1f1f1f" />
+                              <XAxis dataKey="label" tick={{ fill: "#444444", fontSize: 12 }} axisLine={false} tickLine={false} />
+                              <YAxis tickFormatter={(value) => `${Math.round(value * 100)}%`} tick={{ fill: "#444444", fontSize: 12 }} axisLine={false} tickLine={false} />
                               <Tooltip formatter={(value: number) => formatPct(value)} contentStyle={tooltipStyle} />
-                              <Bar dataKey="value" radius={[7, 7, 0, 0]}>
+                              <Bar dataKey="value" radius={[2, 2, 0, 0]}>
                                 {eventData.map((entry) => (
                                   <Cell
                                     key={entry.label}
                                     fill={
                                       entry.label === "Red"
-                                        ? "#ff415f"
+                                        ? "#e8002d"
                                         : entry.label === "Weather"
-                                          ? "#f7bb43"
+                                          ? "#f5a623"
                                           : entry.label === "Safety"
-                                            ? "#f7bb43"
+                                            ? "#f5a623"
                                             : entry.label === "VSC"
-                                              ? "#67e8f9"
-                                              : "#94a3b8"
+                                              ? "#4fc3f7"
+                                              : "#444444"
                                     }
                                   />
                                 ))}
@@ -3321,8 +3929,8 @@ export function SimulatorWorkspace() {
                         </div>
                       </div>
                       <div className="grid gap-4">
-                        <div className="rounded-[18px] border border-white/8 bg-black/20 p-4">
-                          <div className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Lead diagnostics</div>
+                        <div className="border border-[#1f1f1f] rounded-[2px] bg-[#0f0f0f] p-4">
+                          <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#8a8a8a]">Lead diagnostics</div>
                           <div className="mt-4 grid gap-3 sm:grid-cols-2">
                             <SignalMeter label="Pace edge" value={Math.min(1, Math.max(0, ((leaderDiagnostics?.pace_edge ?? 0) + 1.6) / 3.2))} secondary={compactNumber(leaderDiagnostics?.pace_edge ?? 0)} />
                             <SignalMeter label="Track fit" value={Math.min(1, Math.max(0, (leaderDiagnostics?.track_fit_score ?? 0) / 20))} secondary={compactNumber(leaderDiagnostics?.track_fit_score ?? 0)} />
@@ -3330,11 +3938,11 @@ export function SimulatorWorkspace() {
                             <SignalMeter label="Chaos resilience" value={Math.min(1, Math.max(0, leaderDiagnostics?.chaos_resilience ?? 0))} secondary={compactNumber(leaderDiagnostics?.chaos_resilience ?? 0)} />
                           </div>
                         </div>
-                        <div className="rounded-[18px] border border-white/8 bg-black/20 p-4">
-                          <div className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Impact summary</div>
+                        <div className="border border-[#1f1f1f] rounded-[2px] bg-[#0f0f0f] p-4">
+                          <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#8a8a8a]">Impact summary</div>
                           <div className="mt-4 grid gap-3">
                             {deferredSimulation.event_summary.impact_summary.map((item) => (
-                              <div key={item} className="rounded-[14px] border border-white/8 bg-white/[0.03] p-3 text-sm leading-6 text-muted-foreground">
+                              <div key={item} className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] p-3 text-sm leading-6 text-[#8a8a8a]">
                                 {item}
                               </div>
                             ))}
@@ -3348,12 +3956,12 @@ export function SimulatorWorkspace() {
             </>
           ) : (
             <SectionFrame eyebrow="No active run" title="Projection board">
-              <div className="rounded-[12px] border border-dashed border-white/10 bg-black/20 p-5 text-center">
-                <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-[10px] border border-amber-300/20 bg-amber-300/10">
-                  <AlertTriangle className="h-5 w-5 text-amber-200" />
+              <div className="rounded-[2px] border border-dashed border-[#2a2a2a] bg-[#0a0a0a] p-5 text-center">
+                <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-[2px] border border-[#f5a62344] bg-[#1a1000]">
+                  <AlertTriangle className="h-5 w-5 text-[#f5a623]" />
                 </div>
-                <div className="mt-3 text-base uppercase tracking-[0.08em] text-white">No active projection</div>
-                <div className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">Run once to populate the board.</div>
+                <div className="mt-3 text-base uppercase tracking-[0.08em] text-[#f0f0f0]">No active projection</div>
+                <div className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[#8a8a8a]">Run once to populate the board.</div>
               </div>
             </SectionFrame>
           )}
@@ -3377,58 +3985,58 @@ export function SimulatorWorkspace() {
                   secondary={movementSummary.overtaking_intensity}
                   tone={signalVariant(movementSummary.race_fluidity_score)}
                 />
-                <div className="grid grid-cols-2 gap-3 border-t border-white/8 pt-3">
+                <div className="grid grid-cols-2 gap-3 border-t border-[#1f1f1f] pt-3">
                   <InlineDataPoint label="Avg overtakes" value={formatAveragePerRun(movementSummary.avg_overtakes_per_simulation)} />
                   <InlineDataPoint label="Avg position changes" value={formatAveragePerDriver(movementSummary.avg_position_changes_per_driver)} align="right" />
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center justify-between gap-3">
-                    <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground">Track traffic read</div>
+                    <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-[#8a8a8a]">Track traffic read</div>
                     <DisclosureButton expanded={showMovementDetail} onToggle={() => setShowMovementDetail((value) => !value)} label="more" />
                   </div>
-                  <div className="rounded-[10px] border border-white/8 bg-white/[0.03] px-3 py-2.5">
+                  <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] px-3 py-2.5">
                     <div className="flex items-center justify-between gap-4">
                       <div className="min-w-0">
-                        <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground">Likely mover</div>
-                        <div className="mt-1 truncate text-[13px] text-white">{biggestMovers[0]?.driver_name ?? "Pending"}</div>
+                        <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-[#8a8a8a]">Likely mover</div>
+                        <div className="mt-1 truncate text-[13px] text-[#f0f0f0]">{biggestMovers[0]?.driver_name ?? "Pending"}</div>
                       </div>
                       <div className="text-right">
-                        <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground">Net delta</div>
-                        <div className="mt-1 text-[12px] text-white">{biggestMovers[0] ? `${formatSigned(Number(biggestMovers[0].net_position_delta.toFixed(1)))}` : "Pending"}</div>
+                        <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-[#8a8a8a]">Net delta</div>
+                        <div className="mt-1 text-[12px] text-[#f0f0f0]">{biggestMovers[0] ? `${formatSigned(Number(biggestMovers[0].net_position_delta.toFixed(1)))}` : "Pending"}</div>
                       </div>
                     </div>
                   </div>
-                  <div className="rounded-[10px] border border-white/8 bg-white/[0.03] px-3 py-2.5">
+                  <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] px-3 py-2.5">
                     <div className="flex items-center justify-between gap-4">
                       <div className="min-w-0">
-                        <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground">Hardest to clear</div>
-                        <div className="mt-1 truncate text-[13px] text-white">{hardestToPass[0]?.driver_name ?? "Pending"}</div>
+                        <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-[#8a8a8a]">Hardest to clear</div>
+                        <div className="mt-1 truncate text-[13px] text-[#f0f0f0]">{hardestToPass[0]?.driver_name ?? "Pending"}</div>
                       </div>
                       <div className="text-right">
-                        <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground">Passes faced</div>
-                        <div className="mt-1 text-[12px] text-white">{hardestToPass[0] ? formatAveragePerRun(hardestToPass[0].average_overtakes) : "Pending"}</div>
+                        <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-[#8a8a8a]">Passes faced</div>
+                        <div className="mt-1 text-[12px] text-[#f0f0f0]">{hardestToPass[0] ? formatAveragePerRun(hardestToPass[0].average_overtakes) : "Pending"}</div>
                       </div>
                     </div>
                   </div>
                   {showMovementDetail ? (
                     <div className="grid gap-2 sm:grid-cols-2">
-                      <div className="rounded-[10px] border border-white/8 bg-white/[0.03] p-2.5">
-                        <div className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground">Mover ladder</div>
+                      <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] p-2.5">
+                        <div className="text-[9px] uppercase tracking-[0.18em] text-[#8a8a8a]">Mover ladder</div>
                         <div className="mt-2 grid gap-1.5">
                           {biggestMovers.map((driver) => (
-                            <div key={driver.driver_id} className="flex items-center justify-between gap-3 text-[11px] text-muted-foreground">
-                              <span className="truncate text-white">{driver.driver_name}</span>
+                            <div key={driver.driver_id} className="flex items-center justify-between gap-3 text-[11px] text-[#8a8a8a]">
+                              <span className="truncate text-[#f0f0f0]">{driver.driver_name}</span>
                               <span>{formatSigned(Number(driver.net_position_delta.toFixed(1)))}</span>
                             </div>
                           ))}
                         </div>
                       </div>
-                      <div className="rounded-[10px] border border-white/8 bg-white/[0.03] p-2.5">
-                        <div className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground">Traffic anchors</div>
+                      <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] p-2.5">
+                        <div className="text-[9px] uppercase tracking-[0.18em] text-[#8a8a8a]">Traffic anchors</div>
                         <div className="mt-2 grid gap-1.5">
                           {hardestToPass.map((driver) => (
-                            <div key={driver.driver_id} className="flex items-center justify-between gap-3 text-[11px] text-muted-foreground">
-                              <span className="truncate text-white">{driver.driver_name}</span>
+                            <div key={driver.driver_id} className="flex items-center justify-between gap-3 text-[11px] text-[#8a8a8a]">
+                              <span className="truncate text-[#f0f0f0]">{driver.driver_name}</span>
                               <span>{formatAveragePerRun(driver.average_overtakes)}</span>
                             </div>
                           ))}
@@ -3439,7 +4047,7 @@ export function SimulatorWorkspace() {
                 </div>
               </div>
             ) : (
-              <div className="rounded-[12px] border border-white/8 bg-white/[0.03] p-4 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+              <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] p-4 font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8a8a]">
                 Run to inspect overtaking load, movers, and race fluidity.
               </div>
             )}
@@ -3459,16 +4067,16 @@ export function SimulatorWorkspace() {
                   secondary={eventTiming.leverage_phase}
                   tone={signalVariant(eventTiming.safety_car_leverage_score)}
                 />
-                <div className="grid grid-cols-2 gap-3 border-t border-white/8 pt-3">
+                <div className="grid grid-cols-2 gap-3 border-t border-[#1f1f1f] pt-3">
                   <InlineDataPoint label="Disruption window" value={formatLapWindow(eventTiming.disruption_window_start, eventTiming.disruption_window_end)} />
                   <InlineDataPoint label="Crossover window" value={formatLapWindow(eventTiming.weather_crossover_window_start, eventTiming.weather_crossover_window_end)} align="right" />
                 </div>
-                <div className="rounded-[10px] border border-white/8 bg-white/[0.03] px-3 py-2.5 text-[11px] leading-5 text-muted-foreground">
+                <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] px-3 py-2.5 text-[11px] leading-5 text-[#8a8a8a]">
                   Avg disruption {formatLapValue(eventTiming.average_disruption_lap)} · avg neutralized pit gain {eventTiming.average_neutralized_pit_gain.toFixed(1)}s · late-race interruption risk {formatPct(eventTiming.late_race_interruption_risk)}
                 </div>
               </div>
             ) : (
-              <div className="rounded-[12px] border border-white/8 bg-white/[0.03] p-4 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+              <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] p-4 font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8a8a]">
                 Run to inspect SC leverage, disruption windows, and crossover timing.
               </div>
             )}
@@ -3530,7 +4138,7 @@ export function SimulatorWorkspace() {
                       <SignalMeter label="Chaos resilience" value={Math.min(1, Math.max(0, leaderDiagnostics.chaos_resilience))} secondary={`${compactNumber(leaderDiagnostics.chaos_resilience)} score`} tone="success" />
                     </div>
                   ) : (
-                    <div className="rounded-[12px] border border-white/8 bg-white/[0.03] p-4 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                    <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] p-4 font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8a8a]">
                       Run to inspect pace edge, track fit, strategy edge, and chaos resilience.
                     </div>
                   )}
@@ -3542,29 +4150,29 @@ export function SimulatorWorkspace() {
                   icon={Flag}
                   tone="info"
                 >
-                  <div className="rounded-[10px] border border-white/8 bg-white/[0.03] p-3">
+                  <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] p-3">
                     <div className="flex items-center justify-between gap-3">
-                      <div className="text-sm text-white">{activeTrack.name}</div>
+                      <div className="text-sm text-[#f0f0f0]">{activeTrack.name}</div>
                       {activeTrack.sprint_weekend ? <Badge variant="warning">Sprint</Badge> : <Badge variant="info">Standard</Badge>}
                     </div>
-                    <div className="mt-1.5 line-clamp-2 text-[11px] leading-5 text-muted-foreground">{activeTrack.summary}</div>
+                    <div className="mt-1.5 line-clamp-2 text-[11px] leading-5 text-[#8a8a8a]">{activeTrack.summary}</div>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
-                    <div className="rounded-[10px] border border-white/8 bg-black/20 p-2.5">
-                      <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Circuit</div>
-                      <div className="mt-1 text-sm text-white">{activeTrack.circuit_type}</div>
+                    <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-2.5">
+                      <div className="text-[10px] uppercase tracking-[0.18em] text-[#8a8a8a]">Circuit</div>
+                      <div className="mt-1 text-sm text-[#f0f0f0]">{activeTrack.circuit_type}</div>
                     </div>
-                    <div className="rounded-[10px] border border-white/8 bg-black/20 p-2.5">
-                      <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Laps</div>
-                      <div className="mt-1 text-sm text-white">{activeTrack.laps}</div>
+                    <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-2.5">
+                      <div className="text-[10px] uppercase tracking-[0.18em] text-[#8a8a8a]">Laps</div>
+                      <div className="mt-1 text-sm text-[#f0f0f0]">{activeTrack.laps}</div>
                     </div>
-                    <div className="rounded-[10px] border border-white/8 bg-black/20 p-2.5">
-                      <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Pit loss</div>
-                      <div className="mt-1 text-sm text-white">{activeTrack.pit_loss_seconds.toFixed(1)}s</div>
+                    <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-2.5">
+                      <div className="text-[10px] uppercase tracking-[0.18em] text-[#8a8a8a]">Pit loss</div>
+                      <div className="mt-1 text-sm text-[#f0f0f0]">{activeTrack.pit_loss_seconds.toFixed(1)}s</div>
                     </div>
-                    <div className="rounded-[10px] border border-white/8 bg-black/20 p-2.5">
-                      <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Deg</div>
-                      <div className="mt-1 text-sm capitalize text-white">{activeTrack.degradation_profile}</div>
+                    <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0a0a0a] p-2.5">
+                      <div className="text-[10px] uppercase tracking-[0.18em] text-[#8a8a8a]">Deg</div>
+                      <div className="mt-1 text-sm capitalize text-[#f0f0f0]">{activeTrack.degradation_profile}</div>
                     </div>
                   </div>
                 </InsightCard>
@@ -3578,27 +4186,27 @@ export function SimulatorWorkspace() {
                   {topDrivers.length ? (
                     <div className="space-y-1.5">
                       {topDrivers.map((driver) => (
-                        <div key={driver.driver_id} className="rounded-[10px] border border-white/8 bg-white/[0.03] p-2.5">
+                        <div key={driver.driver_id} className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] p-2.5">
                           <div className="flex items-center justify-between gap-3">
                             <div>
-                              <div className="text-[13px] text-white">{driver.driver_name}</div>
-                              <div className="mt-0.5 text-[9px] uppercase tracking-[0.16em] text-muted-foreground">{driver.team_name}</div>
+                              <div className="text-[13px] text-[#f0f0f0]">{driver.driver_name}</div>
+                              <div className="mt-0.5 text-[9px] uppercase tracking-[0.16em] text-[#8a8a8a]">{driver.team_name}</div>
                             </div>
-                            <div className="text-[13px] text-white">{formatPct(driver.win_probability)}</div>
+                            <div className="text-[13px] text-[#f0f0f0]">{formatPct(driver.win_probability)}</div>
                           </div>
-                          <div className="mt-1.5 line-clamp-2 text-[11px] leading-5 text-muted-foreground">{driver.explanation[0]}</div>
+                          <div className="mt-1.5 line-clamp-2 text-[11px] leading-5 text-[#8a8a8a]">{driver.explanation[0]}</div>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <div className="rounded-[12px] border border-white/8 bg-white/[0.03] p-4 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                    <div className="rounded-[2px] border border-[#1f1f1f] bg-[#0f0f0f] p-4 font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8a8a]">
                       Leader notes and fit signals appear after the first run.
                     </div>
                   )}
                 </InsightCard>
               </div>
             ) : (
-              <div className="rounded-[12px] border border-dashed border-white/10 bg-black/20 px-4 py-3 text-[11px] leading-5 text-muted-foreground">
+              <div className="rounded-[2px] border border-dashed border-[#2a2a2a] bg-[#0a0a0a] px-4 py-3 text-[11px] leading-5 text-[#8a8a8a]">
                 Open telemetry to inspect scenario pressure, lead diagnostics, detailed track metadata, and front-group notes.
               </div>
             )}
